@@ -1,0 +1,64 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Page;
+use App\Models\User;
+use App\Support\HtmlSanitizer;
+use Illuminate\Database\Seeder;
+
+class PageSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $admin = User::query()
+            ->where('email', env('SUPER_ADMIN_EMAIL', 'qowiyrofi@poltekkesbanten.ac.id'))
+            ->orWhere('email', 'admin@ppid.local')
+            ->first();
+
+        Page::query()->updateOrCreate(
+            ['slug' => 'profil-singkat-ppid'],
+            [
+                'title' => 'Profil Singkat PPID Poltekkes Kemenkes Banten',
+                'excerpt' => 'Profil singkat Pejabat Pengelola Informasi dan Dokumentasi (PPID) Poltekkes Kemenkes Banten beserta dokumen lengkap dalam format PDF.',
+                'meta_title' => 'Profil Singkat PPID Poltekkes Kemenkes Banten',
+                'meta_description' => 'Mengenal profil singkat PPID Poltekkes Kemenkes Banten dan unduh dokumen profil lengkap.',
+                'body' => HtmlSanitizer::clean($this->profilSingkatBody()),
+                'status' => 'published',
+                'published_at' => now(),
+                'sort_order' => 1,
+                'created_by' => $admin?->id,
+                'updated_by' => $admin?->id,
+            ],
+        );
+
+        Page::query()->updateOrCreate(
+            ['slug' => 'dasar-hukum-sk-ppid'],
+            [
+                'title' => 'Dasar Hukum dan SK PPID',
+                'excerpt' => 'Keputusan Direktur Poltekkes Kemenkes Banten tentang Pejabat Pengelola Informasi dan Dokumentasi Tahun 2025.',
+                'meta_title' => 'Dasar Hukum dan SK PPID Poltekkes Kemenkes Banten',
+                'meta_description' => 'Dokumen Keputusan Direktur Poltekkes Kemenkes Banten tentang Pejabat Pengelola Informasi dan Dokumentasi Tahun 2025.',
+                'body' => '',
+                'status' => 'published',
+                'published_at' => now(),
+                'sort_order' => 2,
+                'created_by' => $admin?->id,
+                'updated_by' => $admin?->id,
+            ],
+        );
+    }
+
+    private function profilSingkatBody(): string
+    {
+        return <<<'HTML'
+<section>
+    <h2>Profil Singkat</h2>
+    <p>Mengacu pada Undang-Undang Nomor 14 Tahun 2008 tentang Keterbukaan Informasi Publik, Poltekkes Kemenkes Banten berkomitmen mewujudkan layanan informasi publik yang transparan, akuntabel, cepat, tepat, dan mudah diakses.</p>
+    <p>Untuk mendukung pelaksanaan layanan tersebut, Direktur Poltekkes Kemenkes Banten telah menunjuk pegawai di lingkungan institusi sebagai pengelola Pejabat Pengelola Informasi dan Dokumentasi (PPID).</p>
+    <p>PPID Poltekkes Kemenkes Banten berfungsi mengelola, mendokumentasikan, menyediakan, serta menyampaikan informasi publik yang berada dalam penguasaan Poltekkes Kemenkes Banten.</p>
+    <p>Keberadaan PPID diharapkan memberikan kemudahan kepada masyarakat dalam memperoleh informasi secara cepat, tepat, efektif, dan sesuai dengan ketentuan peraturan perundang-undangan.</p>
+</section>
+HTML;
+    }
+}

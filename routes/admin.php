@@ -1,0 +1,78 @@
+<?php
+
+use App\Http\Controllers\Admin\AnnouncementController;
+use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Admin\PublicDocumentController;
+use App\Http\Controllers\Admin\ServiceLinkController;
+use App\Http\Controllers\Admin\SiteSettingController;
+use App\Http\Controllers\Admin\UnitController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Middleware\EnsureUserCanAccessAdmin;
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('guest')->group(function () {
+        Route::get('login', [LoginController::class, 'create'])->name('login');
+        Route::post('login', [LoginController::class, 'store'])
+            ->middleware('throttle:10,1')
+            ->name('login.store');
+    });
+
+    Route::middleware(['auth', EnsureUserCanAccessAdmin::class])->group(function () {
+        Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
+        Route::get('/', DashboardController::class)->name('dashboard');
+
+        Route::middleware(EnsureUserCanAccessAdmin::class.':manage-pages')->group(function () {
+            Route::resource('pages', PageController::class)->except(['show']);
+        });
+
+        Route::middleware(EnsureUserCanAccessAdmin::class.':manage-posts')->group(function () {
+            Route::resource('posts', PostController::class)->except(['show']);
+        });
+
+        Route::middleware(EnsureUserCanAccessAdmin::class.':manage-announcements')->group(function () {
+            Route::resource('announcements', AnnouncementController::class)->except(['show']);
+        });
+
+        Route::middleware(EnsureUserCanAccessAdmin::class.':manage-documents')->group(function () {
+            Route::resource('documents', PublicDocumentController::class)
+                ->except(['show'])
+                ->parameters(['documents' => 'document']);
+        });
+
+        Route::middleware(EnsureUserCanAccessAdmin::class.':manage-faqs')->group(function () {
+            Route::resource('faqs', FaqController::class)->except(['show']);
+        });
+
+        Route::middleware(EnsureUserCanAccessAdmin::class.':manage-units')->group(function () {
+            Route::resource('units', UnitController::class)->except(['show']);
+        });
+
+        Route::middleware(EnsureUserCanAccessAdmin::class.':manage-services')->group(function () {
+            Route::resource('services', ServiceLinkController::class)
+                ->except(['show'])
+                ->parameters(['services' => 'service']);
+        });
+
+        Route::middleware(EnsureUserCanAccessAdmin::class.':manage-menus')->group(function () {
+            Route::get('menus', [MenuController::class, 'edit'])->name('menus.edit');
+            Route::post('menus/items', [MenuController::class, 'storeItem'])->name('menus.items.store');
+            Route::put('menus/items/{menuItem}', [MenuController::class, 'updateItem'])->name('menus.items.update');
+            Route::delete('menus/items/{menuItem}', [MenuController::class, 'destroyItem'])->name('menus.items.destroy');
+        });
+
+        Route::middleware(EnsureUserCanAccessAdmin::class.':manage-settings')->group(function () {
+            Route::get('settings', [SiteSettingController::class, 'edit'])->name('settings.edit');
+            Route::put('settings', [SiteSettingController::class, 'update'])->name('settings.update');
+        });
+
+        Route::middleware(EnsureUserCanAccessAdmin::class.':manage-users')->group(function () {
+            Route::resource('users', UserController::class)->except(['show']);
+        });
+    });
+});

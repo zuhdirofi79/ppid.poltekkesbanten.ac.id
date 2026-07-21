@@ -1,0 +1,493 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-heading: 'Poppins', 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+    --color-navy: #17184f;
+    --color-navy-dark: #10113b;
+    --color-green: #008d70;
+    --color-green-light: #20b486;
+    --color-gold: #d7ae62;
+    --color-surface: #f7f8fa;
+    --color-ink: #25273a;
+    --color-muted: #6b7280;
+    --color-line: #e5e7eb;
+}
+
+:root {
+    --navy: #17184f;
+    --navy-dark: #10113b;
+    --green: #008d70;
+    --green-light: #20b486;
+    --gold: #d7ae62;
+    --white: #ffffff;
+    --surface: #f7f8fa;
+    --text: #25273a;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --font-size-base: 100%;
+}
+
+html {
+    font-size: var(--font-size-base);
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+body {
+    color: var(--text);
+    background: var(--white);
+    font-family: var(--font-sans);
+}
+
+.font-heading {
+    font-family: var(--font-heading);
+}
+
+:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+}
+
+.skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -100%;
+    z-index: 100;
+    border-radius: 0.375rem;
+    background: var(--navy);
+    color: var(--white);
+    padding: 0.75rem 1rem;
+}
+
+.skip-link:focus {
+    top: 1rem;
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+/* Accessibility modes */
+html.a11y-high-contrast {
+    --navy: #000000;
+    --navy-dark: #000000;
+    --green: #006644;
+    --text: #000000;
+    --muted: #222222;
+    --surface: #ffffff;
+    --border: #000000;
+    --gold: #b8860b;
+}
+
+html.a11y-high-contrast body {
+    background: #fff;
+    color: #000;
+}
+
+html.a11y-grayscale {
+    filter: grayscale(1);
+}
+
+/* Sticky header shadow */
+.site-header.is-scrolled {
+    box-shadow: 0 4px 18px rgba(23, 24, 79, 0.12);
+}
+
+/* Dropdown bridge — tidak tertutup saat pindah ke submenu */
+.nav-dropdown-panel {
+    top: 100%;
+    padding-top: 0.5rem;
+}
+
+.nav-dropdown-panel::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: -0.5rem;
+    height: 0.75rem;
+}
+
+/* Hero */
+.hero-banner {
+    position: relative;
+    min-height: 360px;
+    isolation: isolate;
+}
+
+@media (min-width: 768px) {
+    .hero-banner {
+        min-height: 430px;
+        aspect-ratio: 16 / 7;
+    }
+}
+
+@media (min-width: 1024px) {
+    .hero-banner {
+        min-height: 540px;
+    }
+}
+
+.hero-banner__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hero-banner__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+        105deg,
+        rgba(16, 17, 59, 0.88) 0%,
+        rgba(23, 24, 79, 0.72) 48%,
+        rgba(0, 141, 112, 0.45) 100%
+    );
+}
+
+.hero-banner__fallback {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background: linear-gradient(135deg, var(--navy-dark), var(--navy) 45%, var(--green));
+}
+
+/* CMS static pages generik (/halaman/{slug}) — gaya ringan */
+.cms-page {
+    color: var(--text);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+}
+
+.cms-page > * + * {
+    margin-top: 1.15rem;
+}
+
+.cms-page h2 {
+    font-family: var(--font-heading);
+    color: var(--navy);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+}
+
+.cms-page h3 {
+    font-family: var(--font-heading);
+    color: var(--navy);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.cms-page p {
+    margin: 0 0 1rem;
+}
+
+.cms-page a {
+    color: var(--green);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.cms-page ol,
+.cms-page ul {
+    padding-left: 1.5rem;
+    margin: 0 0 1rem;
+}
+
+.cms-page ol {
+    list-style: decimal;
+}
+
+.cms-page ul {
+    list-style: disc;
+}
+
+.cms-page li + li {
+    margin-top: 0.5rem;
+}
+
+.cms-page li ol,
+.cms-page li ul {
+    margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+/* Halaman Profil Singkat PPID — tipografi artikel scoped */
+.ppid-profile-page {
+    background: #fff;
+}
+
+.ppid-profile-content {
+    color: #334155;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: normal;
+    line-height: 1.8;
+}
+
+@media (min-width: 640px) {
+    .ppid-profile-content {
+        font-size: 1.0625rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .ppid-profile-content {
+        font-size: 1.125rem;
+        line-height: 1.85;
+    }
+}
+
+.ppid-profile-content > * + * {
+    margin-top: 0;
+}
+
+.ppid-profile-content section + section {
+    margin-top: 0.5rem;
+}
+
+.ppid-profile-content h2 {
+    font-family: var(--font-heading);
+    color: var(--navy);
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    margin: 2.75rem 0 1rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 3px solid var(--green);
+}
+
+.ppid-profile-content section:first-child > h2:first-child,
+.ppid-profile-content > h2:first-child {
+    margin-top: 0;
+}
+
+@media (min-width: 768px) {
+    .ppid-profile-content h2 {
+        font-size: 1.75rem;
+        margin-top: 3rem;
+    }
+}
+
+.ppid-profile-content h3 {
+    font-family: var(--font-heading);
+    color: var(--navy);
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 1.85rem 0 0.7rem;
+}
+
+@media (min-width: 768px) {
+    .ppid-profile-content h3 {
+        font-size: 1.35rem;
+        margin-top: 2rem;
+    }
+}
+
+.ppid-profile-content h4 {
+    font-family: var(--font-heading);
+    color: var(--navy);
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.4;
+    margin: 1.5rem 0 0.6rem;
+}
+
+.ppid-profile-content p {
+    margin: 0 0 1.15rem;
+    max-width: none;
+}
+
+.ppid-profile-content strong,
+.ppid-profile-content b {
+    color: var(--navy-dark);
+    font-weight: 700;
+}
+
+.ppid-profile-content a {
+    color: var(--green);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.ppid-profile-content a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.ppid-profile-content a:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.ppid-profile-content ol,
+.ppid-profile-content ul {
+    margin: 0 0 1.25rem;
+    padding-left: 1.4rem;
+    max-width: none;
+}
+
+@media (min-width: 768px) {
+    .ppid-profile-content ol,
+    .ppid-profile-content ul {
+        padding-left: 1.85rem;
+    }
+}
+
+.ppid-profile-content ol {
+    list-style-type: decimal;
+    list-style-position: outside;
+}
+
+.ppid-profile-content ul {
+    list-style-type: disc;
+    list-style-position: outside;
+}
+
+.ppid-profile-content li {
+    margin: 0 0 0.8rem;
+    padding-left: 0.25rem;
+    line-height: 1.75;
+}
+
+.ppid-profile-content li::marker {
+    color: var(--navy);
+    font-weight: 700;
+}
+
+.ppid-profile-content li > ol,
+.ppid-profile-content li > ul {
+    margin-top: 0.55rem;
+    margin-bottom: 0.35rem;
+    padding-left: 1.25rem;
+}
+
+.ppid-profile-content li > ol {
+    list-style-type: lower-alpha;
+}
+
+.ppid-profile-content li > ul {
+    list-style-type: disc;
+}
+
+.ppid-profile-content li > ol > li::marker,
+.ppid-profile-content li > ul > li::marker {
+    color: var(--green);
+    font-weight: 700;
+}
+
+.ppid-profile-content blockquote {
+    margin: 0 0 1.25rem;
+    padding: 0.9rem 1.1rem;
+    border-left: 4px solid var(--gold);
+    background: var(--surface);
+    border-radius: 0 0.75rem 0.75rem 0;
+    color: var(--muted);
+}
+
+.ppid-profile-content .ppid-profile-note {
+    margin: 0 0 1.25rem;
+    padding: 0.95rem 1.15rem;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    background: var(--surface);
+    border-radius: 0.75rem;
+    font-size: 0.95em;
+    color: var(--muted);
+}
+
+.ppid-profile-content .ppid-profile-note p {
+    margin-bottom: 0;
+}
+
+.ppid-profile-content .ppid-profile-note strong {
+    color: var(--navy);
+}
+
+/* PDF viewer — scoped ke halaman profil singkat */
+.ppid-pdf-viewer__object {
+    min-height: 620px;
+    height: 650px;
+    border: 0;
+    background: var(--surface);
+}
+
+@media (min-width: 768px) {
+    .ppid-pdf-viewer__object {
+        min-height: 780px;
+        height: 800px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .ppid-pdf-viewer__object {
+        min-height: 880px;
+        height: 900px;
+    }
+}
+
+/* Halaman dokumen SK PPID — viewer PDF scoped */
+.ppid-document-page {
+    background: #fff;
+}
+
+.ppid-document-toolbar {
+    margin-bottom: 1.15rem;
+}
+
+.ppid-document-viewer {
+    min-height: 650px;
+    height: 700px;
+    border: 0;
+    background: #f8fafc;
+}
+
+.ppid-document-fallback {
+    min-height: 200px;
+}
+
+@media (min-width: 768px) {
+    .ppid-document-viewer {
+        min-height: 750px;
+        height: 800px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .ppid-document-viewer {
+        min-height: 900px;
+        height: max(800px, calc(100vh - 170px));
+    }
+}
