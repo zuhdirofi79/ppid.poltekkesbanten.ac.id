@@ -888,3 +888,181 @@ html.a11y-grayscale {
         }
     }
 }
+
+/* Halaman Tugas, Fungsi, dan Wewenang — tipografi artikel scoped */
+@layer components {
+    .ppid-duty-page {
+        background: #fff;
+        text-align: left;
+    }
+
+    .ppid-duty-content {
+        color: #334155;
+        font-size: 1rem;
+        font-weight: 400;
+        letter-spacing: normal;
+        line-height: 1.8;
+        text-align: left;
+    }
+
+    @media (min-width: 640px) {
+        .ppid-duty-content {
+            font-size: 1.0625rem;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .ppid-duty-content {
+            font-size: 1.125rem;
+            line-height: 1.85;
+        }
+    }
+
+    .ppid-duty-heading {
+        font-family: var(--font-heading);
+        color: var(--navy);
+        font-size: 1.4rem;
+        font-weight: 700;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
+        margin: 0 0 1.15rem;
+        text-align: left;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-duty-heading {
+            font-size: 1.75rem;
+            margin-bottom: 1.25rem;
+        }
+    }
+
+    .ppid-duty-section {
+        margin: 0;
+    }
+
+    .ppid-duty-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .ppid-duty-item {
+        display: grid;
+        grid-template-columns: 2.125rem minmax(0, 1fr);
+        gap: 0.8rem;
+        align-items: flex-start;
+        padding: 0.9rem 0;
+        border-bottom: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+    }
+
+    @media (min-width: 768px) {
+        .ppid-duty-item {
+            grid-template-columns: 2.5rem minmax(0, 1fr);
+            gap: 1.1rem;
+            padding: 1.05rem 0;
+        }
+    }
+
+    .ppid-duty-item:last-child {
+        border-bottom: 0;
+    }
+
+    .ppid-duty-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.125rem;
+        height: 2.125rem;
+        border-radius: 9999px;
+        background: var(--navy);
+        color: #fff;
+        font-family: var(--font-heading);
+        font-size: 0.9rem;
+        font-weight: 700;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-duty-number {
+            width: 2.5rem;
+            height: 2.5rem;
+            font-size: 1rem;
+        }
+    }
+
+    .ppid-duty-text {
+        margin: 0;
+        padding-top: 0.15rem;
+        color: #334155;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.75;
+        text-align: left;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-duty-text {
+            font-size: 1.0625rem;
+            padding-top: 0.3rem;
+            line-height: 1.8;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .ppid-duty-text {
+            font-size: 1.125rem;
+        }
+    }
+
+    .ppid-function-section {
+        margin-top: 2.75rem;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-function-section {
+            margin-top: 3.25rem;
+        }
+    }
+
+    .ppid-function-box {
+        margin: 0;
+        padding: 1.25rem 1.35rem;
+        border-left: 4px solid var(--green);
+        border-radius: 0.9rem;
+        background: color-mix(in srgb, var(--green) 7%, #fff);
+        text-align: left;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-function-box {
+            padding: 1.75rem 2rem;
+            border-radius: 1rem;
+        }
+    }
+
+    .ppid-function-text {
+        margin: 0;
+        color: var(--navy-dark);
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1.8;
+        text-align: left;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-function-text {
+            font-size: 1.125rem;
+        }
+    }
+
+    .ppid-authority-section {
+        margin-top: 2.75rem;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-authority-section {
+            margin-top: 3.25rem;
+        }
+    }
+}

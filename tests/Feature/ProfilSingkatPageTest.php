@@ -130,18 +130,18 @@ class ProfilSingkatPageTest extends TestCase
     public function other_page_slug_uses_generic_template(): void
     {
         Page::query()->create([
-            'title' => 'Tugas Fungsi Wewenang',
-            'slug' => 'tugas-fungsi-wewenang',
-            'excerpt' => 'Ringkasan tugas',
-            'body' => '<p>Konten tugas fungsi.</p>',
+            'title' => 'Halaman Uji Generik',
+            'slug' => 'halaman-uji-generik',
+            'excerpt' => 'Ringkasan uji',
+            'body' => '<p>Konten generik aman.</p>',
             'status' => 'published',
             'published_at' => now(),
         ]);
 
-        $response = $this->get('/halaman/tugas-fungsi-wewenang');
+        $response = $this->get('/halaman/halaman-uji-generik');
 
         $response->assertOk();
-        $response->assertSee('Tugas Fungsi Wewenang', false);
+        $response->assertSee('Halaman Uji Generik', false);
         $response->assertDontSee('ppid-profile-page', false);
         $response->assertDontSee('Dokumen Profil PPID Lengkap', false);
         $response->assertSee('cms-page', false);

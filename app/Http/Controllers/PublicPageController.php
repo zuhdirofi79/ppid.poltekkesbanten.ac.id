@@ -54,6 +54,7 @@ class PublicPageController extends Controller
             str_contains($title, 'Profil Singkat') => 'Profil Singkat PPID',
             str_contains($title, 'Dasar Hukum') => 'Dasar Hukum dan SK PPID',
             str_contains($title, 'Visi dan Misi') => 'Visi dan Misi',
+            str_contains($title, 'Tugas, Fungsi') => 'Tugas, Fungsi, dan Wewenang PPID',
             default => $title,
         };
     }

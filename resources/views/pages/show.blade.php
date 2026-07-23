@@ -30,6 +30,16 @@
             ])
             @break
 
+        @case('tugas-fungsi-wewenang')
+            @include('pages.partials.tugas-fungsi-wewenang', [
+                'page' => $page,
+                'title' => $title ?? $page->title,
+                'excerpt' => $excerpt ?? $page->excerpt,
+                'label' => $label ?? null,
+                'breadcrumbs' => $breadcrumbs ?? [],
+            ])
+            @break
+
         @default
             <div class="border-b border-line bg-surface">
                 <div class="mx-auto max-w-7xl px-4 py-8">

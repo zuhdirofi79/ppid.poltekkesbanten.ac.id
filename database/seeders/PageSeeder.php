@@ -63,6 +63,22 @@ class PageSeeder extends Seeder
                 'updated_by' => $admin?->id,
             ],
         );
+
+        Page::query()->updateOrCreate(
+            ['slug' => 'tugas-fungsi-wewenang'],
+            [
+                'title' => 'Tugas, Fungsi, dan Wewenang PPID',
+                'excerpt' => 'Tugas dan fungsi PPID Poltekkes Kemenkes Banten dalam pengelolaan, pelayanan, serta keterbukaan informasi publik.',
+                'meta_title' => 'Tugas, Fungsi, dan Wewenang PPID Poltekkes Kemenkes Banten',
+                'meta_description' => 'Informasi mengenai tugas dan fungsi PPID Poltekkes Kemenkes Banten dalam pelayanan serta pengelolaan keterbukaan informasi publik.',
+                'body' => HtmlSanitizer::clean($this->tugasFungsiWewenangBody()),
+                'status' => 'published',
+                'published_at' => now(),
+                'sort_order' => 4,
+                'created_by' => $admin?->id,
+                'updated_by' => $admin?->id,
+            ],
+        );
     }
 
     private function visiDanMisiBody(): string
@@ -96,6 +112,31 @@ HTML;
     <p>Untuk mendukung pelaksanaan layanan tersebut, Direktur Poltekkes Kemenkes Banten telah menunjuk pegawai di lingkungan institusi sebagai pengelola Pejabat Pengelola Informasi dan Dokumentasi (PPID).</p>
     <p>PPID Poltekkes Kemenkes Banten berfungsi mengelola, mendokumentasikan, menyediakan, serta menyampaikan informasi publik yang berada dalam penguasaan Poltekkes Kemenkes Banten.</p>
     <p>Keberadaan PPID diharapkan memberikan kemudahan kepada masyarakat dalam memperoleh informasi secara cepat, tepat, efektif, dan sesuai dengan ketentuan peraturan perundang-undangan.</p>
+</section>
+HTML;
+    }
+
+    /**
+     * Cadangan konten CMS (Tugas + Fungsi). Partial Blade merender tampilan khusus;
+     * bagian Wewenang sengaja tidak disertakan sampai materi resmi tersedia.
+     */
+    private function tugasFungsiWewenangBody(): string
+    {
+        return <<<'HTML'
+<section>
+    <h2>Tugas PPID</h2>
+    <ol>
+        <li>PPID Poltekkes Kemenkes Banten bertugas menerima, memeriksa, dan menindaklanjuti pengaduan masyarakat, permintaan layanan informasi, serta sengketa informasi publik.</li>
+        <li>PPID Poltekkes Kemenkes Banten bertugas sebagai produsen dan pengendali pembuatan konten atau berita tentang penyelenggaraan dan pengembangan pendidikan di Poltekkes Kemenkes Banten, yang meliputi pendidikan Diploma Tiga, Sarjana Terapan, dan Pendidikan Profesi Ners.</li>
+        <li>PPID Poltekkes Kemenkes Banten bertugas sebagai produsen dan pengendali pembuatan konten atau berita tentang pengembangan Tri Dharma Perguruan Tinggi melalui media sosial Poltekkes Kemenkes Banten.</li>
+        <li>PPID Poltekkes Kemenkes Banten bertugas melaksanakan pembinaan, pengawasan, dan evaluasi terhadap pelaksanaan pengelolaan informasi publik.</li>
+        <li>PPID Poltekkes Kemenkes Banten bertugas menyusun laporan semester dan tahunan pengelolaan informasi.</li>
+        <li>PPID Poltekkes Kemenkes Banten bertugas melakukan penyusunan dan pemutakhiran Daftar Informasi Publik.</li>
+    </ol>
+</section>
+<section>
+    <h2>Fungsi PPID</h2>
+    <p>PPID Poltekkes Kemenkes Banten berfungsi menjalankan Undang-Undang Nomor 14 Tahun 2008 tentang Keterbukaan Informasi Publik serta menetapkan standar operasional untuk mengelola layanan informasi publik.</p>
 </section>
 HTML;
     }
