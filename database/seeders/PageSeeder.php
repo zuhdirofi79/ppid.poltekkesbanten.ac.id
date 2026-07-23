@@ -47,6 +47,44 @@ class PageSeeder extends Seeder
                 'updated_by' => $admin?->id,
             ],
         );
+
+        Page::query()->updateOrCreate(
+            ['slug' => 'visi-dan-misi'],
+            [
+                'title' => 'Visi dan Misi PPID Poltekkes Kemenkes Banten',
+                'excerpt' => 'Visi dan misi pelayanan informasi publik PPID Poltekkes Kemenkes Banten.',
+                'meta_title' => 'Visi dan Misi PPID Poltekkes Kemenkes Banten',
+                'meta_description' => 'Visi dan misi PPID Poltekkes Kemenkes Banten dalam mewujudkan layanan informasi publik yang transparan, akuntabel, prima, dan berbasis digital.',
+                'body' => HtmlSanitizer::clean($this->visiDanMisiBody()),
+                'status' => 'published',
+                'published_at' => now(),
+                'sort_order' => 3,
+                'created_by' => $admin?->id,
+                'updated_by' => $admin?->id,
+            ],
+        );
+    }
+
+    private function visiDanMisiBody(): string
+    {
+        return <<<'HTML'
+<section>
+    <h2>Visi</h2>
+    <blockquote>
+        <p>Terwujudnya pelayanan informasi yang transparan, akuntabel, dan prima demi terselenggaranya pendidikan tinggi yang menghasilkan tenaga kesehatan berbasis kearifan lokal dan diakui internasional sesuai dengan ketentuan peraturan perundang-undangan yang berlaku.</p>
+    </blockquote>
+</section>
+<section>
+    <h2>Misi</h2>
+    <ol>
+        <li>Menyediakan informasi publik yang akurat dan dapat dipertanggungjawabkan;</li>
+        <li>Membangun dan mengembangkan sistem penyediaan dan layanan informasi berbasis digital;</li>
+        <li>Meningkatkan pengelolaan informasi dan dokumentasi secara baik, efisien, mudah diakses, dan bersifat desentralisasi;</li>
+        <li>Memanfaatkan teknologi informasi dalam memberikan layanan informasi publik kepada masyarakat dan mendukung pengelolaan keterbukaan informasi publik;</li>
+        <li>Meningkatkan pengelolaan informasi dan dokumentasi secara baik, efisien, mudah diakses, dan bersifat desentralisasi.</li>
+    </ol>
+</section>
+HTML;
     }
 
     private function profilSingkatBody(): string

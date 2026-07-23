@@ -53,6 +53,7 @@ class PublicPageController extends Controller
         return match (true) {
             str_contains($title, 'Profil Singkat') => 'Profil Singkat PPID',
             str_contains($title, 'Dasar Hukum') => 'Dasar Hukum dan SK PPID',
+            str_contains($title, 'Visi dan Misi') => 'Visi dan Misi',
             default => $title,
         };
     }

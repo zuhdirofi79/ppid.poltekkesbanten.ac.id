@@ -458,36 +458,433 @@ html.a11y-grayscale {
     }
 }
 
-/* Halaman dokumen SK PPID — viewer PDF scoped */
-.ppid-document-page {
-    background: #fff;
-}
+/* Halaman Dasar Hukum / SK PPID — kartu dokumen + preview */
+@layer components {
+    .ppid-sk-page {
+        background: #fff;
+    }
 
-.ppid-document-toolbar {
-    margin-bottom: 1.15rem;
-}
+    .ppid-sk-card {
+        display: flex;
+        flex-direction: column;
+        gap: 1.15rem;
+        padding: 1.15rem 1.25rem;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 1rem;
+        box-shadow: 0 1px 2px rgb(15 23 42 / 0.04), 0 8px 24px rgb(15 23 42 / 0.04);
+    }
 
-.ppid-document-viewer {
-    min-height: 650px;
-    height: 700px;
-    border: 0;
-    background: #f8fafc;
-}
+    @media (min-width: 768px) {
+        .ppid-sk-card {
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 1.35rem;
+            padding: 1.5rem 1.75rem;
+            border-radius: 1.1rem;
+        }
+    }
 
-.ppid-document-fallback {
-    min-height: 200px;
-}
+    .ppid-sk-card-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 0.85rem;
+        color: #b91c1c;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+    }
 
-@media (min-width: 768px) {
-    .ppid-document-viewer {
-        min-height: 750px;
-        height: 800px;
+    @media (min-width: 768px) {
+        .ppid-sk-card-icon {
+            width: 3.25rem;
+            height: 3.25rem;
+        }
+    }
+
+    .ppid-sk-card-content {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .ppid-sk-eyebrow {
+        margin: 0;
+        font-size: 0.8125rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--green);
+    }
+
+    .ppid-sk-title {
+        margin: 0.4rem 0 0;
+        font-family: var(--font-heading);
+        font-size: 1.25rem;
+        font-weight: 700;
+        line-height: 1.3;
+        color: var(--navy);
+    }
+
+    @media (min-width: 768px) {
+        .ppid-sk-title {
+            font-size: 1.45rem;
+        }
+    }
+
+    .ppid-sk-description {
+        margin: 0.75rem 0 0;
+        max-width: 46rem;
+        font-size: 0.975rem;
+        line-height: 1.7;
+        color: var(--muted);
+    }
+
+    .ppid-sk-meta {
+        margin: 0.7rem 0 0;
+        font-size: 0.8125rem;
+        line-height: 1.5;
+        color: #64748b;
+    }
+
+    .ppid-sk-actions {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.15rem;
+    }
+
+    @media (min-width: 640px) {
+        .ppid-sk-actions {
+            flex-direction: row;
+            align-items: center;
+        }
+    }
+
+    .ppid-sk-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 2.75rem;
+        padding: 0.55rem 1.05rem;
+        border-radius: 0.5rem;
+        border: 1px solid transparent;
+        font-family: var(--font-heading);
+        font-size: 0.875rem;
+        font-weight: 600;
+        line-height: 1.25;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .ppid-sk-button:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 2px;
+    }
+
+    @media (max-width: 639px) {
+        .ppid-sk-button {
+            width: 100%;
+        }
+    }
+
+    .ppid-sk-button-primary {
+        background: var(--navy);
+        color: #fff;
+    }
+
+    .ppid-sk-button-primary:hover {
+        background: var(--navy-dark);
+    }
+
+    .ppid-sk-button-secondary {
+        background: #fff;
+        border-color: var(--border);
+        color: var(--navy);
+    }
+
+    .ppid-sk-button-secondary:hover {
+        border-color: var(--navy);
+        background: var(--surface);
+    }
+
+    .ppid-sk-button-preview {
+        background: #fff;
+        border-color: var(--green);
+        color: var(--green);
+    }
+
+    .ppid-sk-button-preview:hover,
+    .ppid-sk-button-preview.is-active {
+        background: #ecfdf5;
+        border-color: var(--green);
+        color: var(--green);
+    }
+
+    .ppid-sk-preview {
+        margin-top: 1.5rem;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 1rem;
+        background: #f8fafc;
+        box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
+    }
+
+    .ppid-sk-preview-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.85rem 1rem;
+        border-bottom: 1px solid var(--border);
+        background: #fff;
+    }
+
+    .ppid-sk-preview-heading {
+        margin: 0;
+        font-family: var(--font-heading);
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--navy);
+    }
+
+    .ppid-sk-preview-close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 2.25rem;
+        padding: 0.35rem 0.85rem;
+        border: 1px solid var(--border);
+        border-radius: 0.45rem;
+        background: #fff;
+        color: var(--navy);
+        font-family: var(--font-heading);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .ppid-sk-preview-close:hover {
+        border-color: var(--green);
+        color: var(--green);
+    }
+
+    .ppid-sk-preview-close:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 2px;
+    }
+
+    .ppid-sk-preview-frame {
+        display: block;
+        width: 100%;
+        min-height: 650px;
+        height: 680px;
+        border: 0;
+        background: #fff;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-sk-preview-frame {
+            min-height: 780px;
+            height: 800px;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .ppid-sk-preview-frame {
+            min-height: 900px;
+            height: 920px;
+        }
+    }
+
+    .ppid-sk-preview-fallback {
+        margin: 0;
+        padding: 0.85rem 1rem 1rem;
+        border-top: 1px solid var(--border);
+        background: #fff;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        color: var(--muted);
+    }
+
+    .ppid-sk-preview-fallback a {
+        color: var(--green);
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .ppid-sk-preview-fallback a:hover {
+        text-decoration: underline;
+        text-underline-offset: 2px;
     }
 }
 
-@media (min-width: 1024px) {
-    .ppid-document-viewer {
-        min-height: 900px;
-        height: max(800px, calc(100vh - 170px));
+/* Halaman Visi dan Misi — tipografi artikel scoped */
+@layer components {
+    .ppid-vision-mission-page {
+        background: #fff;
+        text-align: left;
+    }
+
+    .ppid-vision-mission-content {
+        color: #334155;
+        font-size: 1rem;
+        font-weight: 400;
+        letter-spacing: normal;
+        line-height: 1.8;
+        text-align: left;
+    }
+
+    @media (min-width: 640px) {
+        .ppid-vision-mission-content {
+            font-size: 1.0625rem;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .ppid-vision-mission-content {
+            font-size: 1.125rem;
+            line-height: 1.85;
+        }
+    }
+
+    .ppid-vision-section .ppid-vision-heading,
+    .ppid-mission-section .ppid-mission-heading {
+        font-family: var(--font-heading);
+        color: var(--navy);
+        font-size: 1.4rem;
+        font-weight: 700;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
+        margin: 0 0 1.15rem;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-vision-section .ppid-vision-heading,
+        .ppid-mission-section .ppid-mission-heading {
+            font-size: 1.75rem;
+            margin-bottom: 1.25rem;
+        }
+    }
+
+    .ppid-vision-box {
+        margin: 0;
+        padding: 1.25rem 1.35rem;
+        border-left: 4px solid var(--green);
+        border-radius: 0.9rem;
+        background: color-mix(in srgb, var(--green) 7%, #fff);
+        text-align: left;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-vision-box {
+            padding: 1.75rem 2rem;
+            border-radius: 1rem;
+        }
+    }
+
+    .ppid-vision-text {
+        margin: 0;
+        color: var(--navy-dark);
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1.8;
+        text-align: left;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-vision-text {
+            font-size: 1.125rem;
+        }
+    }
+
+    .ppid-mission-section {
+        margin-top: 2.75rem;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-mission-section {
+            margin-top: 3.25rem;
+        }
+    }
+
+    .ppid-mission-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        counter-reset: none;
+    }
+
+    .ppid-mission-item {
+        display: grid;
+        grid-template-columns: 2.25rem minmax(0, 1fr);
+        gap: 0.9rem;
+        align-items: flex-start;
+        padding: 0.9rem 0;
+        border-bottom: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+    }
+
+    @media (min-width: 768px) {
+        .ppid-mission-item {
+            grid-template-columns: 2.5rem minmax(0, 1fr);
+            gap: 1.1rem;
+            padding: 1.05rem 0;
+        }
+    }
+
+    .ppid-mission-item:last-child {
+        border-bottom: 0;
+    }
+
+    .ppid-mission-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 9999px;
+        background: var(--navy);
+        color: #fff;
+        font-family: var(--font-heading);
+        font-size: 0.95rem;
+        font-weight: 700;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-mission-number {
+            width: 2.5rem;
+            height: 2.5rem;
+            font-size: 1rem;
+        }
+    }
+
+    .ppid-mission-text {
+        margin: 0;
+        padding-top: 0.2rem;
+        color: #334155;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.75;
+        text-align: left;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-mission-text {
+            font-size: 1.0625rem;
+            padding-top: 0.3rem;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .ppid-mission-text {
+            font-size: 1.125rem;
+        }
     }
 }
