@@ -31,12 +31,12 @@
             <form method="POST" action="{{ route('admin.login.store') }}" class="space-y-4">
                 @csrf
                 <div>
-                    <label for="email" class="mb-1 block text-sm font-medium text-navy">Email</label>
+                    <label for="login" class="mb-1 block text-sm font-medium text-navy">Email atau Username</label>
                     <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value="{{ old('email') }}"
+                        id="login"
+                        name="login"
+                        type="text"
+                        value="{{ old('login') }}"
                         required
                         autofocus
                         autocomplete="username"

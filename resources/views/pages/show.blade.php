@@ -41,6 +41,9 @@
             @break
 
         @default
+            @if (($page->slug ?? '') === 'akreditasi')
+                <!-- PPID-AKREDITASI-DEPLOY-20260904-A -->
+            @endif
             <div class="border-b border-line bg-surface">
                 <div class="mx-auto max-w-7xl px-4 py-8">
                     <nav class="mb-3 text-sm text-muted" aria-label="Breadcrumb">

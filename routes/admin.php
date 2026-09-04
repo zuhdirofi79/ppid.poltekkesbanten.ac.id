@@ -4,8 +4,10 @@ use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\InformasiBerkalaController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\Admin\PpidDashboardController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\PublicDocumentController;
 use App\Http\Controllers\Admin\ServiceLinkController;
@@ -27,6 +29,19 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
         Route::get('/', DashboardController::class)->name('dashboard');
 
+        Route::middleware(EnsureUserCanAccessAdmin::class.':manage-documents')->group(function () {
+            Route::get('ppid', PpidDashboardController::class)->name('ppid.dashboard');
+            Route::get('informasi-publik/berkala', [InformasiBerkalaController::class, 'index'])
+                ->name('informasi-publik.berkala');
+
+            Route::resource('documents', PublicDocumentController::class)
+                ->except(['show'])
+                ->parameters(['documents' => 'document']);
+
+            Route::delete('documents/{document}/file', [PublicDocumentController::class, 'removeFile'])
+                ->name('documents.remove-file');
+        });
+
         Route::middleware(EnsureUserCanAccessAdmin::class.':manage-pages')->group(function () {
             Route::resource('pages', PageController::class)->except(['show']);
         });
@@ -37,12 +52,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::middleware(EnsureUserCanAccessAdmin::class.':manage-announcements')->group(function () {
             Route::resource('announcements', AnnouncementController::class)->except(['show']);
-        });
-
-        Route::middleware(EnsureUserCanAccessAdmin::class.':manage-documents')->group(function () {
-            Route::resource('documents', PublicDocumentController::class)
-                ->except(['show'])
-                ->parameters(['documents' => 'document']);
         });
 
         Route::middleware(EnsureUserCanAccessAdmin::class.':manage-faqs')->group(function () {

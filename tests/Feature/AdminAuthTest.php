@@ -23,7 +23,7 @@ class AdminAuthTest extends TestCase
         ]);
 
         $this->post('/admin/login', [
-            'email' => 'admin@example.com',
+            'login' => 'admin@example.com',
             'password' => 'password',
         ])->assertRedirect(route('admin.dashboard'));
 
@@ -38,9 +38,9 @@ class AdminAuthTest extends TestCase
         ]);
 
         $this->post('/admin/login', [
-            'email' => 'inactive@example.com',
+            'login' => 'inactive@example.com',
             'password' => 'password',
-        ])->assertSessionHasErrors('email');
+        ])->assertSessionHasErrors('login');
 
         $this->assertGuest();
     }

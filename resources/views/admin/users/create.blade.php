@@ -7,6 +7,7 @@
     @if(isset($user->id)) @method('PUT') @endif
     <x-admin.input label="Nama" name="name" :value="$user->name" required />
     <x-admin.input label="Email" name="email" type="email" :value="$user->email" required />
+    <x-admin.input label="Username" name="username" :value="$user->username" help="Opsional. Digunakan untuk login alternatif." />
     <x-admin.select label="Role" name="role" :value="$user->role?->value" :options="collect($roles)->mapWithKeys(fn($r) => [$r->value => $r->label()])->all()" required />
     <x-admin.input label="Kata sandi" name="password" type="password" :required="!isset($user->id)" help="{{ isset($user->id) ? 'Kosongkan jika tidak diubah.' : '' }}" />
     <x-admin.input label="Konfirmasi kata sandi" name="password_confirmation" type="password" :required="!isset($user->id)" />

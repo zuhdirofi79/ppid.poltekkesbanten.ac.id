@@ -1,5 +1,5 @@
 @php
-    $link = function (string $route, string $label, ?string $ability = null, string $pattern = null) {
+    $link = function (string $route, string $label, ?string $ability = null, string $pattern = null, ?string $badge = null) {
         if ($ability && ! auth()->user()?->can($ability)) {
             return '';
         }
@@ -11,8 +11,21 @@
             return '';
         }
 
-        return '<a href="'.e($href).'" class="'.$class.'">'.e($label).'</a>';
+        $badgeHtml = $badge !== null && $badge !== '' && (int) $badge > 0
+            ? ' <span class="ml-1 inline-flex rounded-full bg-amber-400/90 px-1.5 py-0.5 text-[10px] font-bold text-navy-dark">'.e($badge).'</span>'
+            : '';
+
+        return '<a href="'.e($href).'" class="'.$class.'">'.e($label).$badgeHtml.'</a>';
     };
+
+    $missingBerkala = 0;
+    if (auth()->user()?->can('manage-documents')) {
+        $missingBerkala = \App\Models\PublicDocument::query()
+            ->whereHas('informationCategory', fn ($q) => $q->where('slug', 'berkala'))
+            ->get()
+            ->filter(fn ($doc) => ! $doc->isAvailable())
+            ->count();
+    }
 @endphp
 
 <div class="border-b border-white/10 px-5 py-5">
@@ -21,6 +34,12 @@
 </div>
 <nav class="space-y-1 p-3 text-sm" aria-label="Menu admin">
     {!! $link('admin.dashboard', 'Dashboard') !!}
+    {!! $link('admin.ppid.dashboard', 'Dashboard PPID', 'manage-documents', 'admin.ppid.*') !!}
+
+    <p class="px-3 pt-4 text-[10px] font-bold uppercase tracking-wider text-white/40">Informasi Publik</p>
+    {!! $link('admin.informasi-publik.berkala', 'Informasi Berkala', 'manage-documents', 'admin.informasi-publik.*') !!}
+    {!! $link('admin.ppid.dashboard', 'Dokumen Wajib Dilengkapi', 'manage-documents', 'admin.ppid.*', (string) $missingBerkala) !!}
+
     <p class="px-3 pt-4 text-[10px] font-bold uppercase tracking-wider text-white/40">Konten</p>
     {!! $link('admin.pages.index', 'Halaman', 'manage-pages', 'admin.pages.*') !!}
     {!! $link('admin.posts.index', 'Berita', 'manage-posts', 'admin.posts.*') !!}

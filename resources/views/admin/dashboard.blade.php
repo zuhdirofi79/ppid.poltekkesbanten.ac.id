@@ -5,8 +5,17 @@
 @section('content')
     <div class="mb-6">
         <h1 class="font-heading text-2xl font-bold text-navy">Dashboard</h1>
-        <p class="mt-1 text-sm text-muted">Ringkasan konten PPID. Modul CRUD penuh dilanjutkan di FASE 4.</p>
+        <p class="mt-1 text-sm text-muted">Ringkasan konten PPID Poltekkes Kemenkes Banten.</p>
     </div>
+
+    @can('manage-documents')
+        @if (($stats['berkala_missing'] ?? 0) > 0)
+            <div class="mb-6 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950" role="alert">
+                Masih terdapat <strong>{{ $stats['berkala_missing'] }}</strong> dokumen Informasi Berkala yang wajib dilengkapi.
+                <a href="{{ route('admin.ppid.dashboard') }}" class="font-semibold text-navy underline">Buka Dashboard Admin PPID</a>
+            </div>
+        @endif
+    @endcan
 
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         @foreach ([

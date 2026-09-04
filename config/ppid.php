@@ -21,6 +21,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Admin PPID (credential dari .env — jangan hardcode password di source)
+    |--------------------------------------------------------------------------
+    */
+    'admin' => [
+        'email' => env('PPID_ADMIN_EMAIL'),
+        'username' => env('PPID_ADMIN_USERNAME'),
+        'password' => env('PPID_ADMIN_PASSWORD'),
+        'name' => env('PPID_ADMIN_NAME', 'Admin PPID'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Kontak (placeholder — ganti dengan data resmi)
     |--------------------------------------------------------------------------
     */

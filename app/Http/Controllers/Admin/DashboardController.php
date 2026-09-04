@@ -16,6 +16,12 @@ class DashboardController extends Controller
 {
     public function __invoke(): View
     {
+        $berkalaMissing = PublicDocument::query()
+            ->whereHas('informationCategory', fn ($q) => $q->where('slug', 'berkala'))
+            ->get()
+            ->filter(fn (PublicDocument $doc) => ! $doc->isAvailable())
+            ->count();
+
         $stats = [
             'posts' => Post::query()->count(),
             'announcements' => Announcement::query()->count(),
@@ -24,6 +30,7 @@ class DashboardController extends Controller
             'faqs' => Faq::query()->count(),
             'units' => Unit::query()->count(),
             'users' => User::query()->count(),
+            'berkala_missing' => $berkalaMissing,
         ];
 
         return view('admin.dashboard', compact('stats'));

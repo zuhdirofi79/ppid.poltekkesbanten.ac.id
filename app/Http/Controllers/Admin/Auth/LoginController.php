@@ -25,29 +25,31 @@ class LoginController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'login' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string'],
         ]);
 
-        $key = 'admin-login:'.$request->ip().'|'.strtolower($credentials['email']);
+        $login = trim($credentials['login']);
+        $field = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $key = 'admin-login:'.$request->ip().'|'.strtolower($login);
 
         if (RateLimiter::tooManyAttempts($key, 5)) {
             $seconds = RateLimiter::availableIn($key);
 
             throw ValidationException::withMessages([
-                'email' => "Terlalu banyak percobaan login. Coba lagi dalam {$seconds} detik.",
+                'login' => "Terlalu banyak percobaan login. Coba lagi dalam {$seconds} detik.",
             ]);
         }
 
         if (! Auth::attempt([
-            'email' => $credentials['email'],
+            $field => $login,
             'password' => $credentials['password'],
             'is_active' => true,
         ], $request->boolean('remember'))) {
             RateLimiter::hit($key, 60);
 
             throw ValidationException::withMessages([
-                'email' => 'Email atau kata sandi tidak valid, atau akun nonaktif.',
+                'login' => 'Email/username atau password tidak sesuai.',
             ]);
         }
 
@@ -62,11 +64,15 @@ class LoginController extends Controller
             $request->session()->regenerateToken();
 
             throw ValidationException::withMessages([
-                'email' => 'Akun ini tidak memiliki akses panel admin.',
+                'login' => 'Email/username atau password tidak sesuai.',
             ]);
         }
 
         ActivityLog::record('login', $user, 'Login panel admin');
+
+        if ($user->hasRole(\App\Enums\UserRole::AdminPpid) && ! $request->session()->has('url.intended')) {
+            return redirect()->route('admin.ppid.dashboard');
+        }
 
         return redirect()->intended(route('admin.dashboard'));
     }

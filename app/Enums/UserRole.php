@@ -43,17 +43,12 @@ enum UserRole: string
             ],
             self::AdminPpid => [
                 'access-admin',
-                'manage-settings',
-                'manage-menus',
                 'manage-pages',
                 'manage-posts',
                 'manage-announcements',
                 'manage-documents',
                 'manage-categories',
-                'manage-services',
                 'manage-faqs',
-                'manage-units',
-                'manage-contacts',
                 'view-activity-logs',
             ],
             self::Editor => [

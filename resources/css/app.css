@@ -1066,3 +1066,162 @@ html.a11y-grayscale {
         }
     }
 }
+
+/* Informasi Berkala — katalog dokumen publik */
+@layer components {
+    .ppid-berkala-page {
+        text-align: left;
+    }
+
+    .ppid-berkala-section + .ppid-berkala-section {
+        margin-top: 2.5rem;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-berkala-section + .ppid-berkala-section {
+            margin-top: 2.75rem;
+        }
+    }
+
+    .ppid-berkala-section-title {
+        font-family: var(--font-heading);
+        color: var(--navy);
+        font-size: 1.25rem;
+        font-weight: 700;
+        line-height: 1.3;
+        margin: 0 0 0.9rem;
+        padding-bottom: 0.65rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    @media (min-width: 768px) {
+        .ppid-berkala-section-title {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+    }
+
+    .ppid-berkala-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .ppid-berkala-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+        text-align: left;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-berkala-item {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+    }
+
+    .ppid-berkala-item:last-child {
+        border-bottom: 0;
+    }
+
+    .ppid-berkala-item-main {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.85rem;
+        min-width: 0;
+    }
+
+    .ppid-berkala-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.65rem;
+        background: color-mix(in srgb, var(--navy) 8%, #fff);
+        color: var(--navy);
+        flex-shrink: 0;
+    }
+
+    .ppid-berkala-item.is-missing .ppid-berkala-icon {
+        color: #64748b;
+        background: #f8fafc;
+    }
+
+    .ppid-berkala-item-title {
+        margin: 0;
+        color: var(--navy);
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.45;
+    }
+
+    .ppid-berkala-item.is-missing .ppid-berkala-item-title {
+        color: #475569;
+    }
+
+    .ppid-berkala-item-meta {
+        margin: 0.35rem 0 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--muted);
+        font-size: 0.8125rem;
+    }
+
+    .ppid-berkala-badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 9999px;
+        padding: 0.15rem 0.55rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+    }
+
+    .ppid-berkala-badge.is-available {
+        background: color-mix(in srgb, var(--green) 14%, #fff);
+        color: var(--green);
+    }
+
+    .ppid-berkala-badge.is-missing {
+        background: #fff7ed;
+        color: #9a3412;
+    }
+
+    .ppid-berkala-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        color: var(--green);
+        font-size: 0.875rem;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .ppid-berkala-link:hover {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+
+    .ppid-berkala-link:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 2px;
+        border-radius: 2px;
+    }
+
+    .ppid-berkala-unavailable {
+        display: inline-block;
+        color: #64748b;
+        font-size: 0.8125rem;
+        font-weight: 600;
+    }
+}

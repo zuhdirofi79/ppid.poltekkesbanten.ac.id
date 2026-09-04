@@ -79,6 +79,22 @@ class PageSeeder extends Seeder
                 'updated_by' => $admin?->id,
             ],
         );
+
+        Page::query()->updateOrCreate(
+            ['slug' => 'akreditasi'],
+            [
+                'title' => 'Akreditasi Poltekkes Kemenkes Banten',
+                'excerpt' => 'Informasi akreditasi institusi dan program studi Poltekkes Kemenkes Banten.',
+                'meta_title' => 'Akreditasi Poltekkes Kemenkes Banten',
+                'meta_description' => 'Informasi akreditasi institusi dan program studi Poltekkes Kemenkes Banten.',
+                'body' => HtmlSanitizer::clean($this->akreditasiBody()),
+                'status' => 'published',
+                'published_at' => now(),
+                'sort_order' => 20,
+                'created_by' => $admin?->id,
+                'updated_by' => $admin?->id,
+            ],
+        );
     }
 
     private function visiDanMisiBody(): string
@@ -137,6 +153,17 @@ HTML;
 <section>
     <h2>Fungsi PPID</h2>
     <p>PPID Poltekkes Kemenkes Banten berfungsi menjalankan Undang-Undang Nomor 14 Tahun 2008 tentang Keterbukaan Informasi Publik serta menetapkan standar operasional untuk mengelola layanan informasi publik.</p>
+</section>
+HTML;
+    }
+
+    private function akreditasiBody(): string
+    {
+        return <<<'HTML'
+<section>
+    <h2>Informasi Akreditasi</h2>
+    <p>Informasi akreditasi institusi dan program studi Poltekkes Kemenkes Banten sedang dalam proses pemutakhiran.</p>
+    <p>Dokumen dan status akreditasi resmi akan ditampilkan pada halaman ini setelah data diverifikasi oleh Admin PPID.</p>
 </section>
 HTML;
     }
