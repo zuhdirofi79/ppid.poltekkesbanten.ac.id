@@ -15,9 +15,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 
-Route::get('/cari', SearchController::class)
+Route::get('/cari', [SearchController::class, 'index'])
     ->middleware('throttle:60,1')
     ->name('search');
+Route::get('/pencarian', [SearchController::class, 'index'])
+    ->middleware('throttle:60,1')
+    ->name('search.index');
+Route::get('/pencarian/saran', [SearchController::class, 'suggestions'])
+    ->middleware('throttle:60,1')
+    ->name('search.suggestions');
 
 Route::get('/profil/maklumat-pelayanan', [ProfileController::class, 'maklumatPelayanan'])
     ->name('profil.maklumat-pelayanan');

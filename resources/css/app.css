@@ -2215,3 +2215,301 @@ html.a11y-grayscale {
         }
     }
 }
+
+/* Global Search PPID */
+body.ppid-search-lock {
+    overflow: hidden;
+}
+
+@layer components {
+    .ppid-search-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 80;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 4.5rem 0.85rem 1rem;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-search-overlay {
+            padding-top: 5.5rem;
+        }
+    }
+
+    .ppid-search-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgb(16 17 59 / 0.42);
+    }
+
+    .ppid-search-panel {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 54rem;
+        max-height: 85vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 1.15rem;
+        box-shadow: 0 18px 40px rgb(15 23 42 / 0.18);
+    }
+
+    .ppid-search-panel-form {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.85rem 0.9rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .ppid-search-panel-icon {
+        color: var(--muted);
+        flex-shrink: 0;
+    }
+
+    .ppid-search-panel-input {
+        flex: 1;
+        min-width: 0;
+        height: 2.85rem;
+        border: 0;
+        background: transparent;
+        color: var(--navy);
+        font-size: 1rem;
+        outline: none;
+    }
+
+    .ppid-search-panel-close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border: 0;
+        border-radius: 0.5rem;
+        background: transparent;
+        color: var(--navy);
+        cursor: pointer;
+    }
+
+    .ppid-search-panel-close:hover,
+    .ppid-search-panel-close:focus-visible {
+        background: var(--surface);
+        outline: 3px solid var(--gold);
+        outline-offset: 2px;
+    }
+
+    .ppid-search-panel-body {
+        overflow-y: auto;
+        padding: 0.75rem 1rem 1rem;
+        min-height: 7rem;
+    }
+
+    .ppid-search-panel-hint {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.65;
+    }
+
+    .ppid-search-suggest-group + .ppid-search-suggest-group {
+        margin-top: 0.85rem;
+    }
+
+    .ppid-search-suggest-label {
+        margin: 0 0 0.35rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--green);
+    }
+
+    .ppid-search-suggest-item {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.7rem 0.15rem;
+        border-bottom: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .ppid-search-suggest-item:hover {
+        background: var(--surface);
+    }
+
+    .ppid-search-suggest-item.is-static {
+        cursor: default;
+    }
+
+    .ppid-search-suggest-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--navy);
+        line-height: 1.4;
+    }
+
+    .ppid-search-suggest-meta {
+        flex-shrink: 0;
+        font-size: 0.75rem;
+        color: var(--muted);
+    }
+
+    .ppid-search-panel-footer {
+        display: block;
+        padding: 0.85rem 1rem;
+        border-top: 1px solid var(--border);
+        color: var(--green);
+        font-size: 0.875rem;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .ppid-search-panel-footer:hover {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+
+    .ppid-search-form {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.65rem;
+        margin-top: 1.15rem;
+        padding: 0.4rem 0.5rem 0.4rem 0.9rem;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 0.85rem;
+    }
+
+    .ppid-search-form:focus-within {
+        outline: 3px solid var(--gold);
+        outline-offset: 2px;
+    }
+
+    .ppid-search-form-icon {
+        color: var(--muted);
+    }
+
+    .ppid-search-form-input {
+        flex: 1;
+        min-width: 12rem;
+        height: 2.75rem;
+        border: 0;
+        background: transparent;
+        font-size: 1rem;
+        color: var(--navy);
+        outline: none;
+    }
+
+    .ppid-search-form-submit {
+        min-height: 2.75rem;
+        padding: 0 1.1rem;
+        border: 0;
+        border-radius: 0.6rem;
+        background: var(--navy);
+        color: #fff;
+        font-family: var(--font-heading);
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .ppid-search-form-submit:hover {
+        background: var(--navy-dark);
+    }
+
+    .ppid-search-group + .ppid-search-group {
+        margin-top: 1.75rem;
+    }
+
+    .ppid-search-group-title {
+        font-family: var(--font-heading);
+        color: var(--navy);
+        font-size: 1.125rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem;
+    }
+
+    .ppid-search-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .ppid-search-row-link,
+    .ppid-search-row-static {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.9rem 0;
+        border-bottom: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .ppid-search-row-link:hover {
+        background: color-mix(in srgb, var(--navy) 3%, #fff);
+    }
+
+    .ppid-search-row-title {
+        margin: 0;
+        font-weight: 600;
+        color: var(--navy);
+        line-height: 1.4;
+    }
+
+    .ppid-search-row-desc {
+        margin: 0.3rem 0 0;
+        color: #475569;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .ppid-search-row-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0.4rem 0 0;
+        color: var(--muted);
+        font-size: 0.8rem;
+    }
+
+    .ppid-search-badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 9999px;
+        padding: 0.12rem 0.5rem;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+    }
+
+    .ppid-search-badge.is-available {
+        background: color-mix(in srgb, var(--green) 14%, #fff);
+        color: var(--green);
+    }
+
+    .ppid-search-badge.is-missing {
+        background: #fff7ed;
+        color: #9a3412;
+    }
+
+    .ppid-search-row-action {
+        flex-shrink: 0;
+        color: var(--green);
+        font-size: 0.8125rem;
+        font-weight: 700;
+        white-space: nowrap;
+        padding-top: 0.15rem;
+    }
+}

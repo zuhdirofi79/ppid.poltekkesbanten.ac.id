@@ -59,17 +59,7 @@
                 @else
                     <a href="{{ route('contact') }}" class="hover:text-gold">Kontak PPID</a>
                 @endif
-                <a
-                    href="{{ route('search') }}"
-                    class="inline-flex items-center gap-1 rounded px-1.5 py-0.5 hover:text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-                    aria-label="Pencarian"
-                >
-                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <circle cx="11" cy="11" r="7"></circle>
-                        <path d="m20 20-3.5-3.5"></path>
-                    </svg>
-                    <span class="hidden sm:inline">Cari</span>
-                </a>
+                <x-search.global-search />
             </div>
         </div>
     </div>

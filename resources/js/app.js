@@ -109,6 +109,88 @@ document.addEventListener('alpine:init', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         },
     }));
+
+    Alpine.data('globalSearch', (config = {}) => ({
+        open: false,
+        q: '',
+        loading: false,
+        results: [],
+        timer: null,
+        suggestionsUrl: config.suggestionsUrl || '/pencarian/saran',
+        searchPageUrl: config.searchPageUrl || '/cari',
+
+        get groupedResults() {
+            const groups = [];
+            const index = {};
+            this.results.forEach((item) => {
+                const label = item.group || 'Lainnya';
+                if (index[label] === undefined) {
+                    index[label] = groups.length;
+                    groups.push({ label, items: [] });
+                }
+                groups[index[label]].items.push(item);
+            });
+            return groups;
+        },
+
+        openPanel() {
+            this.open = true;
+            document.body.classList.add('ppid-search-lock');
+            this.$nextTick(() => this.$refs.searchInput?.focus());
+        },
+
+        closePanel() {
+            this.open = false;
+            document.body.classList.remove('ppid-search-lock');
+            this.$nextTick(() => this.$refs.searchTrigger?.focus());
+        },
+
+        onInput() {
+            clearTimeout(this.timer);
+            const value = this.q.trim();
+            if (value.length < 2) {
+                this.results = [];
+                this.loading = false;
+                return;
+            }
+            this.loading = true;
+            this.timer = setTimeout(() => this.fetchSuggestions(), 300);
+        },
+
+        async fetchSuggestions() {
+            const value = this.q.trim();
+            if (value.length < 2) {
+                this.loading = false;
+                return;
+            }
+            try {
+                const url = `${this.suggestionsUrl}?q=${encodeURIComponent(value)}`;
+                const response = await fetch(url, {
+                    headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                if (!response.ok) {
+                    this.results = [];
+                    return;
+                }
+                const data = await response.json();
+                this.results = Array.isArray(data.results) ? data.results : [];
+            } catch {
+                this.results = [];
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        goToResults(event) {
+            const value = this.q.trim();
+            if (value.length < 2) {
+                event.preventDefault();
+                return;
+            }
+            event.preventDefault();
+            window.location.assign(`${this.searchPageUrl}?q=${encodeURIComponent(value)}`);
+        },
+    }));
 });
 
 Alpine.start();

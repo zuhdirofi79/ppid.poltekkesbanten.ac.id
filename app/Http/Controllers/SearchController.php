@@ -2,57 +2,45 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Announcement;
-use App\Models\Faq;
-use App\Models\Page;
-use App\Models\Post;
-use App\Models\PublicDocument;
+use App\Services\GlobalSearchService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class SearchController extends Controller
 {
-    public function __invoke(Request $request): View
+    public function __construct(private readonly GlobalSearchService $search) {}
+
+    public function index(Request $request): View
     {
-        $q = trim((string) $request->string('q'));
+        $raw = (string) $request->query('q', '');
+        $normalized = $this->search->normalize($raw);
+        $result = $normalized === null
+            ? ['query' => trim($raw), 'total' => 0, 'groups' => []]
+            : $this->search->search($normalized, 12);
 
-        $posts = collect();
-        $documents = collect();
-        $pages = collect();
-        $announcements = collect();
-        $faqs = collect();
+        return view('pages.search', [
+            'q' => $result['query'] ?? trim($raw),
+            'hasQuery' => $normalized !== null,
+            'total' => $result['total'],
+            'groups' => $result['groups'],
+        ]);
+    }
 
-        if ($q !== '') {
-            $like = '%'.$q.'%';
+    public function suggestions(Request $request): JsonResponse
+    {
+        $normalized = $this->search->normalize((string) $request->query('q', ''));
 
-            $posts = Post::query()->published()
-                ->where(fn ($query) => $query->where('title', 'like', $like)->orWhere('excerpt', 'like', $like))
-                ->latest('published_at')
-                ->limit(10)
-                ->get();
-
-            $documents = PublicDocument::query()->published()
-                ->where(fn ($query) => $query->where('title', 'like', $like)->orWhere('description', 'like', $like))
-                ->latest('published_at')
-                ->limit(10)
-                ->get();
-
-            $pages = Page::query()->published()
-                ->where(fn ($query) => $query->where('title', 'like', $like)->orWhere('excerpt', 'like', $like))
-                ->limit(10)
-                ->get();
-
-            $announcements = Announcement::query()->published()
-                ->where(fn ($query) => $query->where('title', 'like', $like)->orWhere('excerpt', 'like', $like))
-                ->limit(10)
-                ->get();
-
-            $faqs = Faq::query()->where('is_active', true)
-                ->where(fn ($query) => $query->where('question', 'like', $like)->orWhere('answer', 'like', $like))
-                ->limit(10)
-                ->get();
+        if ($normalized === null) {
+            return response()->json([
+                'query' => '',
+                'results' => [],
+            ]);
         }
 
-        return view('pages.search', compact('q', 'posts', 'documents', 'pages', 'announcements', 'faqs'));
+        return response()->json([
+            'query' => $normalized,
+            'results' => $this->search->suggestions($normalized, 10),
+        ]);
     }
 }
