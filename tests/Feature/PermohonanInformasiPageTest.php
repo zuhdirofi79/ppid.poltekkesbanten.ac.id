@@ -28,11 +28,15 @@ class PermohonanInformasiPageTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('PPID-PERMOHONAN-INFORMASI-DEPLOY-20260907-A', false);
+        $response->assertSee('PPID-PERMOHONAN-FORM-CTA-DEPLOY-20260907-A', false);
         $response->assertSee('ppid-request-page', false);
+        $response->assertSee('ppid-request-form-cta', false);
         $response->assertSee('Permohonan Informasi Publik', false);
         $response->assertSee('Ajukan permohonan informasi publik secara resmi melalui PPID.', false);
         $response->assertSee('Ajukan Permohonan Informasi Publik', false);
-        $response->assertSee('Isi Formulir Permohonan Informasi', false);
+        $response->assertSee('Formulir Online', false);
+        $response->assertSee('Isi Form Permohonan Informasi Publik', false);
+        $response->assertSee('Silakan isi formulir resmi permohonan informasi publik melalui tautan berikut.', false);
         $response->assertSee(self::FORM_URL, false);
         $response->assertSee('target="_blank"', false);
         $response->assertSee('rel="noopener noreferrer"', false);
@@ -61,6 +65,11 @@ class PermohonanInformasiPageTest extends TestCase
         $this->assertSame(1, preg_match_all('/<ol\b[^>]*class="ppid-requirement-list"/', $html));
         $this->assertGreaterThanOrEqual(2, substr_count($html, 'target="_blank"'));
         $this->assertGreaterThanOrEqual(2, substr_count($html, 'rel="noopener noreferrer"'));
+        $this->assertLessThan(
+            strpos($html, 'Waktu Pelayanan Informasi'),
+            strpos($html, 'Isi Form Permohonan Informasi Publik'),
+            'CTA must appear before Waktu Pelayanan Informasi'
+        );
     }
 
     #[Test]
@@ -74,7 +83,7 @@ class PermohonanInformasiPageTest extends TestCase
         $response = $this->get('/layanan/permohonan-informasi');
 
         $response->assertOk();
-        $response->assertSee('Isi Formulir Permohonan Informasi', false);
+        $response->assertSee('Isi Form Permohonan Informasi Publik', false);
         $response->assertDontSee('https://example.com/should-not-redirect', false);
         $response->assertSee(self::FORM_URL, false);
     }
@@ -89,7 +98,7 @@ class PermohonanInformasiPageTest extends TestCase
         $response->assertOk();
         $response->assertSee('Permohonan Informasi Publik', false);
         $response->assertDontSee('javascript:alert(1)', false);
-        $response->assertDontSee('Isi Formulir Permohonan Informasi', false);
+        $response->assertDontSee('Isi Form Permohonan Informasi Publik', false);
     }
 
     #[Test]
@@ -101,8 +110,9 @@ class PermohonanInformasiPageTest extends TestCase
         $response->assertSee('Pengajuan Keberatan', false);
         $response->assertSee('Hubungi PPID', false);
         $response->assertDontSee('PPID-PERMOHONAN-INFORMASI-DEPLOY-20260907-A', false);
+        $response->assertDontSee('PPID-PERMOHONAN-FORM-CTA-DEPLOY-20260907-A', false);
         $response->assertDontSee('ppid-request-page', false);
-        $response->assertDontSee('Isi Formulir Permohonan Informasi', false);
+        $response->assertDontSee('Isi Form Permohonan Informasi Publik', false);
         $response->assertDontSee('Persyaratan Permohonan Informasi Publik', false);
         $response->assertDontSee('Formulir belum terhubung', false);
         $response->assertDontSee('config/ppid.php', false);

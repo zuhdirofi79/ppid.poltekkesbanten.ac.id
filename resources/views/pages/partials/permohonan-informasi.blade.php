@@ -14,29 +14,36 @@
 @endphp
 
 <div class="ppid-request-page">
-    <div class="mx-auto max-w-7xl px-5 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+    <div class="mx-auto max-w-7xl px-5 pb-8 pt-8 sm:px-6 sm:pb-12 sm:pt-9 lg:px-8 lg:pb-16 lg:pt-10">
         @if ($formUrl)
-            <section class="ppid-request-hero" aria-labelledby="request-hero-heading">
-                <div class="ppid-request-hero-content">
-                    <p class="ppid-request-eyebrow">Layanan Informasi Publik</p>
-                    <h2 id="request-hero-heading" class="ppid-request-hero-title">Ajukan Permohonan Informasi Publik</h2>
-                    <p class="ppid-request-hero-text">
-                        Formulir untuk pengajuan permintaan informasi publik dapat diisi melalui tautan berikut.
-                    </p>
-                    <a
-                        href="{{ $formUrl }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="ppid-request-primary-action"
-                    >
-                        Isi Formulir Permohonan Informasi
-                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path d="M14 5h5v5" />
-                            <path d="M10 14 19 5" />
-                            <path d="M19 13v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6" />
-                        </svg>
-                    </a>
-                    <p class="ppid-request-microcopy">Formulir akan terbuka pada tab baru.</p>
+            <!-- PPID-PERMOHONAN-FORM-CTA-DEPLOY-20260907-A -->
+            <section class="ppid-request-form-cta" aria-labelledby="request-form-cta-heading">
+                <div class="ppid-request-form-cta-inner">
+                    <div class="ppid-request-form-cta-copy">
+                        <p class="ppid-request-form-eyebrow">Formulir Online</p>
+                        <h2 id="request-form-cta-heading" class="ppid-request-form-title">
+                            Ajukan Permohonan Informasi Publik
+                        </h2>
+                        <p class="ppid-request-form-description">
+                            Silakan isi formulir resmi permohonan informasi publik melalui tautan berikut.
+                        </p>
+                    </div>
+                    <div class="ppid-request-form-action">
+                        <a
+                            href="{{ $formUrl }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="ppid-request-form-button"
+                        >
+                            Isi Form Permohonan Informasi Publik
+                            <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path d="M14 5h5v5" />
+                                <path d="M10 14 19 5" />
+                                <path d="M19 13v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6" />
+                            </svg>
+                        </a>
+                        <p class="ppid-request-form-note">Formulir akan dibuka pada tab baru.</p>
+                    </div>
                 </div>
             </section>
         @endif

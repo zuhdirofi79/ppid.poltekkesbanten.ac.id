@@ -1267,33 +1267,47 @@ html.a11y-grayscale {
         }
     }
 
-    .ppid-request-hero {
+    .ppid-request-form-cta {
         max-width: 72rem;
-        margin: 0 auto;
-        padding: 1.35rem 1.35rem 1.5rem;
+        margin: 0 auto 3rem;
+        padding: 1.125rem 1.2rem;
         border: 1px solid color-mix(in srgb, var(--navy) 10%, var(--border));
-        border-radius: 1.25rem;
-        background: linear-gradient(
-            135deg,
-            color-mix(in srgb, var(--navy) 5%, #fff) 0%,
-            #fff 58%,
-            color-mix(in srgb, var(--green) 6%, #fff) 100%
-        );
-        box-shadow: 0 1px 2px rgb(15 23 42 / 0.04), 0 8px 20px rgb(15 23 42 / 0.04);
+        border-radius: 1.05rem;
+        background: color-mix(in srgb, var(--navy) 4.5%, #fff);
+        box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
     }
 
     @media (min-width: 768px) {
-        .ppid-request-hero {
-            padding: 2rem 2.25rem;
-            border-radius: 1.35rem;
+        .ppid-request-form-cta {
+            margin-bottom: 3.5rem;
+            padding: 1.5rem 1.75rem;
+            border-radius: 1.125rem;
         }
     }
 
-    .ppid-request-hero-content {
-        max-width: 40rem;
+    .ppid-request-form-cta-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.15rem;
+        text-align: left;
     }
 
-    .ppid-request-eyebrow {
+    @media (min-width: 768px) {
+        .ppid-request-form-cta-inner {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+    }
+
+    .ppid-request-form-cta-copy {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .ppid-request-form-eyebrow {
         margin: 0;
         font-size: 0.75rem;
         font-weight: 700;
@@ -1302,32 +1316,93 @@ html.a11y-grayscale {
         color: var(--green);
     }
 
-    .ppid-request-hero-title {
+    .ppid-request-form-title {
         font-family: var(--font-heading);
         color: var(--navy);
-        font-size: 1.375rem;
+        font-size: 1.25rem;
         font-weight: 700;
         line-height: 1.25;
-        margin: 0.45rem 0 0;
+        margin: 0.4rem 0 0;
     }
 
     @media (min-width: 768px) {
-        .ppid-request-hero-title {
-            font-size: 1.75rem;
+        .ppid-request-form-title {
+            font-size: 1.5rem;
         }
     }
 
-    .ppid-request-hero-text {
-        margin: 0.7rem 0 0;
+    .ppid-request-form-description {
+        margin: 0.5rem 0 0;
+        max-width: 36rem;
         color: #334155;
-        font-size: 1rem;
-        line-height: 1.75;
+        font-size: 0.975rem;
+        line-height: 1.7;
     }
 
     @media (min-width: 768px) {
-        .ppid-request-hero-text {
-            font-size: 1.0625rem;
+        .ppid-request-form-description {
+            font-size: 1rem;
         }
+    }
+
+    .ppid-request-form-action {
+        flex-shrink: 0;
+        width: 100%;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-request-form-action {
+            width: auto;
+            max-width: 22rem;
+        }
+    }
+
+    .ppid-request-form-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        min-height: 2.75rem;
+        width: 100%;
+        padding: 0.7rem 1.35rem;
+        border-radius: 0.6rem;
+        background: var(--navy);
+        color: #fff;
+        font-family: var(--font-heading);
+        font-size: 0.9375rem;
+        font-weight: 600;
+        line-height: 1.25;
+        text-align: center;
+        text-decoration: none;
+        transition: background-color 0.15s ease;
+    }
+
+    .ppid-request-form-button:hover {
+        background: var(--navy-dark);
+    }
+
+    .ppid-request-form-button:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 2px;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-request-form-button {
+            width: auto;
+            min-height: 3rem;
+        }
+    }
+
+    .ppid-request-form-note {
+        margin: 0.55rem 0 0;
+        color: var(--muted);
+        font-size: 0.8125rem;
+        line-height: 1.5;
+        text-align: left;
+    }
+
+    .ppid-request-form-cta + .ppid-service-hours {
+        margin-top: 0;
     }
 
     .ppid-request-primary-action {
