@@ -46,6 +46,19 @@ class ServiceController extends Controller
             ]);
         }
 
+        if ($slug === 'pengajuan-keberatan') {
+            return view('pages.service', [
+                'service' => array_merge($service, [
+                    'slug' => $slug,
+                    'title' => $title,
+                    'excerpt' => $description,
+                ]),
+                'title' => $title,
+                'description' => $description,
+                'formUrl' => $this->safeHttpUrl(config('ppid.objection_request.external_url')),
+            ]);
+        }
+
         $external = $service['external_url'] ?? null;
         if (is_string($external) && $this->safeHttpUrl($external)) {
             return redirect()->away($external);

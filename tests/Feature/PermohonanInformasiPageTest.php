@@ -104,11 +104,12 @@ class PermohonanInformasiPageTest extends TestCase
     #[Test]
     public function other_service_pages_are_unaffected(): void
     {
-        $response = $this->get('/layanan/pengajuan-keberatan');
+        $response = $this->get('/layanan/keluhan-pelayanan');
 
         $response->assertOk();
-        $response->assertSee('Pengajuan Keberatan', false);
+        $response->assertSee('Keluhan Pelayanan', false);
         $response->assertSee('Hubungi PPID', false);
+        $response->assertSee('Kembali ke beranda', false);
         $response->assertDontSee('PPID-PERMOHONAN-INFORMASI-DEPLOY-20260907-A', false);
         $response->assertDontSee('PPID-PERMOHONAN-FORM-CTA-DEPLOY-20260907-A', false);
         $response->assertDontSee('ppid-request-page', false);

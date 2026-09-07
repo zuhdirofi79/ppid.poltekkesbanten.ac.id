@@ -27,6 +27,10 @@
             'formUrl' => $formUrl ?? null,
             'ppidEmail' => $ppidEmail ?? 'humas@poltekkesbanten.ac.id',
         ])
+    @elseif (($service['slug'] ?? '') === 'pengajuan-keberatan')
+        @include('pages.partials.pengajuan-keberatan', [
+            'formUrl' => $formUrl ?? null,
+        ])
     @else
         <div class="mx-auto max-w-3xl px-4 py-10">
             <div class="rounded-xl border border-line bg-white p-6 shadow-sm">

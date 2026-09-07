@@ -114,6 +114,8 @@ return [
             'slug' => 'pengajuan-keberatan',
             'title' => 'Pengajuan Keberatan',
             'excerpt' => 'Ajukan keberatan atas permohonan informasi yang ditolak atau tidak ditanggapi.',
+            // Landing page tetap di /layanan/pengajuan-keberatan.
+            // URL Google Form: objection_request.external_url
             'external_url' => null,
             'is_featured' => true,
             'sort_order' => 2,
@@ -163,6 +165,18 @@ return [
             'https://docs.google.com/forms/d/e/1FAIpQLSffivoxDcFT-iDrc8eb1GKvkqhx-LenWuaQkE826D5uSbOG3A/viewform'
         ),
         'email' => 'humas@poltekkesbanten.ac.id',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Formulir pengajuan keberatan (Google Form eksternal)
+    |--------------------------------------------------------------------------
+    */
+    'objection_request' => [
+        'external_url' => env(
+            'PPID_OBJECTION_FORM_URL',
+            'https://docs.google.com/forms/d/e/1FAIpQLScE8lH-ihPiy_FbzWJ6zQIk8eiFgd9bUeckJerQPsNHNIMbew/viewform'
+        ),
     ],
 
     /*
