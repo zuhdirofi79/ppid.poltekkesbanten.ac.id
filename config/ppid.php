@@ -2,7 +2,6 @@
 
 /**
  * Konfigurasi identitas & navigasi publik PPID Poltekkes Kemenkes Banten.
- * Data kontak yang belum resmi: placeholder TODO — lihat docs/CONTENT_REQUIREMENTS.md
  */
 
 return [
@@ -33,20 +32,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Kontak (placeholder — ganti dengan data resmi)
+    | Kontak resmi PPID
     |--------------------------------------------------------------------------
     */
     'contact' => [
-        // TODO: ganti dengan alamat resmi Direktorat Serang
-        'address' => '[TODO: Alamat resmi Direktorat Poltekkes Kemenkes Banten, Serang]',
-        // TODO: email resmi PPID
-        'email' => '[TODO: email-ppid@poltekkesbanten.ac.id]',
-        // TODO: telepon resmi
-        'phone' => '[TODO: nomor telepon]',
-        // TODO: WhatsApp layanan
-        'whatsapp' => '[TODO: nomor WhatsApp]',
-        // TODO: jam layanan resmi
-        'service_hours' => 'Senin–Jumat, 08.00–15.30 WIB (CONTOH)',
+        'address' => 'Jl. Syekh Moh. Nawawi Albantani No.12, Banjaragung, Kec. Cipocok Jaya, Kota Serang, Banten 42122',
+        'website' => 'https://poltekkesbanten.ac.id/',
+        'website_label' => 'poltekkesbanten.ac.id',
+        'email' => 'humas@poltekkesbanten.ac.id',
+        'phone' => null,
+        'whatsapp' => '+62 895-0839-4483 (Dias Arliadini)',
+        'whatsapp_url' => 'https://wa.me/6289508394483',
+        'service_hours' => 'Senin–Jumat, 08.00–15.30 WIB',
     ],
 
     /*
@@ -254,15 +251,15 @@ return [
     'campuses' => [
         [
             'name' => 'Direktorat / Kampus Serang',
-            'address' => '[TODO: alamat Kampus Serang]',
+            'address' => 'Jl. Syekh Moh. Nawawi Albantani No.12, Banjaragung, Kec. Cipocok Jaya, Kota Serang, Banten 42122',
         ],
         [
             'name' => 'Kampus Tangerang',
-            'address' => '[TODO: alamat Kampus Tangerang]',
+            'address' => 'RJRP+697, RT.002/RW.003, Karang Sari, Kec. Neglasari, Kota Tangerang, Banten 15121 (persis samping RSUP Dr. Sitanala)',
         ],
         [
             'name' => 'Kampus Rangkasbitung',
-            'address' => '[TODO: alamat Kampus Rangkasbitung]',
+            'address' => 'Jl. Raya Rangkasbitung Pandeglang No.421, Kaduagung Tengah, Kec. Cibadak, Kabupaten Lebak, Banten 42317',
         ],
     ],
 

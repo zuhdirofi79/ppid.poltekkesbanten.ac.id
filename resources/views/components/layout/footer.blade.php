@@ -23,24 +23,53 @@
             <p class="mb-4 text-sm leading-relaxed text-white/80">
                 {{ config('ppid.name_long') }}
             </p>
+            <!-- PPID-FOOTER-CONTACT-DEPLOY-20260907-A -->
             <ul class="space-y-2 text-sm text-white/85">
-                <li>{{ $contact['address'] ?? '' }}</li>
-                <li>
-                    <span class="text-white/60">Email:</span>
-                    {{ $contact['email'] ?? '' }}
-                </li>
-                <li>
-                    <span class="text-white/60">Telepon:</span>
-                    {{ $contact['phone'] ?? '' }}
-                </li>
-                <li>
-                    <span class="text-white/60">WhatsApp:</span>
-                    {{ $contact['whatsapp'] ?? '' }}
-                </li>
-                <li>
-                    <span class="text-white/60">Jam layanan:</span>
-                    {{ $contact['service_hours'] ?? '' }}
-                </li>
+                @if (! empty($contact['website']))
+                    <li>
+                        <span class="text-white/60">Website resmi:</span>
+                        <a
+                            href="{{ $contact['website'] }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center gap-1 break-words hover:text-gold"
+                        >
+                            {{ $contact['website_label'] ?? 'poltekkesbanten.ac.id' }}
+                            <span class="sr-only">(membuka tab baru)</span>
+                            <svg class="h-3.5 w-3.5 shrink-0 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path d="M14 4h6v6M10 14 20 4M20 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h5" />
+                            </svg>
+                        </a>
+                    </li>
+                @endif
+                @if (! empty($contact['email']))
+                    <li>
+                        <span class="text-white/60">Email:</span>
+                        <a href="mailto:{{ $contact['email'] }}" class="break-all hover:text-gold">
+                            {{ $contact['email'] }}
+                        </a>
+                    </li>
+                @endif
+                @if (! empty($contact['whatsapp_url']) && ! empty($contact['whatsapp']))
+                    <li>
+                        <span class="text-white/60">WhatsApp/Telepon Humas:</span>
+                        <a
+                            href="{{ $contact['whatsapp_url'] }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center gap-1 break-words hover:text-gold"
+                        >
+                            {{ $contact['whatsapp'] }}
+                            <span class="sr-only">(membuka tab baru)</span>
+                        </a>
+                    </li>
+                @endif
+                @if (! empty($contact['service_hours']))
+                    <li>
+                        <span class="text-white/60">Jam layanan:</span>
+                        {{ $contact['service_hours'] }}
+                    </li>
+                @endif
             </ul>
         </div>
 

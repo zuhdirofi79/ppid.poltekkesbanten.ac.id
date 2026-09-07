@@ -24,13 +24,29 @@
         <div class="rounded-xl border border-line p-6">
             <h2 class="font-heading text-lg font-bold text-navy">Informasi kontak</h2>
             <ul class="mt-4 space-y-3 text-sm">
-                <li><span class="text-muted">Alamat:</span> {{ $contact['address'] }}</li>
-                <li><span class="text-muted">Email:</span> {{ $contact['email'] }}</li>
-                <li><span class="text-muted">Telepon:</span> {{ $contact['phone'] }}</li>
-                <li><span class="text-muted">WhatsApp:</span> {{ $contact['whatsapp'] }}</li>
-                <li><span class="text-muted">Jam layanan:</span> {{ $contact['service_hours'] }}</li>
+                @if (! empty($contact['address']))
+                    <li><span class="text-muted">Alamat:</span> {{ $contact['address'] }}</li>
+                @endif
+                @if (! empty($contact['email']))
+                    <li>
+                        <span class="text-muted">Email:</span>
+                        <a href="mailto:{{ $contact['email'] }}" class="text-green hover:underline">{{ $contact['email'] }}</a>
+                    </li>
+                @endif
+                @if (! empty($contact['whatsapp']))
+                    <li>
+                        <span class="text-muted">WhatsApp/Telepon Humas:</span>
+                        @if (! empty($contact['whatsapp_url']))
+                            <a href="{{ $contact['whatsapp_url'] }}" target="_blank" rel="noopener noreferrer" class="text-green hover:underline">{{ $contact['whatsapp'] }}</a>
+                        @else
+                            {{ $contact['whatsapp'] }}
+                        @endif
+                    </li>
+                @endif
+                @if (! empty($contact['service_hours']))
+                    <li><span class="text-muted">Jam layanan:</span> {{ $contact['service_hours'] }}</li>
+                @endif
             </ul>
-            <p class="mt-4 text-xs text-muted">Data bertanda TODO diganti admin dengan kontak resmi institusi.</p>
         </div>
         <div class="rounded-xl border border-line bg-surface/60 p-6">
             <h2 class="font-heading text-lg font-bold text-navy">Lokasi kampus</h2>

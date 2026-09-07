@@ -56,26 +56,34 @@
             <div>
                 <h3 class="font-heading text-lg font-bold text-navy">Kontak PPID</h3>
                 <ul class="mt-4 space-y-3 text-sm text-ink">
-                    <li>
-                        <span class="block text-xs font-semibold uppercase tracking-wide text-muted">Alamat</span>
-                        {{ $contact['address'] ?? '' }}
-                    </li>
-                    <li>
-                        <span class="block text-xs font-semibold uppercase tracking-wide text-muted">Email</span>
-                        {{ $contact['email'] ?? '' }}
-                    </li>
-                    <li>
-                        <span class="block text-xs font-semibold uppercase tracking-wide text-muted">Telepon</span>
-                        {{ $contact['phone'] ?? '' }}
-                    </li>
-                    <li>
-                        <span class="block text-xs font-semibold uppercase tracking-wide text-muted">WhatsApp</span>
-                        {{ $contact['whatsapp'] ?? '' }}
-                    </li>
-                    <li>
-                        <span class="block text-xs font-semibold uppercase tracking-wide text-muted">Jam layanan</span>
-                        {{ $contact['service_hours'] ?? '' }}
-                    </li>
+                    @if (! empty($contact['address']))
+                        <li>
+                            <span class="block text-xs font-semibold uppercase tracking-wide text-muted">Alamat</span>
+                            {{ $contact['address'] }}
+                        </li>
+                    @endif
+                    @if (! empty($contact['email']))
+                        <li>
+                            <span class="block text-xs font-semibold uppercase tracking-wide text-muted">Email</span>
+                            <a href="mailto:{{ $contact['email'] }}" class="text-green hover:underline">{{ $contact['email'] }}</a>
+                        </li>
+                    @endif
+                    @if (! empty($contact['whatsapp']))
+                        <li>
+                            <span class="block text-xs font-semibold uppercase tracking-wide text-muted">WhatsApp/Telepon Humas</span>
+                            @if (! empty($contact['whatsapp_url']))
+                                <a href="{{ $contact['whatsapp_url'] }}" target="_blank" rel="noopener noreferrer" class="text-green hover:underline">{{ $contact['whatsapp'] }}</a>
+                            @else
+                                {{ $contact['whatsapp'] }}
+                            @endif
+                        </li>
+                    @endif
+                    @if (! empty($contact['service_hours']))
+                        <li>
+                            <span class="block text-xs font-semibold uppercase tracking-wide text-muted">Jam layanan</span>
+                            {{ $contact['service_hours'] }}
+                        </li>
+                    @endif
                 </ul>
 
                 <h3 class="font-heading mt-8 text-lg font-bold text-navy">Lokasi Kampus</h3>
