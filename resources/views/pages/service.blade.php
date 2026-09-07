@@ -5,7 +5,7 @@
 
 @section('content')
     <div class="border-b border-line bg-surface">
-        <div class="mx-auto max-w-7xl px-4 py-8">
+        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <nav class="mb-3 text-sm text-muted" aria-label="Breadcrumb">
                 <ol class="flex flex-wrap items-center gap-2">
                     <li><a href="{{ route('home') }}" class="hover:text-green">Beranda</a></li>
@@ -22,30 +22,27 @@
         </div>
     </div>
 
-    <div class="mx-auto max-w-3xl px-4 py-10">
-        <div class="rounded-xl border border-line bg-white p-6 shadow-sm">
-            <p class="text-sm leading-relaxed text-ink">
-                {{ $service['excerpt'] ?? 'Layanan ini dikelola oleh PPID Poltekkes Kemenkes Banten.' }}
-            </p>
-
-            <div class="mt-6 rounded-lg border border-dashed border-line bg-surface p-4 text-sm text-muted">
-                <p class="font-medium text-navy">Formulir belum terhubung</p>
-                <p class="mt-1">
-                    Tautan Google Form / e-PPID dapat diisi pada
-                    <code class="rounded bg-white px-1">config/ppid.php</code>
-                    → <code class="rounded bg-white px-1">services.*.external_url</code>
-                    (nanti diganti panel admin).
+    @if (($service['slug'] ?? '') === 'permohonan-informasi')
+        @include('pages.partials.permohonan-informasi', [
+            'formUrl' => $formUrl ?? null,
+            'ppidEmail' => $ppidEmail ?? 'humas@poltekkesbanten.ac.id',
+        ])
+    @else
+        <div class="mx-auto max-w-3xl px-4 py-10">
+            <div class="rounded-xl border border-line bg-white p-6 shadow-sm">
+                <p class="text-sm leading-relaxed text-ink">
+                    {{ $service['excerpt'] ?? 'Layanan ini dikelola oleh PPID Poltekkes Kemenkes Banten.' }}
                 </p>
-            </div>
 
-            <div class="mt-6 flex flex-wrap gap-3">
-                <a href="{{ route('home') }}" class="font-heading rounded-md bg-navy px-4 py-2.5 text-sm font-semibold text-white hover:bg-navy-dark">
-                    Kembali ke beranda
-                </a>
-                <a href="{{ route('contact') }}" class="font-heading rounded-md border border-line px-4 py-2.5 text-sm font-semibold text-navy hover:border-green">
-                    Hubungi PPID
-                </a>
+                <div class="mt-6 flex flex-wrap gap-3">
+                    <a href="{{ route('home') }}" class="font-heading rounded-md bg-navy px-4 py-2.5 text-sm font-semibold text-white hover:bg-navy-dark">
+                        Kembali ke beranda
+                    </a>
+                    <a href="{{ route('contact') }}" class="font-heading rounded-md border border-line px-4 py-2.5 text-sm font-semibold text-navy hover:border-green">
+                        Hubungi PPID
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
+    @endif
 @endsection

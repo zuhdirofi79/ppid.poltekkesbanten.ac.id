@@ -9,6 +9,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicPageController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,29 +45,9 @@ Route::get('/dokumen-publik/{slug}/unduh', [DocumentController::class, 'download
     ->middleware('throttle:30,1')
     ->name('documents.download');
 
-Route::get('/layanan/{slug}', function (string $slug) {
-    $serviceModel = \App\Models\ServiceLink::query()->where('slug', $slug)->where('is_active', true)->first();
-
-    $service = $serviceModel
-        ? [
-            'slug' => $serviceModel->slug,
-            'title' => $serviceModel->title,
-            'excerpt' => $serviceModel->excerpt,
-            'external_url' => $serviceModel->external_url,
-        ]
-        : collect(config('ppid.services', []))->firstWhere('slug', $slug);
-
-    $external = $service['external_url'] ?? null;
-    if (is_string($external) && preg_match('#^https?://#i', $external)) {
-        return redirect()->away($external);
-    }
-
-    return view('pages.service', [
-        'service' => $service,
-        'title' => $service['title'] ?? str($slug)->replace('-', ' ')->title()->toString(),
-        'description' => $service['excerpt'] ?? 'Layanan informasi publik PPID Poltekkes Kemenkes Banten.',
-    ]);
-})->name('services.show');
+Route::get('/layanan/{slug}', [ServiceController::class, 'show'])
+    ->where('slug', '[a-z0-9-]+')
+    ->name('services.show');
 
 Route::get('/berita', [PostController::class, 'index'])->name('posts.index');
 Route::get('/berita/{slug}', [PostController::class, 'show'])->name('posts.show');

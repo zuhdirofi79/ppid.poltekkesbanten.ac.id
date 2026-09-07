@@ -1225,3 +1225,495 @@ html.a11y-grayscale {
         font-weight: 600;
     }
 }
+
+/* Halaman Permohonan Informasi Publik — landing layanan */
+@layer components {
+    .ppid-request-page {
+        background: #fff;
+        text-align: left;
+    }
+
+    .ppid-request-section-title {
+        font-family: var(--font-heading);
+        color: var(--navy);
+        font-size: 1.375rem;
+        font-weight: 700;
+        line-height: 1.25;
+        letter-spacing: -0.01em;
+        margin: 0;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-request-section-title {
+            font-size: 1.75rem;
+        }
+    }
+
+    .ppid-request-section-intro {
+        margin: 0 0 1.25rem;
+        max-width: 42rem;
+    }
+
+    .ppid-request-section-subtext {
+        margin: 0.55rem 0 0;
+        color: var(--muted);
+        font-size: 0.9375rem;
+        line-height: 1.7;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-request-section-subtext {
+            font-size: 1rem;
+        }
+    }
+
+    .ppid-request-hero {
+        max-width: 72rem;
+        margin: 0 auto;
+        padding: 1.35rem 1.35rem 1.5rem;
+        border: 1px solid color-mix(in srgb, var(--navy) 10%, var(--border));
+        border-radius: 1.25rem;
+        background: linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--navy) 5%, #fff) 0%,
+            #fff 58%,
+            color-mix(in srgb, var(--green) 6%, #fff) 100%
+        );
+        box-shadow: 0 1px 2px rgb(15 23 42 / 0.04), 0 8px 20px rgb(15 23 42 / 0.04);
+    }
+
+    @media (min-width: 768px) {
+        .ppid-request-hero {
+            padding: 2rem 2.25rem;
+            border-radius: 1.35rem;
+        }
+    }
+
+    .ppid-request-hero-content {
+        max-width: 40rem;
+    }
+
+    .ppid-request-eyebrow {
+        margin: 0;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--green);
+    }
+
+    .ppid-request-hero-title {
+        font-family: var(--font-heading);
+        color: var(--navy);
+        font-size: 1.375rem;
+        font-weight: 700;
+        line-height: 1.25;
+        margin: 0.45rem 0 0;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-request-hero-title {
+            font-size: 1.75rem;
+        }
+    }
+
+    .ppid-request-hero-text {
+        margin: 0.7rem 0 0;
+        color: #334155;
+        font-size: 1rem;
+        line-height: 1.75;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-request-hero-text {
+            font-size: 1.0625rem;
+        }
+    }
+
+    .ppid-request-primary-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        min-height: 2.75rem;
+        width: 100%;
+        margin-top: 1.15rem;
+        padding: 0.7rem 1.15rem;
+        border-radius: 0.6rem;
+        background: var(--navy);
+        color: #fff;
+        font-family: var(--font-heading);
+        font-size: 0.9375rem;
+        font-weight: 600;
+        line-height: 1.25;
+        text-align: center;
+        text-decoration: none;
+        transition: background-color 0.15s ease;
+    }
+
+    .ppid-request-primary-action:hover {
+        background: var(--navy-dark);
+    }
+
+    .ppid-request-primary-action:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 2px;
+    }
+
+    @media (min-width: 640px) {
+        .ppid-request-primary-action {
+            width: auto;
+        }
+    }
+
+    .ppid-request-microcopy {
+        margin: 0.65rem 0 0;
+        color: var(--muted);
+        font-size: 0.8125rem;
+        line-height: 1.5;
+    }
+
+    .ppid-service-hours {
+        margin-top: 2.75rem;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-service-hours {
+            margin-top: 3.5rem;
+        }
+    }
+
+    .ppid-service-hours-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-service-hours-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 1.15rem;
+        }
+    }
+
+    .ppid-service-hour-card {
+        padding: 1.2rem 1.25rem;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 1rem;
+        box-shadow: 0 1px 2px rgb(15 23 42 / 0.03);
+    }
+
+    .ppid-service-hour-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        background: color-mix(in srgb, var(--green) 10%, #fff);
+        color: var(--green);
+        margin-bottom: 0.75rem;
+    }
+
+    .ppid-service-hour-day {
+        margin: 0;
+        font-family: var(--font-heading);
+        font-size: 1.125rem;
+        font-weight: 700;
+        line-height: 1.3;
+        color: var(--navy);
+    }
+
+    @media (min-width: 768px) {
+        .ppid-service-hour-day {
+            font-size: 1.25rem;
+        }
+    }
+
+    .ppid-service-hour-time {
+        margin: 0.45rem 0 0;
+        color: var(--navy-dark);
+        font-size: 1.0625rem;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    .ppid-service-hour-break {
+        margin: 0.3rem 0 0;
+        color: var(--muted);
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+
+    .ppid-service-hours-note {
+        margin: 1rem 0 0;
+        max-width: 46rem;
+        color: #64748b;
+        font-size: 0.8125rem;
+        line-height: 1.65;
+    }
+
+    .ppid-service-description {
+        margin-top: 2.75rem;
+        max-width: 61rem;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-service-description {
+            margin-top: 3.5rem;
+        }
+    }
+
+    .ppid-service-description-text {
+        margin: 1rem 0 0;
+        max-width: 61rem;
+        color: #334155;
+        font-size: 1rem;
+        line-height: 1.8;
+        text-align: left;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-service-description-text {
+            font-size: 1.0625rem;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .ppid-service-description-text {
+            font-size: 1.125rem;
+        }
+    }
+
+    .ppid-contact-box {
+        margin-top: 2rem;
+        max-width: 61rem;
+        padding: 1.4rem 1.35rem;
+        border-radius: 1rem;
+        border: 1px solid color-mix(in srgb, var(--green) 22%, var(--border));
+        border-left: 4px solid var(--green);
+        background: color-mix(in srgb, var(--green) 7%, #fff);
+    }
+
+    @media (min-width: 768px) {
+        .ppid-contact-box {
+            margin-top: 2.25rem;
+            padding: 1.65rem 1.75rem;
+        }
+    }
+
+    .ppid-contact-lead {
+        margin: 0;
+        color: #334155;
+        font-size: 1rem;
+        line-height: 1.75;
+    }
+
+    .ppid-contact-label {
+        margin: 0.85rem 0 0;
+        font-family: var(--font-heading);
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: var(--navy);
+    }
+
+    .ppid-contact-email {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-height: 2.75rem;
+        margin-top: 0.35rem;
+        color: var(--navy-dark);
+        font-size: 1.0625rem;
+        font-weight: 700;
+        line-height: 1.4;
+        text-decoration: none;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+    .ppid-contact-email:hover {
+        color: var(--green);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+
+    .ppid-contact-email:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 3px;
+        border-radius: 4px;
+    }
+
+    .ppid-contact-mail-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: var(--green);
+    }
+
+    .ppid-requirements {
+        margin-top: 2.75rem;
+        max-width: 61rem;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-requirements {
+            margin-top: 3.5rem;
+        }
+    }
+
+    .ppid-requirement-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        counter-reset: none;
+    }
+
+    .ppid-requirement-item {
+        display: grid;
+        grid-template-columns: 2.25rem minmax(0, 1fr);
+        gap: 1rem;
+        align-items: flex-start;
+        padding: 1rem 0;
+        border-bottom: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+    }
+
+    @media (min-width: 768px) {
+        .ppid-requirement-item {
+            grid-template-columns: 2.5rem minmax(0, 1fr);
+            gap: 1.125rem;
+            padding: 1.1rem 0;
+        }
+    }
+
+    .ppid-requirement-item:last-child {
+        border-bottom: 0;
+    }
+
+    .ppid-requirement-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 9999px;
+        background: var(--navy);
+        color: #fff;
+        font-family: var(--font-heading);
+        font-size: 0.95rem;
+        font-weight: 700;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-requirement-number {
+            width: 2.5rem;
+            height: 2.5rem;
+            font-size: 1rem;
+        }
+    }
+
+    .ppid-requirement-text {
+        margin: 0;
+        padding-top: 0.2rem;
+        color: #334155;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.75;
+        text-align: left;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-requirement-text {
+            font-size: 1.0625rem;
+            padding-top: 0.25rem;
+        }
+    }
+
+    .ppid-request-final-cta {
+        margin-top: 2.75rem;
+        padding: 1.5rem 1.35rem;
+        border: 1px solid var(--border);
+        border-radius: 1.15rem;
+        background: var(--surface);
+        max-width: 61rem;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-request-final-cta {
+            margin-top: 3.5rem;
+            padding: 2rem 2.15rem;
+        }
+    }
+
+    .ppid-request-final-text {
+        margin: 0.7rem 0 0;
+        max-width: 40rem;
+        color: #334155;
+        font-size: 1rem;
+        line-height: 1.75;
+    }
+
+    @media (min-width: 768px) {
+        .ppid-request-final-text {
+            font-size: 1.0625rem;
+        }
+    }
+
+    .ppid-request-final-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 1.15rem;
+    }
+
+    @media (min-width: 640px) {
+        .ppid-request-final-actions {
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+    }
+
+    .ppid-request-final-cta .ppid-request-primary-action {
+        margin-top: 0;
+    }
+
+    .ppid-request-secondary-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 2.75rem;
+        width: 100%;
+        padding: 0.7rem 1.15rem;
+        border: 1px solid var(--border);
+        border-radius: 0.6rem;
+        background: #fff;
+        color: var(--navy);
+        font-family: var(--font-heading);
+        font-size: 0.9375rem;
+        font-weight: 600;
+        line-height: 1.25;
+        text-decoration: none;
+        transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .ppid-request-secondary-action:hover {
+        border-color: var(--green);
+        background: #fff;
+    }
+
+    .ppid-request-secondary-action:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 2px;
+    }
+
+    @media (min-width: 640px) {
+        .ppid-request-secondary-action {
+            width: auto;
+        }
+    }
+}

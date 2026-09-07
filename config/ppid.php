@@ -104,7 +104,9 @@ return [
             'slug' => 'permohonan-informasi',
             'title' => 'Permohonan Informasi Publik',
             'excerpt' => 'Ajukan permohonan informasi publik secara resmi melalui PPID.',
-            'external_url' => null, // TODO: Google Form / e-PPID
+            // Landing page tetap di /layanan/permohonan-informasi.
+            // URL Google Form: information_request.external_url
+            'external_url' => null,
             'is_featured' => true,
             'sort_order' => 1,
         ],
@@ -148,6 +150,19 @@ return [
             'is_featured' => false,
             'sort_order' => 6,
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Formulir permohonan informasi (Google Form eksternal)
+    |--------------------------------------------------------------------------
+    */
+    'information_request' => [
+        'external_url' => env(
+            'PPID_INFORMATION_REQUEST_FORM_URL',
+            'https://docs.google.com/forms/d/e/1FAIpQLSffivoxDcFT-iDrc8eb1GKvkqhx-LenWuaQkE826D5uSbOG3A/viewform'
+        ),
+        'email' => 'humas@poltekkesbanten.ac.id',
     ],
 
     /*
