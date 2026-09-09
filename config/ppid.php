@@ -22,12 +22,42 @@ return [
     |--------------------------------------------------------------------------
     | Admin PPID (credential dari .env — jangan hardcode password di source)
     |--------------------------------------------------------------------------
+    |
+    | Jika password mengandung karakter #, tulis dengan tanda kutip di .env:
+    | PPID_ADMIN_PASSWORD="nilai-password-dengan-#"
+    |
     */
     'admin' => [
         'email' => env('PPID_ADMIN_EMAIL'),
         'username' => env('PPID_ADMIN_USERNAME'),
         'password' => env('PPID_ADMIN_PASSWORD'),
         'name' => env('PPID_ADMIN_NAME', 'Admin PPID'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tiga Admin PPID inti (protected) — identitas dari env, bukan ID database
+    |--------------------------------------------------------------------------
+    */
+    'protected_admins' => [
+        [
+            'email' => env('PPID_ADMIN_EMAIL'),
+            'username' => env('PPID_ADMIN_USERNAME'),
+            'name' => env('PPID_ADMIN_NAME', 'Admin PPID'),
+            'password' => env('PPID_ADMIN_PASSWORD'),
+        ],
+        [
+            'email' => env('PPID_ADMIN2_EMAIL'),
+            'username' => env('PPID_ADMIN2_USERNAME'),
+            'name' => env('PPID_ADMIN2_NAME'),
+            'password' => env('PPID_ADMIN2_PASSWORD'),
+        ],
+        [
+            'email' => env('PPID_ADMIN3_EMAIL'),
+            'username' => env('PPID_ADMIN3_USERNAME'),
+            'name' => env('PPID_ADMIN3_NAME'),
+            'password' => env('PPID_ADMIN3_PASSWORD'),
+        ],
     ],
 
     /*

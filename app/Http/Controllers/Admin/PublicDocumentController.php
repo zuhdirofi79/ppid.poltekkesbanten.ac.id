@@ -77,9 +77,14 @@ class PublicDocumentController extends Controller
         $document->syncSourceFlags();
         $document->save();
 
-        ActivityLog::record('uploaded', $document, 'Membuat dokumen: '.$document->title);
+        $action = $document->isAvailable() ? 'document_uploaded' : 'created';
+        ActivityLog::record($action, $document, 'Membuat dokumen: '.$document->title);
 
-        return $this->redirectAfterSave($document, 'Dokumen berhasil dibuat.');
+        $message = $document->isAvailable()
+            ? 'Dokumen berhasil dilengkapi dan telah tersedia pada portal PPID.'
+            : 'Dokumen berhasil dibuat.';
+
+        return $this->redirectAfterSave($document, $message);
     }
 
     public function edit(PublicDocument $document): View
@@ -99,14 +104,24 @@ class PublicDocumentController extends Controller
         $data['updated_by'] = $request->user()->id;
         $data = $this->handleUpload($request, $data, $document);
 
+        $wasAvailable = $document->isAvailable();
+        $hadFile = filled($document->file_path);
+
         $document->fill($data);
         $document->syncSourceFlags();
         $document->save();
 
-        ActivityLog::record('updated', $document, 'Memperbarui dokumen: '.$document->title);
+        $action = 'updated';
+        if ($request->hasFile('file')) {
+            $action = $hadFile ? 'document_replaced' : 'document_uploaded';
+        } elseif ($document->hasSafeExternalUrl() || $document->hasInternalUrl()) {
+            $action = 'document_url_updated';
+        }
 
-        $message = $document->isAvailable()
-            ? 'Dokumen berhasil diunggah dan sekarang tersedia pada halaman Informasi Berkala.'
+        ActivityLog::record($action, $document, 'Memperbarui dokumen: '.$document->title);
+
+        $message = $document->isAvailable() && (! $wasAvailable || $request->hasFile('file') || $action === 'document_url_updated')
+            ? 'Dokumen berhasil dilengkapi dan telah tersedia pada portal PPID.'
             : 'Dokumen berhasil diperbarui.';
 
         return $this->redirectAfterSave($document, $message);

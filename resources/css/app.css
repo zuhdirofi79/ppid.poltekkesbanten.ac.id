@@ -114,6 +114,10 @@ html.a11y-grayscale {
     box-shadow: 0 4px 18px rgba(23, 24, 79, 0.12);
 }
 
+.ppid-admin-dropdown {
+    max-width: calc(100vw - 24px);
+}
+
 /* Dropdown bridge — tidak tertutup saat pindah ke submenu */
 .nav-dropdown-panel {
     top: 100%;

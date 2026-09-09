@@ -46,6 +46,7 @@
     :class="{ 'is-scrolled': scrolled }"
 >
     {{-- Top bar --}}
+    <!-- PPID-ADMIN-LOGIN-NAV-DEPLOY-20260909-A -->
     <div class="bg-navy text-white">
         <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2 text-xs sm:text-sm">
             <p class="truncate font-medium tracking-wide">
@@ -60,6 +61,7 @@
                     <a href="{{ route('contact') }}" class="hover:text-gold">Kontak PPID</a>
                 @endif
                 <x-search.global-search />
+                @include('components.layout.admin-topbar')
             </div>
         </div>
     </div>
@@ -218,6 +220,17 @@
                         @endif
                     </li>
                 @endforeach
+                @if ($ppidAdminChrome['showLogin'] ?? true)
+                    <li class="border-b border-line/70 last:border-0">
+                        <a
+                            href="{{ route('admin.login') }}"
+                            class="font-heading block py-3 text-sm font-semibold text-navy"
+                            @click="closeMobileMenu()"
+                        >
+                            Login Admin
+                        </a>
+                    </li>
+                @endif
             </ul>
         </nav>
     </div>

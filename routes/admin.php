@@ -7,8 +7,10 @@ use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\InformasiBerkalaController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\Admin\PpidAdminController;
 use App\Http\Controllers\Admin\PpidDashboardController;
 use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\PublicDocumentController;
 use App\Http\Controllers\Admin\ServiceLinkController;
 use App\Http\Controllers\Admin\SiteSettingController;
@@ -28,11 +30,25 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware(['auth', EnsureUserCanAccessAdmin::class])->group(function () {
         Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
         Route::get('/', DashboardController::class)->name('dashboard');
+        Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
 
         Route::middleware(EnsureUserCanAccessAdmin::class.':manage-documents')->group(function () {
             Route::get('ppid', PpidDashboardController::class)->name('ppid.dashboard');
             Route::get('informasi-publik/berkala', [InformasiBerkalaController::class, 'index'])
                 ->name('informasi-publik.berkala');
+
+            Route::middleware('can:manage-ppid-admins')->prefix('ppid/admins')->name('ppid.admins.')->group(function () {
+                Route::get('/', [PpidAdminController::class, 'index'])->name('index');
+                Route::get('create', [PpidAdminController::class, 'create'])->name('create');
+                Route::post('/', [PpidAdminController::class, 'store'])->name('store');
+                Route::post('bulk-destroy', [PpidAdminController::class, 'bulkDestroy'])->name('bulk-destroy');
+                Route::get('{user}/edit', [PpidAdminController::class, 'edit'])->name('edit');
+                Route::put('{user}', [PpidAdminController::class, 'update'])->name('update');
+                Route::patch('{user}/disable', [PpidAdminController::class, 'disable'])->name('disable');
+                Route::patch('{user}/enable', [PpidAdminController::class, 'enable'])->name('enable');
+                Route::delete('{user}', [PpidAdminController::class, 'destroy'])->name('destroy');
+            });
 
             Route::resource('documents', PublicDocumentController::class)
                 ->except(['show'])

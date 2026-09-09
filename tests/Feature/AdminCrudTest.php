@@ -53,8 +53,8 @@ class AdminCrudTest extends TestCase
             ->post('/admin/documents', [
                 'title' => 'CONTOH Dokumen Eksternal',
                 'status' => 'published',
+                'source_type' => \App\Models\PublicDocument::SOURCE_EXTERNAL,
                 'external_url' => 'https://example.com/doc.pdf',
-                'is_external' => '1',
             ])
             ->assertRedirect(route('admin.documents.index'));
 

@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\User;
+use App\Services\PpidAdminService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -15,11 +16,11 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    public function index(): View
+    public function index(PpidAdminService $admins): View
     {
         $users = User::query()->orderBy('name')->paginate(20);
 
-        return view('admin.users.index', compact('users'));
+        return view('admin.users.index', compact('users', 'admins'));
     }
 
     public function create(): View
@@ -30,9 +31,14 @@ class UserController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, PpidAdminService $admins): RedirectResponse
     {
         $data = $this->validated($request);
+
+        if (($data['role'] ?? null) === UserRole::AdminPpid->value && ! $admins->canManagePpidAdmins($request->user())) {
+            abort(403, 'Hanya Admin PPID inti yang dapat membuat akun Admin PPID.');
+        }
+
         $data['password'] = Hash::make($data['password']);
 
         $user = User::query()->create($data);
@@ -41,17 +47,35 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('status', 'Pengguna berhasil dibuat.');
     }
 
-    public function edit(User $user): View
+    public function edit(User $user, PpidAdminService $admins): View
     {
+        if ($admins->isProtectedAdmin($user)) {
+            abort(403, 'Akun Admin PPID inti tidak dapat diubah melalui manajemen pengguna.');
+        }
+
         return view('admin.users.edit', [
             'user' => $user,
             'roles' => UserRole::cases(),
         ]);
     }
 
-    public function update(Request $request, User $user): RedirectResponse
+    public function update(Request $request, User $user, PpidAdminService $admins): RedirectResponse
     {
+        $this->authorize('update', $user);
+
+        if ($admins->isProtectedAdmin($user)) {
+            abort(403, 'Akun Admin PPID inti tidak dapat diubah melalui manajemen pengguna.');
+        }
+
         $data = $this->validated($request, $user);
+
+        if ($admins->isProtectedAdmin($user) || ($user->hasRole(UserRole::AdminPpid) && $admins->isProtectedIdentity($user->email, $user->username))) {
+            unset($data['role'], $data['is_active']);
+        }
+
+        if (($data['role'] ?? null) !== UserRole::AdminPpid->value && $user->hasRole(UserRole::AdminPpid) && $admins->isProtectedAdmin($user)) {
+            abort(403);
+        }
 
         if (! empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
@@ -65,8 +89,14 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('status', 'Pengguna berhasil diperbarui.');
     }
 
-    public function destroy(Request $request, User $user): RedirectResponse
+    public function destroy(Request $request, User $user, PpidAdminService $admins): RedirectResponse
     {
+        $this->authorize('delete', $user);
+
+        if ($admins->isProtectedAdmin($user)) {
+            abort(403, 'Akun Admin PPID inti tidak dapat dihapus.');
+        }
+
         if ($user->id === $request->user()->id) {
             return back()->withErrors(['user' => 'Tidak dapat menghapus akun Anda sendiri.']);
         }

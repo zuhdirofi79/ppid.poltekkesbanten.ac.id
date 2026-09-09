@@ -10,17 +10,14 @@ use App\Models\Post;
 use App\Models\PublicDocument;
 use App\Models\Unit;
 use App\Models\User;
+use App\Services\PpidDocumentNotificationService;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function __invoke(): View
+    public function __invoke(PpidDocumentNotificationService $notifications): View
     {
-        $berkalaMissing = PublicDocument::query()
-            ->whereHas('informationCategory', fn ($q) => $q->where('slug', 'berkala'))
-            ->get()
-            ->filter(fn (PublicDocument $doc) => ! $doc->isAvailable())
-            ->count();
+        $berkalaMissing = $notifications->missingCount();
 
         $stats = [
             'posts' => Post::query()->count(),

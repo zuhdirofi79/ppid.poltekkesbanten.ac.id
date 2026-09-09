@@ -135,8 +135,7 @@ class PpidAdminAuthTest extends TestCase
         ]);
 
         $this->artisan('ppid:ensure-admin')
-            ->expectsOutputToContain('Admin PPID account')
-            ->expectsOutputToContain('Password')
+            ->expectsOutputToContain('Protected Admin #1')
             ->doesntExpectOutputToContain('EnsurePass123!')
             ->assertSuccessful();
 

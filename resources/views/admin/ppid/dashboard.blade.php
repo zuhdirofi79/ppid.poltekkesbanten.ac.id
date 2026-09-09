@@ -10,20 +10,13 @@
 
     @if ($stats['missing'] > 0)
         <div class="mb-6 rounded-xl border border-amber-300 bg-amber-50 p-5" role="alert">
-            <p class="font-heading text-sm font-bold uppercase tracking-wide text-amber-900">Perhatian — Dokumen Wajib Dilengkapi</p>
+            <p class="font-heading text-sm font-bold uppercase tracking-wide text-amber-900">Perhatian — Dokumen Belum Lengkap</p>
             <p class="mt-2 text-sm text-amber-950">
-                Masih terdapat <strong>{{ $stats['missing'] }}</strong> dokumen Informasi Berkala yang belum tersedia.
-                Admin PPID wajib melengkapi file PDF atau URL dokumen sebelum informasi dapat dipublikasikan secara lengkap.
+                Masih terdapat <strong>{{ $stats['missing'] }}</strong> dokumen Informasi Berkala yang wajib dilengkapi.
             </p>
-            <ul class="mt-3 list-disc space-y-1 pl-5 text-sm text-amber-950">
-                @foreach ($missing as $doc)
-                    <li>
-                        {{ $doc->title }}
-                        —
-                        <a href="{{ route('admin.documents.edit', $doc) }}" class="font-semibold text-navy underline hover:text-green">Upload Dokumen</a>
-                    </li>
-                @endforeach
-            </ul>
+            <a href="{{ route('admin.informasi-publik.berkala', ['status' => 'missing']) }}" class="mt-4 inline-flex rounded-md bg-navy px-4 py-2 text-sm font-semibold text-white hover:bg-navy-dark">
+                Kelola Dokumen Sekarang
+            </a>
         </div>
     @endif
 

@@ -34,6 +34,12 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-3 text-sm">
+                    @if (($ppidAdminChrome['showBell'] ?? false) && ($ppidAdminChrome['badgeLabel'] ?? '') !== '')
+                        <a href="{{ route('admin.informasi-publik.berkala', ['status' => 'missing']) }}" class="relative rounded-md border border-line px-2 py-1.5" aria-label="{{ $ppidAdminChrome['missingCount'] }} dokumen belum lengkap">
+                            <span aria-hidden="true">🔔</span>
+                            <span class="absolute -right-1 -top-1 inline-flex min-w-[1.1rem] items-center justify-center rounded-full bg-amber-400 px-1 text-[10px] font-bold text-navy-dark">{{ $ppidAdminChrome['badgeLabel'] }}</span>
+                        </a>
+                    @endif
                     <span class="hidden text-muted sm:inline">{{ auth()->user()?->name }}</span>
                     <a href="{{ route('home') }}" class="text-green hover:underline" target="_blank" rel="noopener noreferrer">Lihat situs</a>
                     <form method="POST" action="{{ route('admin.logout') }}">

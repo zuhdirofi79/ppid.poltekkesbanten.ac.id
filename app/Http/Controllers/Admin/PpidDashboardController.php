@@ -3,33 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\PublicDocument;
-use App\Models\PublicInformationCategory;
+use App\Services\PpidDocumentNotificationService;
 use Illuminate\View\View;
 
 class PpidDashboardController extends Controller
 {
-    public function __invoke(): View
+    public function __invoke(PpidDocumentNotificationService $notifications): View
     {
-        $category = PublicInformationCategory::query()->where('slug', 'berkala')->first();
+        $documents = $notifications->berkalaDocuments();
+        $missing = $notifications->missingDocuments();
+        $available = $documents->filter(fn ($doc) => $doc->isAvailable())->values();
+        $stats = $notifications->stats();
+        $stats['required'] = $stats['missing'];
 
-        $documents = $category
-            ? PublicDocument::query()
-                ->where('public_information_category_id', $category->id)
-                ->catalogOrdered()
-                ->get()
-            : collect();
-
-        $missing = $documents->filter(fn (PublicDocument $doc) => ! $doc->isAvailable())->values();
-        $available = $documents->filter(fn (PublicDocument $doc) => $doc->isAvailable())->values();
-
-        $stats = [
-            'total' => $documents->count(),
-            'available' => $available->count(),
-            'missing' => $missing->count(),
-            'required' => $missing->count(),
-        ];
-
-        return view('admin.ppid.dashboard', compact('stats', 'missing', 'available', 'category'));
+        return view('admin.ppid.dashboard', [
+            'stats' => $stats,
+            'missing' => $missing,
+            'available' => $available,
+            'category' => null,
+        ]);
     }
 }

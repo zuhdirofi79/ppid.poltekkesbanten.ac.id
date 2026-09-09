@@ -19,9 +19,13 @@
                     <td class="px-4 py-3">{{ $user->role?->label() }}</td>
                     <td class="px-4 py-3">{{ $user->is_active ? 'Ya' : 'Tidak' }}</td>
                     <td class="px-4 py-3 text-right">
-                        <a href="{{ route('admin.users.edit', $user) }}" class="text-green hover:underline">Edit</a>
-                        @if ($user->id !== auth()->id())
+                        @if (! $admins->isProtectedAdmin($user))
+                            <a href="{{ route('admin.users.edit', $user) }}" class="text-green hover:underline">Edit</a>
+                        @endif
+                        @if ($user->id !== auth()->id() && ! $admins->isProtectedAdmin($user))
                             <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="ml-3 inline" onsubmit="return confirm('Hapus pengguna?')">@csrf @method('DELETE')<button class="text-red-600">Hapus</button></form>
+                        @elseif ($admins->isProtectedAdmin($user))
+                            <span class="ml-3 text-xs text-muted">Akun terlindungi</span>
                         @endif
                     </td>
                 </tr>

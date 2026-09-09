@@ -95,7 +95,7 @@ class Phase5PublicTest extends TestCase
         ]);
 
         $this->post('/admin/login', [
-            'email' => $email,
+            'login' => $email,
             'password' => env('SUPER_ADMIN_PASSWORD', 'qtester1234567890'),
         ])->assertRedirect(route('admin.dashboard'));
 

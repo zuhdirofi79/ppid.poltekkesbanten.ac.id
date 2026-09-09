@@ -1,4 +1,11 @@
 @php
+    $chrome = $ppidAdminChrome ?? [
+        'showBell' => false,
+        'isProtected' => false,
+        'missingCount' => 0,
+        'badgeLabel' => '',
+    ];
+
     $link = function (string $route, string $label, ?string $ability = null, string $pattern = null, ?string $badge = null) {
         if ($ability && ! auth()->user()?->can($ability)) {
             return '';
@@ -11,21 +18,14 @@
             return '';
         }
 
-        $badgeHtml = $badge !== null && $badge !== '' && (int) $badge > 0
+        $badgeHtml = $badge !== null && $badge !== '' && $badge !== '0'
             ? ' <span class="ml-1 inline-flex rounded-full bg-amber-400/90 px-1.5 py-0.5 text-[10px] font-bold text-navy-dark">'.e($badge).'</span>'
             : '';
 
         return '<a href="'.e($href).'" class="'.$class.'">'.e($label).$badgeHtml.'</a>';
     };
 
-    $missingBerkala = 0;
-    if (auth()->user()?->can('manage-documents')) {
-        $missingBerkala = \App\Models\PublicDocument::query()
-            ->whereHas('informationCategory', fn ($q) => $q->where('slug', 'berkala'))
-            ->get()
-            ->filter(fn ($doc) => ! $doc->isAvailable())
-            ->count();
-    }
+    $missingBerkala = (string) ($chrome['badgeLabel'] ?? '');
 @endphp
 
 <div class="border-b border-white/10 px-5 py-5">
@@ -34,11 +34,21 @@
 </div>
 <nav class="space-y-1 p-3 text-sm" aria-label="Menu admin">
     {!! $link('admin.dashboard', 'Dashboard') !!}
-    {!! $link('admin.ppid.dashboard', 'Dashboard PPID', 'manage-documents', 'admin.ppid.*') !!}
+    {!! $link('admin.ppid.dashboard', 'Dashboard PPID', 'manage-documents', 'admin.ppid.dashboard') !!}
 
     <p class="px-3 pt-4 text-[10px] font-bold uppercase tracking-wider text-white/40">Informasi Publik</p>
     {!! $link('admin.informasi-publik.berkala', 'Informasi Berkala', 'manage-documents', 'admin.informasi-publik.*') !!}
-    {!! $link('admin.ppid.dashboard', 'Dokumen Wajib Dilengkapi', 'manage-documents', 'admin.ppid.*', (string) $missingBerkala) !!}
+    @can('manage-documents')
+        <a
+            href="{{ route('admin.informasi-publik.berkala', ['status' => 'missing']) }}"
+            class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.informasi-publik.berkala') && request('status') === 'missing' ? 'bg-white/10 text-gold' : 'hover:bg-white/5' }}"
+        >
+            Dokumen Wajib Dilengkapi
+            @if ($missingBerkala !== '')
+                <span class="ml-1 inline-flex rounded-full bg-amber-400/90 px-1.5 py-0.5 text-[10px] font-bold text-navy-dark">{{ $missingBerkala }}</span>
+            @endif
+        </a>
+    @endcan
 
     <p class="px-3 pt-4 text-[10px] font-bold uppercase tracking-wider text-white/40">Konten</p>
     {!! $link('admin.pages.index', 'Halaman', 'manage-pages', 'admin.pages.*') !!}
@@ -52,4 +62,9 @@
     {!! $link('admin.menus.edit', 'Menu', 'manage-menus', 'admin.menus.*') !!}
     {!! $link('admin.settings.edit', 'Pengaturan', 'manage-settings', 'admin.settings.*') !!}
     {!! $link('admin.users.index', 'Pengguna', 'manage-users', 'admin.users.*') !!}
+    @if ($chrome['isProtected'] ?? false)
+        {{-- PPID-PROTECTED-ADMIN-MANAGEMENT-DEPLOY-20260909-A --}}
+        {!! $link('admin.ppid.admins.index', 'Manajemen Admin PPID', null, 'admin.ppid.admins.*') !!}
+    @endif
+    {!! $link('admin.profile.edit', 'Profil Saya', null, 'admin.profile.*') !!}
 </nav>

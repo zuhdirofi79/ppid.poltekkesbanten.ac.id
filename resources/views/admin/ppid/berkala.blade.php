@@ -5,8 +5,16 @@
 @section('content')
     <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
-            <h1 class="font-heading text-2xl font-bold text-navy">Informasi Berkala</h1>
-            <p class="mt-1 text-sm text-muted">Kelola dokumen katalog Informasi Berkala (publik: /informasi-publik/berkala).</p>
+            <h1 class="font-heading text-2xl font-bold text-navy">
+                {{ $status === 'missing' ? 'Dokumen Wajib Dilengkapi' : 'Informasi Berkala' }}
+            </h1>
+            <p class="mt-1 text-sm text-muted">
+                @if ($status === 'missing')
+                    {{ $stats['missing'] }} dokumen Informasi Berkala belum tersedia.
+                @else
+                    Kelola dokumen katalog Informasi Berkala (publik: /informasi-publik/berkala).
+                @endif
+            </p>
         </div>
         <a href="{{ route('admin.ppid.dashboard') }}" class="text-sm font-semibold text-green hover:underline">← Dashboard PPID</a>
     </div>
@@ -14,6 +22,12 @@
     @if (session('status'))
         <div class="mb-4 rounded-md border border-green/30 bg-green/5 px-4 py-3 text-sm text-navy" role="status">{{ session('status') }}</div>
     @endif
+
+    <div class="mb-6 flex flex-wrap gap-2 text-sm">
+        <a href="{{ route('admin.informasi-publik.berkala') }}" class="rounded-full px-3 py-1.5 {{ $status === 'all' ? 'bg-navy text-white' : 'border border-line text-navy hover:border-green' }}">Semua</a>
+        <a href="{{ route('admin.informasi-publik.berkala', ['status' => 'available']) }}" class="rounded-full px-3 py-1.5 {{ $status === 'available' ? 'bg-navy text-white' : 'border border-line text-navy hover:border-green' }}">Tersedia</a>
+        <a href="{{ route('admin.informasi-publik.berkala', ['status' => 'missing']) }}" class="rounded-full px-3 py-1.5 {{ $status === 'missing' ? 'bg-navy text-white' : 'border border-line text-navy hover:border-green' }}">Belum Tersedia</a>
+    </div>
 
     <div class="mb-6 grid gap-4 sm:grid-cols-3">
         <div class="rounded-xl border border-line bg-white p-4">
@@ -69,4 +83,8 @@
             </ul>
         </section>
     @endforeach
+
+    @if ($sections->isEmpty())
+        <p class="rounded-xl border border-line bg-white px-5 py-8 text-center text-sm text-muted">Tidak ada dokumen pada filter ini.</p>
+    @endif
 @endsection

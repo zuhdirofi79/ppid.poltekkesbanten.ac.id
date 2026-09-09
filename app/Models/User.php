@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\UserRole;
+use App\Services\PpidAdminService;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -50,5 +51,22 @@ class User extends Authenticatable
     public function canDo(string $ability): bool
     {
         return $this->isActive() && $this->role?->can($ability) === true;
+    }
+
+    public function isProtectedPpidAdmin(): bool
+    {
+        return app(PpidAdminService::class)->isProtectedAdmin($this);
+    }
+
+    public function initials(): string
+    {
+        $parts = preg_split('/\s+/', trim((string) $this->name)) ?: [];
+        $letters = '';
+
+        foreach (array_slice($parts, 0, 2) as $part) {
+            $letters .= mb_strtoupper(mb_substr($part, 0, 1));
+        }
+
+        return $letters !== '' ? $letters : 'A';
     }
 }

@@ -8,10 +8,34 @@ document.addEventListener('alpine:init', () => {
         openDesktop: null,
         openMobile: null,
         scrolled: false,
+        bellOpen: false,
+        profileOpen: false,
 
         init() {
             this.onScroll();
             window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+            window.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    this.closeAdminMenus();
+                }
+            });
+        },
+
+        toggleBell() {
+            this.bellOpen = !this.bellOpen;
+            this.profileOpen = false;
+            this.openDesktop = null;
+        },
+
+        toggleProfile() {
+            this.profileOpen = !this.profileOpen;
+            this.bellOpen = false;
+            this.openDesktop = null;
+        },
+
+        closeAdminMenus() {
+            this.bellOpen = false;
+            this.profileOpen = false;
         },
 
         onScroll() {

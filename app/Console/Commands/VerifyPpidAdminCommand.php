@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Policies\UserPolicy;
+use App\Services\PpidAdminService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 
@@ -11,63 +13,113 @@ class VerifyPpidAdminCommand extends Command
 {
     protected $signature = 'ppid:verify-admin';
 
-    protected $description = 'Verify Admin PPID account without printing the password';
+    protected $description = 'Verify protected Admin PPID accounts and protection rules without printing the password';
 
-    public function handle(): int
+    public function handle(PpidAdminService $admins, UserPolicy $policy): int
     {
-        $email = trim((string) config('ppid.admin.email'));
-        $username = trim((string) config('ppid.admin.username'));
-        $password = (string) config('ppid.admin.password');
-
-        $this->info('Admin PPID Verification');
-        $this->line('-----------------------');
+        $this->info('Protected PPID Admins');
+        $this->line('---------------------');
 
         $failures = 0;
+        $protectedUsers = [];
 
-        if ($email === '' || $username === '' || $password === '') {
-            $this->error('Config ................ FAIL (env incomplete)');
+        foreach ($admins->slots() as $slot) {
+            $n = $slot['index'];
 
-            return self::FAILURE;
+            if ($slot['partial']) {
+                $this->line(sprintf('Admin %d config ......... FAIL', $n));
+                $failures++;
+
+                continue;
+            }
+
+            if (! $slot['complete']) {
+                $this->line(sprintf('Admin %d account ........ SKIP', $n));
+                $this->line(sprintf('Admin %d role ........... SKIP', $n));
+
+                continue;
+            }
+
+            $user = $admins->findBySlot($slot);
+            $accountOk = $user !== null;
+            $this->line(sprintf('Admin %d account ........ %s', $n, $accountOk ? 'PASS' : 'FAIL'));
+
+            if (! $accountOk) {
+                $failures++;
+                $this->line(sprintf('Admin %d role ........... FAIL', $n));
+                $failures++;
+
+                continue;
+            }
+
+            $protectedUsers[] = $user;
+
+            $roleOk = $user->role === UserRole::AdminPpid && $user->is_active;
+            $this->line(sprintf('Admin %d role ........... %s', $n, $roleOk ? 'PASS' : 'FAIL'));
+            if (! $roleOk) {
+                $failures++;
+            }
+
+            $identityOk = strcasecmp((string) $user->email, $slot['email']) === 0
+                && (string) $user->username === $slot['username'];
+            if (! $identityOk) {
+                $this->line(sprintf('Admin %d identity ....... FAIL', $n));
+                $failures++;
+            }
+
+            $passwordOk = Hash::check($slot['password'], $user->password);
+            $this->line(sprintf('Admin %d password ....... %s', $n, $passwordOk ? 'VALID' : 'FAIL'));
+            if (! $passwordOk) {
+                $failures++;
+            }
         }
 
-        $user = User::query()->where('email', $email)->orWhere('username', $username)->first();
-
-        $accountOk = $user !== null;
-        $this->line('Account exists ........ '.($accountOk ? 'PASS' : 'FAIL'));
-        if (! $accountOk) {
-            return self::FAILURE;
-        }
-
-        $emailOk = $user->email === $email;
-        $this->line('Email ................ '.($emailOk ? 'PASS' : 'FAIL'));
-        if (! $emailOk) {
-            $failures++;
-        }
-
-        $usernameOk = $user->username === $username;
-        $this->line('Username .............. '.($usernameOk ? 'PASS' : 'FAIL'));
-        if (! $usernameOk) {
-            $failures++;
-        }
-
-        $roleOk = $user->role === UserRole::AdminPpid;
-        $this->line('Role .................. '.($roleOk ? 'PASS' : 'FAIL'));
-        if (! $roleOk) {
-            $failures++;
-        }
-
-        $passwordOk = Hash::check($password, $user->password);
-        $this->line('Password hash ......... '.($passwordOk ? 'VALID' : 'FAIL'));
-        if (! $passwordOk) {
-            $failures++;
-        }
-
-        $activeOk = $user->is_active;
-        $this->line('Active ................ '.($activeOk ? 'PASS' : 'FAIL'));
-        if (! $activeOk) {
+        $protectionOk = $this->protectionHolds($policy, $admins, $protectedUsers);
+        $this->line('Protection rules ....... '.($protectionOk ? 'PASS' : 'FAIL'));
+        if (! $protectionOk) {
             $failures++;
         }
 
         return $failures === 0 ? self::SUCCESS : self::FAILURE;
+    }
+
+    /**
+     * @param  list<User>  $protectedUsers
+     */
+    private function protectionHolds(UserPolicy $policy, PpidAdminService $admins, array $protectedUsers): bool
+    {
+        if ($protectedUsers === []) {
+            return true;
+        }
+
+        foreach ($protectedUsers as $actor) {
+            if (! $admins->isProtectedAdmin($actor)) {
+                return false;
+            }
+
+            if (! $admins->canManagePpidAdmins($actor)) {
+                return false;
+            }
+
+            foreach ($protectedUsers as $target) {
+                if ($policy->deleteAdmin($actor, $target) !== false) {
+                    return false;
+                }
+
+                if ($policy->disableAdmin($actor, $target) !== false) {
+                    return false;
+                }
+
+                if ($policy->removeRole($actor, $target) !== false) {
+                    return false;
+                }
+
+                if ($policy->updateAdmin($actor, $target) !== false) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
