@@ -147,7 +147,9 @@ class GlobalSearchService
         $year = ctype_digit($query) ? (int) $query : null;
 
         $rows = PublicDocument::query()
-            ->published()
+            ->where(function ($q) {
+                $q->published()->orWhere(fn ($catalog) => $catalog->inBerkalaCatalog());
+            })
             ->with(['informationCategory', 'documentCategory'])
             ->where(function ($q) use ($like, $year) {
                 $q->whereRaw('LOWER(title) LIKE ?', [$like])

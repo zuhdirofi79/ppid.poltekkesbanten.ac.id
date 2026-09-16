@@ -55,22 +55,26 @@ class InformasiBerkalaSeeder extends Seeder
                 ],
             );
 
-            // Metadata aman — jangan menimpa file/URL yang sudah dilengkapi admin.
-            $document->fill([
-                'title' => $item['title'],
+            $hasResource = filled($document->file_path)
+                || filled($document->external_url)
+                || filled($document->internal_url);
+
+            $metadata = [
                 'public_information_category_id' => $category->id,
                 'document_category_id' => $docCategory?->id,
-                'section_title' => $item['section_title'],
                 'year' => $item['year'] ?? $document->year,
                 'sort_order' => ($index + 1) * 10,
                 'status' => 'published',
                 'published_at' => $document->published_at ?? now(),
                 'updated_by' => $admin?->id,
-            ]);
+            ];
 
-            $hasResource = filled($document->file_path)
-                || filled($document->external_url)
-                || filled($document->internal_url);
+            if (! $hasResource) {
+                $metadata['title'] = $item['title'];
+                $metadata['section_title'] = $item['section_title'];
+            }
+
+            $document->fill($metadata);
 
             if (! $hasResource) {
                 $document->source_type = $item['source_type'];

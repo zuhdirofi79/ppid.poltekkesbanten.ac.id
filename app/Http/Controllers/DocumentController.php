@@ -61,7 +61,14 @@ class DocumentController extends Controller
 
     public function download(Request $request, string $slug): StreamedResponse|RedirectResponse
     {
-        $document = PublicDocument::query()->published()->where('slug', $slug)->firstOrFail();
+        $document = PublicDocument::query()
+            ->with('informationCategory')
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        if (! $document->isPubliclyDownloadable()) {
+            abort(404, 'Berkas tidak ditemukan.');
+        }
 
         if ($document->is_external && filled($document->external_url)) {
             $this->logDownload($request, $document);

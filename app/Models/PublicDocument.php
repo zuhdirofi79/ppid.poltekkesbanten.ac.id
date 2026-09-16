@@ -69,6 +69,57 @@ class PublicDocument extends Model
         return $query->orderBy('sort_order')->orderBy('title');
     }
 
+    /**
+     * Katalog DIP Informasi Berkala: seluruh baris kategori berkala aktif.
+     * Tidak memakai scopePublished — admin dan publik harus melihat set yang sama.
+     */
+    public function scopeInBerkalaCatalog(Builder $query): Builder
+    {
+        return $query->whereHas('informationCategory', function (Builder $q) {
+            $q->where('slug', 'berkala')->where('is_active', true);
+        });
+    }
+
+    public function isBerkalaCatalogItem(): bool
+    {
+        $category = $this->informationCategory
+            ?? ($this->public_information_category_id
+                ? PublicInformationCategory::query()->find($this->public_information_category_id)
+                : null);
+
+        return $category?->slug === 'berkala' && $category->is_active;
+    }
+
+    /**
+     * Alasan dokumen masuk query admin tetapi lolos dari scopePublished() publik.
+     */
+    public function publishedScopeExclusionReason(): ?string
+    {
+        if ($this->status !== 'published') {
+            return 'status='.(string) $this->status;
+        }
+
+        if ($this->published_at && $this->published_at->gt(now())) {
+            return 'published_at_future='.$this->published_at->toDateTimeString();
+        }
+
+        return null;
+    }
+
+    public function isPubliclyDownloadable(): bool
+    {
+        if (! $this->isAvailable()) {
+            return false;
+        }
+
+        if ($this->isBerkalaCatalogItem()) {
+            return true;
+        }
+
+        return $this->status === 'published'
+            && ($this->published_at === null || $this->published_at->lte(now()));
+    }
+
     public function isAvailable(): bool
     {
         return $this->hasUploadedFile()

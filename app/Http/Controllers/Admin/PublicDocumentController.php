@@ -11,6 +11,7 @@ use App\Models\PublicInformationCategory;
 use App\Support\UniqueSlug;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -68,6 +69,7 @@ class PublicDocumentController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $this->validated($request);
+        $data = $this->syncBerkalaPublicState($data);
         $data['slug'] = UniqueSlug::make($data['slug'] ?? $data['title'], PublicDocument::class);
         $data['created_by'] = $request->user()->id;
         $data['updated_by'] = $request->user()->id;
@@ -100,6 +102,7 @@ class PublicDocumentController extends Controller
     public function update(Request $request, PublicDocument $document): RedirectResponse
     {
         $data = $this->validated($request, $document);
+        $data = $this->syncBerkalaPublicState($data, $document);
         $data['slug'] = UniqueSlug::make($data['slug'] ?? $data['title'], PublicDocument::class, $document->id);
         $data['updated_by'] = $request->user()->id;
         $data = $this->handleUpload($request, $data, $document);
@@ -265,6 +268,40 @@ class PublicDocumentController extends Controller
         $data['sort_order'] = (int) ($data['sort_order'] ?? $document?->sort_order ?? 0);
 
         unset($data['file']);
+
+        return $data;
+    }
+
+    /**
+     * Katalog Informasi Berkala adalah daftar publik wajib. Upload/lengkapi sumber
+     * tidak boleh menenggelamkan baris dari portal karena status draft atau
+     * published_at di masa depan (datetime-local vs timezone UTC).
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function syncBerkalaPublicState(array $data, ?PublicDocument $document = null): array
+    {
+        $categoryId = $data['public_information_category_id'] ?? $document?->public_information_category_id;
+        if (! $categoryId) {
+            return $data;
+        }
+
+        $isBerkala = PublicInformationCategory::query()
+            ->whereKey($categoryId)
+            ->where('slug', 'berkala')
+            ->exists();
+
+        if (! $isBerkala) {
+            return $data;
+        }
+
+        $data['status'] = 'published';
+
+        $publishedAt = $data['published_at'] ?? null;
+        if (empty($publishedAt) || Carbon::parse($publishedAt)->isFuture()) {
+            $data['published_at'] = now();
+        }
 
         return $data;
     }

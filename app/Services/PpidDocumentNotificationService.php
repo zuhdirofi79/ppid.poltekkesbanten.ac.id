@@ -14,7 +14,7 @@ class PpidDocumentNotificationService
     public const CACHE_SECONDS = 45;
 
     /**
-     * Katalog Informasi Berkala yang tampil di portal publik (published + kategori aktif).
+     * Katalog Informasi Berkala yang tampil di portal publik (seluruh baris kategori berkala aktif).
      *
      * @return Collection<int, PublicDocument>
      */
@@ -30,8 +30,7 @@ class PpidDocumentNotificationService
         }
 
         return PublicDocument::query()
-            ->where('public_information_category_id', $category->id)
-            ->published()
+            ->inBerkalaCatalog()
             ->catalogOrdered()
             ->get();
     }

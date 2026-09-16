@@ -27,8 +27,7 @@ class InformationController extends Controller
 
         if ($slug === 'berkala') {
             $documents = PublicDocument::query()
-                ->published()
-                ->where('public_information_category_id', $category->id)
+                ->inBerkalaCatalog()
                 ->catalogOrdered()
                 ->get();
 

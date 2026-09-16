@@ -4,6 +4,7 @@
 
 @section('content')
 <!-- PPID-INFORMASI-BERKALA-DEPLOY-20260904-A -->
+<!-- PPID-BERKALA-PUBLIC-SYNC-FIX-20260916-A -->
 <div class="border-b border-line bg-surface">
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <nav class="mb-3 text-sm text-muted" aria-label="Breadcrumb">
