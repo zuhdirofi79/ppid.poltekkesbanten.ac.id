@@ -392,6 +392,16 @@ return [
             'children' => [],
         ],
         [
+            'label' => 'SOP & Layanan',
+            'route' => null,
+            'children' => [
+                // Hanya resource publik yang sudah ada, terbit, dan dapat diakses.
+                ['label' => 'Permohonan Informasi Publik', 'route' => 'services.show', 'params' => ['slug' => 'permohonan-informasi']],
+                ['label' => 'Pengajuan Keberatan', 'route' => 'services.show', 'params' => ['slug' => 'pengajuan-keberatan']],
+                ['label' => 'Maklumat Pelayanan', 'route' => 'profil.maklumat-pelayanan', 'params' => []],
+            ],
+        ],
+        [
             'label' => 'FAQ',
             'route' => 'faqs.index',
             'children' => [],

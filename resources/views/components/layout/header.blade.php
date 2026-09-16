@@ -22,14 +22,28 @@
         }
     };
 
-    $isActive = function (array $item) use ($resolveUrl): bool {
+    $isChildActive = function (array $child): bool {
+        $route = $child['route'] ?? null;
+        if (! $route || ! request()->routeIs($route)) {
+            return false;
+        }
+
+        foreach ($child['params'] ?? [] as $key => $value) {
+            if ((string) request()->route($key) !== (string) $value) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    $isActive = function (array $item) use ($isChildActive): bool {
         if (($item['route'] ?? null) === 'home') {
             return request()->routeIs('home');
         }
 
         foreach ($item['children'] ?? [] as $child) {
-            $route = $child['route'] ?? null;
-            if ($route && request()->routeIs($route)) {
+            if ($isChildActive($child)) {
                 return true;
             }
         }
@@ -100,10 +114,12 @@
             </button>
 
             <nav class="hidden lg:block" aria-label="Navigasi utama">
+                <!-- PPID-SOP-LAYANAN-NAV-DEPLOY-20260916-A -->
                 <ul class="flex items-center gap-1">
                     @foreach ($navigation as $index => $item)
                         @php
                             $key = 'd'.$index;
+                            $panelId = 'nav-dropdown-'.$key;
                             $hasChildren = ! empty($item['children']);
                             $active = $isActive($item);
                             $href = $resolveUrl($item);
@@ -117,11 +133,12 @@
                             @if ($hasChildren)
                                 <button
                                     type="button"
-                                    class="font-heading inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-semibold transition {{ $active ? 'text-green' : 'text-navy hover:text-green' }}"
+                                    class="font-heading inline-flex items-center gap-1 whitespace-nowrap rounded-md px-3 py-2 text-sm font-semibold transition {{ $active ? 'text-green' : 'text-navy hover:text-green' }}"
                                     @click="toggleDesktop('{{ $key }}')"
                                     @keydown.escape="closeDesktop()"
                                     :aria-expanded="(openDesktop === '{{ $key }}').toString()"
                                     aria-haspopup="true"
+                                    aria-controls="{{ $panelId }}"
                                     @if ($active) aria-current="page" @endif
                                 >
                                     {{ $item['label'] }}
@@ -130,6 +147,7 @@
                                     </svg>
                                 </button>
                                 <div
+                                    id="{{ $panelId }}"
                                     x-cloak
                                     x-show="openDesktop === '{{ $key }}'"
                                     x-transition.opacity.duration.150ms
@@ -153,7 +171,7 @@
                             @else
                                 <a
                                     href="{{ $href }}"
-                                    class="font-heading inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold transition {{ $active ? 'text-green' : 'text-navy hover:text-green' }}"
+                                    class="font-heading inline-flex items-center whitespace-nowrap rounded-md px-3 py-2 text-sm font-semibold transition {{ $active ? 'text-green' : 'text-navy hover:text-green' }}"
                                     @if ($active) aria-current="page" @endif
                                 >
                                     {{ $item['label'] }}
@@ -179,6 +197,7 @@
                 @foreach ($navigation as $index => $item)
                     @php
                         $key = 'm'.$index;
+                        $panelId = 'nav-mobile-'.$key;
                         $hasChildren = ! empty($item['children']);
                         $active = $isActive($item);
                     @endphp
@@ -189,13 +208,16 @@
                                 class="font-heading flex w-full items-center justify-between py-3 text-left text-sm font-semibold {{ $active ? 'text-green' : 'text-navy' }}"
                                 @click="toggleMobile('{{ $key }}')"
                                 :aria-expanded="(openMobile === '{{ $key }}').toString()"
+                                aria-haspopup="true"
+                                aria-controls="{{ $panelId }}"
+                                @if ($active) aria-current="page" @endif
                             >
                                 <span>{{ $item['label'] }}</span>
                                 <svg class="h-4 w-4 transition" :class="openMobile === '{{ $key }}' ? 'rotate-180' : ''" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path d="M5.25 7.5 10 12.25 14.75 7.5" />
                                 </svg>
                             </button>
-                            <ul x-cloak x-show="openMobile === '{{ $key }}'" x-transition class="space-y-1 pb-3 pl-3">
+                            <ul id="{{ $panelId }}" x-cloak x-show="openMobile === '{{ $key }}'" x-transition class="space-y-1 pb-3 pl-3">
                                 @foreach ($item['children'] as $child)
                                     <li>
                                         <a
