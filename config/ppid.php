@@ -187,6 +187,14 @@ return [
             'is_featured' => false,
             'sort_order' => 7,
         ],
+        [
+            'slug' => 'alur-pengajuan-sengketa',
+            'title' => 'Tata Cara Pengajuan Permohonan Penyelesaian Sengketa Ke Komisi Informasi',
+            'excerpt' => 'Pelajari tahapan penyelesaian sengketa informasi publik melalui Komisi Informasi.',
+            'external_url' => null,
+            'is_featured' => false,
+            'sort_order' => 8,
+        ],
     ],
 
     /*
@@ -378,6 +386,7 @@ return [
                 ['label' => 'Surat Keterangan', 'route' => 'services.show', 'params' => ['slug' => 'surat-keterangan']],
                 ['label' => 'Alur Permohonan Informasi', 'route' => 'services.show', 'params' => ['slug' => 'alur-permohonan-informasi']],
                 ['label' => 'Alur Pengajuan Keberatan', 'route' => 'services.show', 'params' => ['slug' => 'alur-pengajuan-keberatan']],
+                ['label' => 'Tata Cara Pengajuan Permohonan Penyelesaian Sengketa Ke Komisi Informasi', 'route' => 'services.show', 'params' => ['slug' => 'alur-pengajuan-sengketa']],
             ],
         ],
         [

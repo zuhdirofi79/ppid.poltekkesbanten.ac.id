@@ -2,17 +2,21 @@
 
 @php
     $serviceSlug = (string) ($service['slug'] ?? '');
-    $documentTitle = $serviceSlug === 'alur-pengajuan-keberatan'
-        ? 'Alur Pengajuan Keberatan | '.config('ppid.name')
-        : $title.' — '.config('ppid.name');
-    $metaDescription = $serviceSlug === 'alur-pengajuan-keberatan'
-        ? 'Tahapan dan tata cara pengajuan keberatan atas layanan informasi publik PPID Poltekkes Kemenkes Banten.'
-        : ($description ?? config('ppid.name_long'));
+    $documentTitle = match ($serviceSlug) {
+        'alur-pengajuan-keberatan' => 'Alur Pengajuan Keberatan | '.config('ppid.name'),
+        'alur-pengajuan-sengketa' => 'Tata Cara Pengajuan Permohonan Penyelesaian Sengketa Ke Komisi Informasi | '.config('ppid.name'),
+        default => $title.' — '.config('ppid.name'),
+    };
+    $metaDescription = match ($serviceSlug) {
+        'alur-pengajuan-keberatan' => 'Tahapan dan tata cara pengajuan keberatan atas layanan informasi publik PPID Poltekkes Kemenkes Banten.',
+        'alur-pengajuan-sengketa' => 'Pelajari tahapan penyelesaian sengketa informasi publik melalui Komisi Informasi.',
+        default => $description ?? config('ppid.name_long'),
+    };
 @endphp
 
 @section('title', $documentTitle)
 @section('meta_description', $metaDescription)
-@if ($serviceSlug === 'alur-pengajuan-keberatan')
+@if (in_array($serviceSlug, ['alur-pengajuan-keberatan', 'alur-pengajuan-sengketa'], true))
     @section('og_title', $documentTitle)
     @section('og_description', $metaDescription)
 @endif
@@ -49,6 +53,8 @@
         @include('pages.partials.alur-permohonan-informasi')
     @elseif (($service['slug'] ?? '') === 'alur-pengajuan-keberatan')
         @include('pages.partials.alur-pengajuan-keberatan')
+    @elseif (($service['slug'] ?? '') === 'alur-pengajuan-sengketa')
+        @include('pages.partials.alur-pengajuan-sengketa')
     @else
         <div class="mx-auto max-w-3xl px-4 py-10">
             <div class="rounded-xl border border-line bg-white p-6 shadow-sm">

@@ -123,6 +123,9 @@
                             $hasChildren = ! empty($item['children']);
                             $active = $isActive($item);
                             $href = $resolveUrl($item);
+                            $wideMenu = collect($item['children'] ?? [])->contains(
+                                fn (array $child) => mb_strlen((string) ($child['label'] ?? '')) > 42
+                            );
                         @endphp
                         <li
                             class="relative"
@@ -154,7 +157,7 @@
                                     class="nav-dropdown-panel absolute left-0 z-50 min-w-[16rem]"
                                     @keydown.escape="closeDesktop()"
                                 >
-                                    <ul class="rounded-lg border border-line bg-white py-2 shadow-lg" role="menu">
+                                    <ul class="rounded-lg border border-line bg-white py-2 shadow-lg" role="menu" @if ($wideMenu) style="width: min(22rem, calc(100vw - 2rem))" @endif>
                                         @foreach ($item['children'] as $child)
                                             <li role="none">
                                                 <a
