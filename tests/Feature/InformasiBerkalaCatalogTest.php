@@ -42,6 +42,7 @@ class InformasiBerkalaCatalogTest extends TestCase
         $response->assertSee('LAKIN Poltekkes Kemenkes Banten 2022', false);
         $response->assertSee('LAKIN Poltekkes Kemenkes Banten 2023', false);
         $response->assertSee('LAKIN Poltekkes Kemenkes Banten 2024', false);
+        $response->assertSee('LAKIN Poltekkes Kemenkes Banten 2025', false);
         $response->assertSee('Perjanjian Kinerja Tahun 2023', false);
         $response->assertSee('Perjanjian Kinerja Tahun 2024', false);
         $response->assertSee('Perjanjian Kinerja Tahun 2025', false);
@@ -108,13 +109,57 @@ class InformasiBerkalaCatalogTest extends TestCase
         $html = $response->getContent();
 
         $this->assertMatchesRegularExpression(
-            '/LAKIN Poltekkes Kemenkes Banten 2023[\s\S]*?Dokumen belum tersedia/',
+            '/LAKIN Poltekkes Kemenkes Banten 2025[\s\S]*?Dokumen belum tersedia/',
             $html,
         );
 
-        $pos = strpos($html, 'LAKIN Poltekkes Kemenkes Banten 2023');
+        $pos = strpos($html, 'LAKIN Poltekkes Kemenkes Banten 2025');
         $chunk = substr($html, $pos, 800);
         $this->assertStringNotContainsString('Lihat Dokumen', $chunk);
+    }
+
+    #[Test]
+    public function lakin_section_drops_empty_duplicates_when_available_file_exists(): void
+    {
+        $this->seedCatalog();
+
+        $empty2023 = PublicDocument::query()
+            ->where('slug', 'lakin-poltekkes-kemenkes-banten-2023')
+            ->firstOrFail();
+        $this->assertFalse($empty2023->isAvailable());
+
+        PublicDocument::query()->create([
+            'title' => 'LAKIP Poltekkes Kemenkes Banten 2023',
+            'slug' => 'lakip-poltekkes-kemenkes-banten-2023',
+            'public_information_category_id' => $empty2023->public_information_category_id,
+            'document_category_id' => $empty2023->document_category_id,
+            'section_title' => 'Laporan Kinerja (LAKIN) Poltekkes Kemenkes Banten',
+            'year' => 2023,
+            'source_type' => PublicDocument::SOURCE_UPLOADED,
+            'file_path' => 'ppid/documents/2026/09/lakip-2023.pdf',
+            'file_name' => 'lakip-2023.pdf',
+            'status' => 'published',
+            'published_at' => now(),
+            'sort_order' => 55,
+        ]);
+
+        $this->seed(InformasiBerkalaSeeder::class);
+
+        $this->assertNull(
+            PublicDocument::query()->where('slug', 'lakin-poltekkes-kemenkes-banten-2023')->whereNull('file_path')->first()
+        );
+        $this->assertNull(PublicDocument::query()->where('title', 'LAKIN Poltekkes Kemenkes Banten 2023')->whereNull('file_path')->whereNull('external_url')->first());
+
+        $available = PublicDocument::query()
+            ->where('title', 'LAKIN Poltekkes Kemenkes Banten 2023')
+            ->first();
+        $this->assertNotNull($available);
+        $this->assertTrue($available->isAvailable());
+
+        $html = $this->get('/informasi-publik/berkala')->assertOk()->getContent();
+        $this->assertSame(1, substr_count($html, 'LAKIN Poltekkes Kemenkes Banten 2023'));
+        $this->assertStringNotContainsString('LAKIP Poltekkes Kemenkes Banten 2023', $html);
+        $this->assertStringContainsString('LAKIN Poltekkes Kemenkes Banten 2025', $html);
     }
 
     #[Test]
