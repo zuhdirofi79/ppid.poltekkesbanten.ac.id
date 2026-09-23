@@ -135,6 +135,13 @@ class InformasiBerkalaSeeder extends Seeder
                 'year' => 2025,
             ],
             [
+                'section_title' => 'Rencana Kerja dan Anggaran',
+                'title' => 'Rencana Kerja dan Anggaran 2026',
+                'source_type' => PublicDocument::SOURCE_UPLOADED,
+                'admin_notice' => 'Dokumen Rencana Kerja dan Anggaran 2026 (RBA Tahun 2026) wajib diunggah oleh Admin PPID.',
+                'year' => 2026,
+            ],
+            [
                 'section_title' => 'Laporan Kinerja (LAKIN) Poltekkes Kemenkes Banten',
                 'title' => 'LAKIN Poltekkes Kemenkes Banten 2022',
                 'source_type' => PublicDocument::SOURCE_EXTERNAL,

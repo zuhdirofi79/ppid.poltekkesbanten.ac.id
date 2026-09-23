@@ -37,6 +37,8 @@ class InformasiBerkalaCatalogTest extends TestCase
         $response->assertSee('RAK Poltekkes Banten 2020–2024', false);
         $response->assertSee('RSB Poltekkes Banten 2022–2026', false);
         $response->assertSee('RSB Poltekkes Banten 2025–2029', false);
+        $response->assertSee('Rencana Kerja dan Anggaran', false);
+        $response->assertSee('Rencana Kerja dan Anggaran 2026', false);
         $response->assertSee('LAKIN Poltekkes Kemenkes Banten 2022', false);
         $response->assertSee('LAKIN Poltekkes Kemenkes Banten 2023', false);
         $response->assertSee('LAKIN Poltekkes Kemenkes Banten 2024', false);
@@ -55,8 +57,46 @@ class InformasiBerkalaCatalogTest extends TestCase
         $this->assertStringContainsString('https://poltekkesbanten.ac.id/wp-content/uploads/2026/06/RAK-Poltekkes-Banten-2020-2024.pdf', $html);
         $this->assertStringContainsString('/halaman/akreditasi', $html);
 
+        // Section order: RSB → Rencana Kerja dan Anggaran → LAKIN
+        $posRsb = strpos($html, 'Rencana Strategis Bisnis (RSB) Poltekkes Kemenkes Banten');
+        $posRka = strpos($html, 'Rencana Kerja dan Anggaran');
+        $posLakin = strpos($html, 'Laporan Kinerja (LAKIN) Poltekkes Kemenkes Banten');
+        $this->assertNotFalse($posRsb);
+        $this->assertNotFalse($posRka);
+        $this->assertNotFalse($posLakin);
+        $this->assertTrue($posRsb < $posRka && $posRka < $posLakin);
+
         // Missing docs must not be wrapped as clickable href to empty destinations.
         $this->assertSame(1, preg_match_all('/<h1\b/i', $html));
+    }
+
+    #[Test]
+    public function rencana_kerja_anggaran_2026_is_missing_until_admin_upload(): void
+    {
+        $this->seedCatalog();
+
+        $doc = PublicDocument::query()
+            ->where('slug', PublicDocument::makeCatalogSlug('Rencana Kerja dan Anggaran 2026'))
+            ->first();
+
+        $this->assertNotNull($doc);
+        $this->assertSame('Rencana Kerja dan Anggaran', $doc->section_title);
+        $this->assertSame(PublicDocument::SOURCE_UPLOADED, $doc->source_type);
+        $this->assertFalse($doc->isAvailable());
+
+        $html = $this->get('/informasi-publik/berkala')->assertOk()->getContent();
+        $pos = strpos($html, 'Rencana Kerja dan Anggaran 2026');
+        $this->assertNotFalse($pos);
+        $chunk = substr($html, $pos, 800);
+        $this->assertStringContainsString('Dokumen belum tersedia', $chunk);
+        $this->assertStringNotContainsString('Lihat Dokumen', $chunk);
+
+        $admin = User::factory()->adminPpid()->create();
+        $this->actingAs($admin)
+            ->get(route('admin.informasi-publik.berkala', ['status' => 'missing']))
+            ->assertOk()
+            ->assertSee('Rencana Kerja dan Anggaran 2026', false)
+            ->assertSee('WAJIB UNGGAH', false);
     }
 
     #[Test]
