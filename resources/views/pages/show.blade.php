@@ -40,6 +40,16 @@
             ])
             @break
 
+        @case('struktur-organisasi')
+            @include('pages.partials.struktur-organisasi', [
+                'page' => $page,
+                'title' => $title ?? $page->title,
+                'excerpt' => $excerpt ?? $page->excerpt,
+                'label' => $label ?? null,
+                'breadcrumbs' => $breadcrumbs ?? [],
+            ])
+            @break
+
         @default
             @if (($page->slug ?? '') === 'akreditasi')
                 <!-- PPID-AKREDITASI-DEPLOY-20260904-A -->

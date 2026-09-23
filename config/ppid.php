@@ -343,8 +343,8 @@ return [
                 ['label' => 'Dasar Hukum dan SK PPID', 'route' => 'pages.show', 'params' => ['slug' => 'dasar-hukum-sk-ppid']],
                 ['label' => 'Visi dan Misi', 'route' => 'pages.show', 'params' => ['slug' => 'visi-dan-misi']],
                 ['label' => 'Tugas, Fungsi, dan Wewenang', 'route' => 'pages.show', 'params' => ['slug' => 'tugas-fungsi-wewenang']],
-                ['label' => 'Struktur Organisasi', 'route' => 'pages.show', 'params' => ['slug' => 'struktur-organisasi']],
                 ['label' => 'Maklumat Pelayanan', 'route' => 'profil.maklumat-pelayanan', 'params' => []],
+                ['label' => 'Struktur Organisasi PPID', 'route' => 'pages.show', 'params' => ['slug' => 'struktur-organisasi']],
             ],
         ],
         [

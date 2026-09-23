@@ -81,6 +81,22 @@ class PageSeeder extends Seeder
         );
 
         Page::query()->updateOrCreate(
+            ['slug' => 'struktur-organisasi'],
+            [
+                'title' => 'Struktur Organisasi PPID Poltekkes Kemenkes Banten',
+                'excerpt' => 'Struktur organisasi Pejabat Pengelola Informasi dan Dokumentasi (PPID) Poltekkes Kemenkes Banten periode 2025-2029.',
+                'meta_title' => 'Struktur Organisasi PPID Poltekkes Kemenkes Banten',
+                'meta_description' => 'Struktur organisasi PPID Poltekkes Kemenkes Banten periode 2025-2029.',
+                'body' => '',
+                'status' => 'published',
+                'published_at' => now(),
+                'sort_order' => 5,
+                'created_by' => $admin?->id,
+                'updated_by' => $admin?->id,
+            ],
+        );
+
+        Page::query()->updateOrCreate(
             ['slug' => 'akreditasi'],
             [
                 'title' => 'Akreditasi Poltekkes Kemenkes Banten',
