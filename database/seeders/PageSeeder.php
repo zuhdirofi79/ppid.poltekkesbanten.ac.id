@@ -185,6 +185,90 @@ class PageSeeder extends Seeder
                 ],
             );
         }
+
+        $this->seedProgramKegiatanPrioritasPage($adminId);
+    }
+
+    private function seedProgramKegiatanPrioritasPage(?int $adminId): void
+    {
+        $slug = 'program-kegiatan-prioritas-2026';
+        $defaults = [
+            'title' => 'Program atau Kegiatan Prioritas Tahun 2026',
+            'excerpt' => 'Informasi program dan kegiatan prioritas Poltekkes Kemenkes Banten tahun anggaran 2026.',
+            'meta_title' => 'Program atau Kegiatan Prioritas Tahun 2026 — PPID Poltekkes Kemenkes Banten',
+            'meta_description' => 'Program atau kegiatan prioritas Poltekkes Kemenkes Banten tahun 2026, termasuk penanggung jawab, target, jadwal, dan sumber anggaran.',
+            'body' => HtmlSanitizer::clean($this->programKegiatanPrioritas2026Body()),
+            'status' => 'published',
+            'published_at' => now(),
+            'sort_order' => 36,
+            'created_by' => $adminId,
+            'updated_by' => $adminId,
+        ];
+
+        $page = Page::query()->firstOrCreate(['slug' => $slug], $defaults);
+
+        if ($page->wasRecentlyCreated) {
+            return;
+        }
+
+        // Jangan timpa body yang sudah diedit admin; perbarui metadata ringan saja.
+        $page->fill([
+            'title' => $defaults['title'],
+            'excerpt' => $defaults['excerpt'],
+            'meta_title' => $defaults['meta_title'],
+            'meta_description' => $defaults['meta_description'],
+            'status' => 'published',
+            'published_at' => $page->published_at ?? now(),
+            'sort_order' => 36,
+            'updated_by' => $adminId,
+        ]);
+
+        if (! filled(trim((string) $page->body))) {
+            $page->body = $defaults['body'];
+        }
+
+        $page->save();
+    }
+
+    private function programKegiatanPrioritas2026Body(): string
+    {
+        return <<<'HTML'
+<section>
+    <p>Informasi detail mengenai nama program/kegiatan prioritas, penanggung jawab, target, jadwal pelaksanaan, serta sumber dan besaran anggaran spesifik untuk Poltekkes Kemenkes Banten tahun anggaran 2026 secara menyeluruh belum dipublikasikan secara terbuka dalam satu dokumen publik terintegrasi.</p>
+    <p>Rincian komponen anggaran makro tersebut umumnya tercantum dalam dokumen internal:</p>
+    <ul>
+        <li>Rencana Bisnis dan Anggaran (RBA) Poltekkes Banten Tahun 2026</li>
+        <li>Daftar Isian Pelaksanaan Anggaran (DIPA) Tahun 2026</li>
+    </ul>
+</section>
+
+<section>
+    <h2>1. Seleksi Kantor Akuntan Publik (KAP) untuk Audit Laporan Keuangan BLU 2026</h2>
+    <p><strong>Nama Kegiatan:</strong> Beauty Contest / Seleksi Kantor Akuntan Publik (KAP) Audit Eksternal Laporan Keuangan Badan Layanan Umum (BLU) TA 2026</p>
+    <p><strong>Penanggung Jawab:</strong> Direktur Poltekkes Kemenkes Banten Dr. Dahrizal, S.Kp., M.P.H. dan Tim Seleksi Beauty Contest</p>
+    <p><strong>Target:</strong> Terpilihnya KAP yang memenuhi kualifikasi untuk mengaudit laporan keuangan BLU.</p>
+    <p><strong>Jadwal:</strong> September 2026</p>
+    <p><strong>Sumber Anggaran:</strong> Anggaran BLU Poltekkes Banten TA 2026</p>
+</section>
+
+<section>
+    <h2>2. Pelaksanaan Kerja Sama Program Internasional SMK Go Global</h2>
+    <p><strong>Nama Kegiatan:</strong> Pengelolaan program kesiapan kerja internasional dan pelatihan bahasa melalui LPK Poltekkes Banten.</p>
+    <p><strong>Pelaksana:</strong> LPK Poltekkes Kemenkes Banten bekerja sama dengan BP3MI Banten.</p>
+    <p><strong>Target:</strong> Penyerapan alumni ke pasar kerja internasional.</p>
+    <p><strong>Jadwal:</strong> Semester berjalan tahun 2026.</p>
+    <p><strong>Sumber Anggaran:</strong> Anggaran Kerja Sama Operasional / Dana Masyarakat / BLU.</p>
+</section>
+
+<section>
+    <h2>3. Penyelenggaraan Konferensi Internasional BINAR 2026</h2>
+    <p><strong>Nama:</strong> 2nd Banten International Conference on Health Advancement and Research (BINAR) 2026</p>
+    <p><strong>Pelaksana:</strong> Unit Penelitian dan Pengabdian Masyarakat (PPM)</p>
+    <p><strong>Target:</strong> Diseminasi inovasi pelayanan kesehatan publik global.</p>
+    <p><strong>Jadwal:</strong> 25-27 Agustus 2026</p>
+    <p><strong>Sumber:</strong> DIPA Poltekkes Kemenkes Banten 2026</p>
+</section>
+HTML;
     }
 
     private function placeholderBody(string $topic): string

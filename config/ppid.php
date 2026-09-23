@@ -386,6 +386,7 @@ return [
                 ['label' => 'Profil Pimpinan Satuan Kerja', 'route' => 'pages.show', 'params' => ['slug' => 'profil-pimpinan-satuan-kerja']],
                 ['label' => 'LHKPN Pimpinan Tertinggi', 'route' => 'pages.show', 'params' => ['slug' => 'lhkpn-pimpinan-tertinggi']],
                 ['label' => 'Informasi Berkala', 'route' => 'information.category', 'params' => ['slug' => 'berkala']],
+                ['label' => 'Program atau Kegiatan Prioritas', 'route' => 'pages.show', 'params' => ['slug' => 'program-kegiatan-prioritas-2026']],
             ],
         ],
         [

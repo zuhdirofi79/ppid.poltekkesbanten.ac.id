@@ -41,8 +41,15 @@ class DiumumkanBerkalaPagesTest extends TestCase
         $this->assertStringContainsString(route('pages.show', ['slug' => 'profil-pimpinan-satuan-kerja'], false), $html);
         $this->assertStringContainsString(route('pages.show', ['slug' => 'lhkpn-pimpinan-tertinggi'], false), $html);
         $this->assertStringContainsString(route('information.category', ['slug' => 'berkala'], false), $html);
+        $this->assertStringContainsString(route('pages.show', ['slug' => 'program-kegiatan-prioritas-2026'], false), $html);
         $this->assertStringContainsString('Alamat Kantor Lengkap Satuan Kerja', $html);
         $this->assertStringContainsString('LHKPN Pimpinan Tertinggi', $html);
+        $this->assertStringContainsString('Program atau Kegiatan Prioritas', $html);
+
+        $this->assertSame(1, preg_match(
+            '/Informasi Berkala[\s\S]+?Program atau Kegiatan Prioritas/u',
+            $html
+        ));
     }
 
     #[Test]
@@ -117,6 +124,61 @@ class DiumumkanBerkalaPagesTest extends TestCase
             ->assertOk()
             ->assertSee('LHKPN Pimpinan Tertinggi', false)
             ->assertSee('Konten halaman ini sedang disiapkan', false);
+    }
+
+    #[Test]
+    public function program_kegiatan_prioritas_page_renders_cms_content(): void
+    {
+        $response = $this->get('/halaman/program-kegiatan-prioritas-2026');
+
+        $response->assertOk();
+        $response->assertSee('PPID-PROGRAM-KEGIATAN-PRIORITAS-2026-DEPLOY-20260923-A', false);
+        $response->assertSee('ppid-priority-page', false);
+        $response->assertSee('Program atau Kegiatan Prioritas Tahun 2026', false);
+        $response->assertSee('Diumumkan Berkala', false);
+        $response->assertSee('Rencana Bisnis dan Anggaran (RBA) Poltekkes Banten Tahun 2026', false);
+        $response->assertSee('Daftar Isian Pelaksanaan Anggaran (DIPA) Tahun 2026', false);
+        $response->assertSee('Seleksi Kantor Akuntan Publik (KAP)', false);
+        $response->assertSee('Dr. Dahrizal, S.Kp., M.P.H.', false);
+        $response->assertSee('SMK Go Global', false);
+        $response->assertSee('BINAR 2026', false);
+        $response->assertSee('25-27 Agustus 2026', false);
+        $this->assertSame(1, preg_match_all('/<h1\b/i', $response->getContent()));
+    }
+
+    #[Test]
+    public function program_kegiatan_prioritas_body_is_admin_editable_and_preserved_on_reseed(): void
+    {
+        $page = \App\Models\Page::query()->where('slug', 'program-kegiatan-prioritas-2026')->firstOrFail();
+        $page->update([
+            'body' => '<section><h2>Program Uji Admin</h2><p>Konten diedit dari admin.</p></section>',
+        ]);
+
+        $this->seed(PageSeeder::class);
+
+        $fresh = $page->fresh();
+        $this->assertStringContainsString('Program Uji Admin', (string) $fresh->body);
+        $this->assertStringContainsString('Konten diedit dari admin.', (string) $fresh->body);
+
+        $admin = \App\Models\User::factory()->adminPpid()->create();
+        $this->actingAs($admin)
+            ->put(route('admin.pages.update', $fresh), [
+                'title' => $fresh->title,
+                'slug' => $fresh->slug,
+                'excerpt' => $fresh->excerpt,
+                'meta_title' => $fresh->meta_title,
+                'meta_description' => $fresh->meta_description,
+                'body' => '<section><h2>Program Baru Admin</h2><p>Ditambahkan via form CMS.</p></section>',
+                'status' => 'published',
+                'sort_order' => $fresh->sort_order,
+            ])
+            ->assertRedirect(route('admin.pages.index'));
+
+        $this->get('/halaman/program-kegiatan-prioritas-2026')
+            ->assertOk()
+            ->assertSee('Program Baru Admin', false)
+            ->assertSee('Ditambahkan via form CMS.', false)
+            ->assertDontSee('Seleksi Kantor Akuntan Publik (KAP)', false);
     }
 
     #[Test]
