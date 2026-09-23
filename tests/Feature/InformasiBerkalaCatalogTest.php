@@ -47,6 +47,8 @@ class InformasiBerkalaCatalogTest extends TestCase
         $response->assertSee('Perjanjian Kinerja Tahun 2024', false);
         $response->assertSee('Perjanjian Kinerja Tahun 2025', false);
         $response->assertSee('Panduan Akademik 2023/2024', false);
+        $response->assertSee('Laporan Keuangan', false);
+        $response->assertSee('Laporan Keuangan Tahun 2025 (Audited)', false);
         $response->assertSee('Tarif Layanan Akademik', false);
         $response->assertSee('Tarif Layanan Penunjang Akademik', false);
         $response->assertSee('Laporan PPID Tahun 2024', false);
@@ -67,8 +69,47 @@ class InformasiBerkalaCatalogTest extends TestCase
         $this->assertNotFalse($posLakin);
         $this->assertTrue($posRsb < $posRka && $posRka < $posLakin);
 
+        // Section order: Panduan Akademik → Laporan Keuangan → Pola Tarif
+        $posPanduan = strpos($html, 'Panduan Akademik');
+        $posKeuangan = strpos($html, 'Laporan Keuangan');
+        $posTarif = strpos($html, 'Pola Tarif Poltekkes Kemenkes Banten');
+        $this->assertNotFalse($posPanduan);
+        $this->assertNotFalse($posKeuangan);
+        $this->assertNotFalse($posTarif);
+        $this->assertTrue($posPanduan < $posKeuangan && $posKeuangan < $posTarif);
+
         // Missing docs must not be wrapped as clickable href to empty destinations.
         $this->assertSame(1, preg_match_all('/<h1\b/i', $html));
+    }
+
+    #[Test]
+    public function laporan_keuangan_2025_is_missing_until_admin_upload(): void
+    {
+        $this->seedCatalog();
+
+        $doc = PublicDocument::query()
+            ->where('slug', PublicDocument::makeCatalogSlug('Laporan Keuangan Tahun 2025 (Audited)'))
+            ->first();
+
+        $this->assertNotNull($doc);
+        $this->assertSame('Laporan Keuangan', $doc->section_title);
+        $this->assertSame(2025, $doc->year);
+        $this->assertSame(PublicDocument::SOURCE_UPLOADED, $doc->source_type);
+        $this->assertFalse($doc->isAvailable());
+
+        $html = $this->get('/informasi-publik/berkala')->assertOk()->getContent();
+        $pos = strpos($html, 'Laporan Keuangan Tahun 2025 (Audited)');
+        $this->assertNotFalse($pos);
+        $chunk = substr($html, $pos, 800);
+        $this->assertStringContainsString('Dokumen belum tersedia', $chunk);
+        $this->assertStringNotContainsString('Lihat Dokumen', $chunk);
+
+        $admin = User::factory()->adminPpid()->create();
+        $this->actingAs($admin)
+            ->get(route('admin.informasi-publik.berkala', ['status' => 'missing']))
+            ->assertOk()
+            ->assertSee('Laporan Keuangan Tahun 2025 (Audited)', false)
+            ->assertSee('WAJIB UNGGAH', false);
     }
 
     #[Test]

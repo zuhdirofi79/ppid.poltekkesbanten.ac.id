@@ -324,6 +324,13 @@ class InformasiBerkalaSeeder extends Seeder
                 'year' => 2023,
             ],
             [
+                'section_title' => 'Laporan Keuangan',
+                'title' => 'Laporan Keuangan Tahun 2025 (Audited)',
+                'source_type' => PublicDocument::SOURCE_UPLOADED,
+                'admin_notice' => 'Dokumen Ringkasan Laporan Keuangan Poltekkes Kemenkes Banten Tahun Anggaran 2025 wajib diunggah oleh Admin PPID.',
+                'year' => 2025,
+            ],
+            [
                 'section_title' => 'Pola Tarif Poltekkes Kemenkes Banten',
                 'title' => 'Tarif Layanan Akademik',
                 'source_type' => PublicDocument::SOURCE_UPLOADED,
