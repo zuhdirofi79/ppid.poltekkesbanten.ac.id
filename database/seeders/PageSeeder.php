@@ -84,9 +84,9 @@ class PageSeeder extends Seeder
             ['slug' => 'struktur-organisasi'],
             [
                 'title' => 'Struktur Organisasi PPID Poltekkes Kemenkes Banten',
-                'excerpt' => 'Struktur organisasi Pejabat Pengelola Informasi dan Dokumentasi (PPID) Poltekkes Kemenkes Banten periode 2025-2029.',
+                'excerpt' => 'Struktur organisasi Pejabat Pengelola Informasi dan Dokumentasi (PPID) Poltekkes Kemenkes Banten.',
                 'meta_title' => 'Struktur Organisasi PPID Poltekkes Kemenkes Banten',
-                'meta_description' => 'Struktur organisasi PPID Poltekkes Kemenkes Banten periode 2025-2029.',
+                'meta_description' => 'Struktur organisasi Pejabat Pengelola Informasi dan Dokumentasi PPID Poltekkes Kemenkes Banten.',
                 'body' => '',
                 'status' => 'published',
                 'published_at' => now(),

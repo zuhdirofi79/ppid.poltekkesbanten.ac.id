@@ -1,25 +1,33 @@
 {{-- Template khusus: /halaman/struktur-organisasi — gambar struktur organisasi yang sudah ada di public/images/ppid --}}
-<!-- PPID-STRUKTUR-ORGANISASI-DEPLOY-20260923-A -->
+<!-- PPID-STRUKTUR-ORGANISASI-DEPLOY-20260923-B -->
 <style>
     .ppid-org-chart {
         display: block;
         width: 100%;
-        max-width: none;
-        min-width: 1100px;
+        max-width: 100%;
         height: auto;
         object-fit: contain;
     }
 
-    @media (min-width: 1024px) {
+    @media (max-width: 1023px) {
         .ppid-org-chart {
-            min-width: 0;
+            width: 1100px;
+            max-width: none;
         }
+    }
+
+    .ppid-org-structure-actions a:focus-visible {
+        outline: 2px solid #17184f;
+        outline-offset: 2px;
     }
 </style>
 @php
-    $imageRelativePath = 'images/ppid/struktur-organisasi-ppid.jpeg';
-    $imageUrl = asset($imageRelativePath);
-    $downloadName = 'struktur-organisasi-ppid-poltekkes-kemenkes-banten.jpeg';
+    $imageRelativePath = 'images/ppid/struktur-organisasi-ppid.png';
+    $imageExists = is_file(public_path($imageRelativePath));
+    $imageUrl = $imageExists
+        ? asset($imageRelativePath)
+        : 'https://srv1863-files.hstgr.io/c8b544f47f79c21d/files/public_html/images/ppid/struktur-organisasi-ppid.png';
+    $downloadName = 'struktur-organisasi-ppid-poltekkes-kemenkes-banten.png';
     $imageAlt = 'Struktur Organisasi PPID Poltekkes Kemenkes Banten Periode 2025-2029';
 @endphp
 
@@ -51,11 +59,9 @@
                 {{ $title }}
             </h1>
 
-            @if (! empty($excerpt))
-                <p class="mt-3 max-w-[52rem] text-base leading-relaxed text-muted sm:text-[1.0625rem]">
-                    {{ $excerpt }}
-                </p>
-            @endif
+            <p class="mt-3 max-w-[52rem] text-base leading-relaxed text-muted sm:text-[1.0625rem]">
+                {{ $excerpt ?? 'Struktur organisasi Pejabat Pengelola Informasi dan Dokumentasi (PPID) Poltekkes Kemenkes Banten.' }}
+            </p>
         </div>
     </section>
 
@@ -64,11 +70,11 @@
             <h2 id="struktur-organisasi-heading" class="font-heading text-lg font-bold text-navy sm:text-xl">
                 Struktur Organisasi PPID
             </h2>
-            <p class="mt-2 text-sm leading-relaxed text-muted">
-                Struktur organisasi PPID Poltekkes Kemenkes Banten periode 2025-2029.
+            <p class="mt-2 text-sm leading-relaxed text-ink sm:text-base">
+                Struktur organisasi PPID Poltekkes Kemenkes Banten menggambarkan susunan pengelola informasi publik dalam mendukung pelaksanaan keterbukaan informasi publik.
             </p>
 
-            <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <div class="ppid-org-structure-actions mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <a
                     href="{{ $imageUrl }}"
                     target="_blank"
@@ -90,6 +96,8 @@
                 <img
                     src="{{ $imageUrl }}"
                     alt="{{ $imageAlt }}"
+                    width="1600"
+                    height="1120"
                     class="ppid-org-chart h-auto w-full object-contain"
                     loading="lazy"
                     decoding="async"
