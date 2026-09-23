@@ -179,6 +179,14 @@ return [
             'is_featured' => false,
             'sort_order' => 6,
         ],
+        [
+            'slug' => 'alur-pengajuan-keberatan',
+            'title' => 'Alur Pengajuan Keberatan',
+            'excerpt' => 'Pelajari alur dan tata cara pengajuan keberatan atas layanan informasi publik secara jelas, ringkas, dan mudah dipahami.',
+            'external_url' => null,
+            'is_featured' => false,
+            'sort_order' => 7,
+        ],
     ],
 
     /*
@@ -369,6 +377,7 @@ return [
                 ['label' => 'Keluhan Pelayanan', 'route' => 'services.show', 'params' => ['slug' => 'keluhan-pelayanan']],
                 ['label' => 'Surat Keterangan', 'route' => 'services.show', 'params' => ['slug' => 'surat-keterangan']],
                 ['label' => 'Alur Permohonan Informasi', 'route' => 'services.show', 'params' => ['slug' => 'alur-permohonan-informasi']],
+                ['label' => 'Alur Pengajuan Keberatan', 'route' => 'services.show', 'params' => ['slug' => 'alur-pengajuan-keberatan']],
             ],
         ],
         [

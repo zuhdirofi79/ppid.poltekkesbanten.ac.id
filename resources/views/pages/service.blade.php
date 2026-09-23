@@ -1,7 +1,21 @@
 @extends('layouts.app')
 
-@section('title', $title.' — '.config('ppid.name'))
-@section('meta_description', $description ?? config('ppid.name_long'))
+@php
+    $serviceSlug = (string) ($service['slug'] ?? '');
+    $documentTitle = $serviceSlug === 'alur-pengajuan-keberatan'
+        ? 'Alur Pengajuan Keberatan | '.config('ppid.name')
+        : $title.' — '.config('ppid.name');
+    $metaDescription = $serviceSlug === 'alur-pengajuan-keberatan'
+        ? 'Tahapan dan tata cara pengajuan keberatan atas layanan informasi publik PPID Poltekkes Kemenkes Banten.'
+        : ($description ?? config('ppid.name_long'));
+@endphp
+
+@section('title', $documentTitle)
+@section('meta_description', $metaDescription)
+@if ($serviceSlug === 'alur-pengajuan-keberatan')
+    @section('og_title', $documentTitle)
+    @section('og_description', $metaDescription)
+@endif
 
 @section('content')
     <div class="border-b border-line bg-surface">
@@ -33,6 +47,8 @@
         ])
     @elseif (($service['slug'] ?? '') === 'alur-permohonan-informasi')
         @include('pages.partials.alur-permohonan-informasi')
+    @elseif (($service['slug'] ?? '') === 'alur-pengajuan-keberatan')
+        @include('pages.partials.alur-pengajuan-keberatan')
     @else
         <div class="mx-auto max-w-3xl px-4 py-10">
             <div class="rounded-xl border border-line bg-white p-6 shadow-sm">
