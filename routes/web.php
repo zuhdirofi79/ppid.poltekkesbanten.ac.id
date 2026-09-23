@@ -38,6 +38,8 @@ Route::get('/kontak', function () {
     ]);
 })->name('contact');
 
+Route::redirect('/halaman/informasi-berkala', '/informasi-publik/berkala', 301);
+
 Route::get('/halaman/{slug}', [PublicPageController::class, 'show'])
     ->where('slug', '[a-z0-9-]+')
     ->name('pages.show');

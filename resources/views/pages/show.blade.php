@@ -50,6 +50,33 @@
             ])
             @break
 
+        @case('alamat-kantor-satuan-kerja')
+            @include('pages.partials.alamat-kantor-satuan-kerja', [
+                'title' => $title ?? $page->title,
+                'excerpt' => $excerpt ?? $page->excerpt,
+                'label' => $label ?? null,
+                'breadcrumbs' => $breadcrumbs ?? [],
+            ])
+            @break
+
+        @case('visi-misi-satuan-kerja')
+            @include('pages.partials.visi-misi-satuan-kerja', [
+                'title' => $title ?? $page->title,
+                'excerpt' => $excerpt ?? $page->excerpt,
+                'label' => $label ?? null,
+                'breadcrumbs' => $breadcrumbs ?? [],
+            ])
+            @break
+
+        @case('tugas-fungsi-satuan-kerja')
+            @include('pages.partials.tugas-fungsi-satuan-kerja', [
+                'title' => $title ?? $page->title,
+                'excerpt' => $excerpt ?? $page->excerpt,
+                'label' => $label ?? null,
+                'breadcrumbs' => $breadcrumbs ?? [],
+            ])
+            @break
+
         @default
             @if (($page->slug ?? '') === 'akreditasi')
                 <!-- PPID-AKREDITASI-DEPLOY-20260904-A -->

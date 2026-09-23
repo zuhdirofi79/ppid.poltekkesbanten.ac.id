@@ -96,6 +96,8 @@ class PageSeeder extends Seeder
             ],
         );
 
+        $this->seedDiumumkanBerkalaPages($admin?->id);
+
         Page::query()->updateOrCreate(
             ['slug' => 'akreditasi'],
             [
@@ -111,6 +113,88 @@ class PageSeeder extends Seeder
                 'updated_by' => $admin?->id,
             ],
         );
+    }
+
+    private function seedDiumumkanBerkalaPages(?int $adminId): void
+    {
+        $pages = [
+            [
+                'slug' => 'alamat-kantor-satuan-kerja',
+                'title' => 'Alamat Kantor Lengkap Satuan Kerja',
+                'excerpt' => 'Alamat lengkap Direktorat dan kampus Poltekkes Kemenkes Banten.',
+                'meta_description' => 'Alamat lengkap Direktorat / Kampus Serang, Kampus Tangerang, dan Kampus Rangkasbitung Poltekkes Kemenkes Banten.',
+                'body' => '',
+                'sort_order' => 30,
+            ],
+            [
+                'slug' => 'visi-misi-satuan-kerja',
+                'title' => 'Visi dan Misi Satuan Kerja',
+                'excerpt' => 'Visi dan misi Direktorat serta jurusan di Poltekkes Kemenkes Banten.',
+                'meta_description' => 'Visi dan misi satuan kerja Poltekkes Kemenkes Banten meliputi Direktorat, Keperawatan, Kebidanan, dan Teknologi Laboratorium Medis.',
+                'body' => '',
+                'sort_order' => 31,
+            ],
+            [
+                'slug' => 'tugas-fungsi-satuan-kerja',
+                'title' => 'Tugas Fungsi Satuan Kerja',
+                'excerpt' => 'Tugas pokok dan fungsi Direktorat serta jurusan Poltekkes Kemenkes Banten.',
+                'meta_description' => 'Tugas pokok dan fungsi satuan kerja Poltekkes Kemenkes Banten dalam penyelenggaraan pendidikan tinggi kesehatan.',
+                'body' => '',
+                'sort_order' => 32,
+            ],
+            [
+                'slug' => 'struktur-organisasi-satuan-kerja',
+                'title' => 'Struktur Organisasi Satuan Kerja',
+                'excerpt' => 'Struktur organisasi satuan kerja Poltekkes Kemenkes Banten.',
+                'meta_description' => 'Struktur organisasi satuan kerja Poltekkes Kemenkes Banten. Konten lengkap sedang disiapkan.',
+                'body' => HtmlSanitizer::clean($this->placeholderBody('Struktur Organisasi Satuan Kerja')),
+                'sort_order' => 33,
+            ],
+            [
+                'slug' => 'profil-pimpinan-satuan-kerja',
+                'title' => 'Profil Pimpinan Satuan Kerja',
+                'excerpt' => 'Profil pimpinan satuan kerja Poltekkes Kemenkes Banten.',
+                'meta_description' => 'Profil pimpinan satuan kerja Poltekkes Kemenkes Banten. Konten lengkap sedang disiapkan.',
+                'body' => HtmlSanitizer::clean($this->placeholderBody('Profil Pimpinan Satuan Kerja')),
+                'sort_order' => 34,
+            ],
+            [
+                'slug' => 'lhkpn-pimpinan-tertinggi',
+                'title' => 'LHKPN Pimpinan Tertinggi',
+                'excerpt' => 'Laporan Harta Kekayaan Penyelenggara Negara (LHKPN) pimpinan tertinggi.',
+                'meta_description' => 'Informasi LHKPN pimpinan tertinggi Poltekkes Kemenkes Banten. Konten lengkap sedang disiapkan.',
+                'body' => HtmlSanitizer::clean($this->placeholderBody('LHKPN Pimpinan Tertinggi')),
+                'sort_order' => 35,
+            ],
+        ];
+
+        foreach ($pages as $page) {
+            Page::query()->updateOrCreate(
+                ['slug' => $page['slug']],
+                [
+                    'title' => $page['title'],
+                    'excerpt' => $page['excerpt'],
+                    'meta_title' => $page['title'].' — PPID Poltekkes Kemenkes Banten',
+                    'meta_description' => $page['meta_description'],
+                    'body' => $page['body'],
+                    'status' => 'published',
+                    'published_at' => now(),
+                    'sort_order' => $page['sort_order'],
+                    'created_by' => $adminId,
+                    'updated_by' => $adminId,
+                ],
+            );
+        }
+    }
+
+    private function placeholderBody(string $topic): string
+    {
+        return <<<HTML
+<section>
+    <h2>{$topic}</h2>
+    <p>Konten halaman ini sedang disiapkan dan akan ditampilkan setelah data resmi diverifikasi oleh Admin PPID.</p>
+</section>
+HTML;
     }
 
     private function visiDanMisiBody(): string

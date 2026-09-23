@@ -376,6 +376,19 @@ return [
             ],
         ],
         [
+            'label' => 'Diumumkan Berkala',
+            'route' => null,
+            'children' => [
+                ['label' => 'Alamat Kantor Lengkap Satuan Kerja', 'route' => 'pages.show', 'params' => ['slug' => 'alamat-kantor-satuan-kerja']],
+                ['label' => 'Visi dan Misi Satuan Kerja', 'route' => 'pages.show', 'params' => ['slug' => 'visi-misi-satuan-kerja']],
+                ['label' => 'Tugas Fungsi Satuan Kerja', 'route' => 'pages.show', 'params' => ['slug' => 'tugas-fungsi-satuan-kerja']],
+                ['label' => 'Struktur Organisasi Satuan Kerja', 'route' => 'pages.show', 'params' => ['slug' => 'struktur-organisasi-satuan-kerja']],
+                ['label' => 'Profil Pimpinan Satuan Kerja', 'route' => 'pages.show', 'params' => ['slug' => 'profil-pimpinan-satuan-kerja']],
+                ['label' => 'LHKPN Pimpinan Tertinggi', 'route' => 'pages.show', 'params' => ['slug' => 'lhkpn-pimpinan-tertinggi']],
+                ['label' => 'Informasi Berkala', 'route' => 'information.category', 'params' => ['slug' => 'berkala']],
+            ],
+        ],
+        [
             'label' => 'Layanan',
             'route' => null,
             'children' => [

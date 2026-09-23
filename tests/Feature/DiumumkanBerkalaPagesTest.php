@@ -1,0 +1,136 @@
+<?php
+
+namespace Tests\Feature;
+
+use Database\Seeders\MenuSeeder;
+use Database\Seeders\PageSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
+
+class DiumumkanBerkalaPagesTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(PageSeeder::class);
+    }
+
+    #[Test]
+    public function navbar_shows_diumumkan_berkala_between_informasi_publik_and_layanan(): void
+    {
+        $this->seed(MenuSeeder::class);
+
+        $html = $this->get('/')->assertOk()->getContent();
+
+        $this->assertSame(1, preg_match(
+            '/aria-label="Navigasi utama"[\s\S]+?Informasi Publik[\s\S]+?Diumumkan Berkala[\s\S]+?Layanan/u',
+            $html
+        ));
+        $this->assertSame(1, preg_match(
+            '/aria-label="Navigasi seluler"[\s\S]+?Informasi Publik[\s\S]+?Diumumkan Berkala[\s\S]+?Layanan/u',
+            $html
+        ));
+
+        $this->assertStringContainsString(route('pages.show', ['slug' => 'alamat-kantor-satuan-kerja'], false), $html);
+        $this->assertStringContainsString(route('pages.show', ['slug' => 'visi-misi-satuan-kerja'], false), $html);
+        $this->assertStringContainsString(route('pages.show', ['slug' => 'tugas-fungsi-satuan-kerja'], false), $html);
+        $this->assertStringContainsString(route('pages.show', ['slug' => 'struktur-organisasi-satuan-kerja'], false), $html);
+        $this->assertStringContainsString(route('pages.show', ['slug' => 'profil-pimpinan-satuan-kerja'], false), $html);
+        $this->assertStringContainsString(route('pages.show', ['slug' => 'lhkpn-pimpinan-tertinggi'], false), $html);
+        $this->assertStringContainsString(route('information.category', ['slug' => 'berkala'], false), $html);
+        $this->assertStringContainsString('Alamat Kantor Lengkap Satuan Kerja', $html);
+        $this->assertStringContainsString('LHKPN Pimpinan Tertinggi', $html);
+    }
+
+    #[Test]
+    public function alamat_kantor_page_renders_campus_cards(): void
+    {
+        $response = $this->get('/halaman/alamat-kantor-satuan-kerja');
+
+        $response->assertOk();
+        $response->assertSee('PPID-ALAMAT-KANTOR-SATUAN-KERJA-DEPLOY-20260923-A', false);
+        $response->assertSee('Alamat Kantor Lengkap Satuan Kerja', false);
+        $response->assertSee('Diumumkan Berkala', false);
+        $response->assertSee('Direktorat / Kampus Serang', false);
+        $response->assertSee('Jl. Syekh Moh. Nawawi Albantani No.12,', false);
+        $response->assertSee('Kampus Tangerang', false);
+        $response->assertSee('Persis samping RSUP Dr. Sitanala', false);
+        $response->assertSee('Kampus Rangkasbitung', false);
+        $response->assertSee('Jl. Raya Rangkasbitung Pandeglang No.421,', false);
+        $this->assertSame(1, preg_match_all('/<h1\b/i', $response->getContent()));
+    }
+
+    #[Test]
+    public function visi_misi_satuan_kerja_page_renders_all_units(): void
+    {
+        $response = $this->get('/halaman/visi-misi-satuan-kerja');
+
+        $response->assertOk();
+        $response->assertSee('PPID-VISI-MISI-SATUAN-KERJA-DEPLOY-20260923-A', false);
+        $response->assertSee('Visi dan Misi Satuan Kerja', false);
+        $response->assertSee('Direktorat Poltekkes Kemenkes Banten', false);
+        $response->assertSee('Menjadi Perguruan Tinggi Kesehatan yang Unggul, Profesional dan Berkarakter pada Tahun 2026.', false);
+        $response->assertSee('Jurusan Keperawatan', false);
+        $response->assertSee('Menghasilkan tenaga keperawatan profesional yang berkarakter', false);
+        $response->assertSee('Jurusan Kebidanan', false);
+        $response->assertSee('Berdaya Saing Global Tahun 2044', false);
+        $response->assertSee('Jurusan Teknologi Laboratorium Medis', false);
+        $response->assertSee('pemeriksaan penyakit infeksi pada tahun 2026', false);
+        $response->assertDontSee('ppid-vision-mission-page', false);
+    }
+
+    #[Test]
+    public function tugas_fungsi_satuan_kerja_page_uses_accordion_cards(): void
+    {
+        $response = $this->get('/halaman/tugas-fungsi-satuan-kerja');
+
+        $response->assertOk();
+        $response->assertSee('PPID-TUGAS-FUNGSI-SATUAN-KERJA-DEPLOY-20260923-A', false);
+        $response->assertSee('Tugas Fungsi Satuan Kerja', false);
+        $response->assertSee('Direktorat Poltekkes Kemenkes Banten', false);
+        $response->assertSee('Menyelenggarakan pendidikan tinggi vokasi dan profesi bidang kesehatan.', false);
+        $response->assertSee('Penjaminan mutu.', false);
+        $response->assertSee('Jurusan Keperawatan', false);
+        $response->assertSee('Jurusan Kebidanan', false);
+        $response->assertSee('Jurusan Teknologi Laboratorium Medis', false);
+        $response->assertSee('<details', false);
+        $response->assertDontSee('ppid-duty-page', false);
+    }
+
+    #[Test]
+    public function placeholder_pages_are_published(): void
+    {
+        $this->get('/halaman/struktur-organisasi-satuan-kerja')
+            ->assertOk()
+            ->assertSee('Struktur Organisasi Satuan Kerja', false)
+            ->assertSee('Konten halaman ini sedang disiapkan', false);
+
+        $this->get('/halaman/profil-pimpinan-satuan-kerja')
+            ->assertOk()
+            ->assertSee('Profil Pimpinan Satuan Kerja', false)
+            ->assertSee('Konten halaman ini sedang disiapkan', false);
+
+        $this->get('/halaman/lhkpn-pimpinan-tertinggi')
+            ->assertOk()
+            ->assertSee('LHKPN Pimpinan Tertinggi', false)
+            ->assertSee('Konten halaman ini sedang disiapkan', false);
+    }
+
+    #[Test]
+    public function informasi_berkala_halaman_redirects_to_existing_catalog(): void
+    {
+        $this->get('/halaman/informasi-berkala')
+            ->assertRedirect('/informasi-publik/berkala');
+    }
+
+    #[Test]
+    public function existing_profil_pages_remain_intact(): void
+    {
+        $this->get('/halaman/visi-dan-misi')->assertOk()->assertSee('ppid-vision-mission-page', false);
+        $this->get('/halaman/tugas-fungsi-wewenang')->assertOk()->assertSee('ppid-duty-page', false);
+        $this->get('/halaman/struktur-organisasi')->assertOk()->assertSee('ppid-org-structure-page', false);
+    }
+}
