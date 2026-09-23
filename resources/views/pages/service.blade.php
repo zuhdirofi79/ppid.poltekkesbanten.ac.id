@@ -31,6 +31,8 @@
         @include('pages.partials.pengajuan-keberatan', [
             'formUrl' => $formUrl ?? null,
         ])
+    @elseif (($service['slug'] ?? '') === 'alur-permohonan-informasi')
+        @include('pages.partials.alur-permohonan-informasi')
     @else
         <div class="mx-auto max-w-3xl px-4 py-10">
             <div class="rounded-xl border border-line bg-white p-6 shadow-sm">
