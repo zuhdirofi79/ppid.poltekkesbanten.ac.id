@@ -113,6 +113,8 @@ class PageSeeder extends Seeder
                 'updated_by' => $admin?->id,
             ],
         );
+
+        $this->call(InformationDeskPageSeeder::class);
     }
 
     private function seedDiumumkanBerkalaPages(?int $adminId): void

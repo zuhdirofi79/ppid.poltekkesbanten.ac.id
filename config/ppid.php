@@ -427,6 +427,7 @@ return [
                 ['label' => 'Kerja Sama', 'route' => 'pages.show', 'params' => ['slug' => 'kerja-sama']],
                 ['label' => 'Pengadaan Barang dan Jasa', 'route' => 'pages.show', 'params' => ['slug' => 'pengadaan-barang-dan-jasa']],
                 ['label' => 'Statistik Layanan Informasi', 'route' => 'pages.show', 'params' => ['slug' => 'ringkasan-laporan-layanan-informasi']],
+                ['label' => 'Information Desk', 'route' => 'pages.show', 'params' => ['slug' => 'information-desk']],
             ],
         ],
         [

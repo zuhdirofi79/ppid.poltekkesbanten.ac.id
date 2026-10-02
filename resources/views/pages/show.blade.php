@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title', ($seoTitle ?? $title).' — '.config('ppid.name'))
+@section('title', ($page->slug ?? '') === \App\Support\InformationDesk::SLUG
+    ? \App\Support\InformationDesk::TITLE.' | '.config('ppid.name')
+    : (($seoTitle ?? $title).' — '.config('ppid.name')))
 @section('meta_description', $description ?? config('ppid.name_long'))
 @section('og_title', $seoTitle ?? $title)
 @section('og_description', $description ?? config('ppid.name_long'))
@@ -154,6 +156,16 @@
                 'label' => $label ?? null,
                 'breadcrumbs' => $breadcrumbs ?? [],
                 'documents' => $lhkpnDocuments ?? collect(),
+            ])
+            @break
+
+        @case('information-desk')
+            @include('pages.partials.information-desk', [
+                'title' => $title ?? $page->title,
+                'excerpt' => $excerpt ?? $page->excerpt,
+                'label' => $label ?? null,
+                'breadcrumbs' => $breadcrumbs ?? [],
+                'body' => $body ?? '',
             ])
             @break
 

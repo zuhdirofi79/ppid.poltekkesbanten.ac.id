@@ -7,6 +7,7 @@ use App\Models\LeadershipProfile;
 use App\Models\LhkpnDocument;
 use App\Models\Page;
 use App\Support\HtmlSanitizer;
+use App\Support\InformationDesk;
 use App\Support\ServiceSummaryReport;
 use App\Support\SopLayananDocuments;
 use Illuminate\Http\RedirectResponse;
@@ -56,9 +57,22 @@ class PublicPageController extends Controller
             $page->excerpt = $seoDescription;
         }
 
+        if ($slug === InformationDesk::SLUG) {
+            if (blank($page->meta_title)) {
+                $seoTitle = InformationDesk::TITLE;
+            }
+            if (blank($page->meta_description)) {
+                $seoDescription = InformationDesk::META_DESCRIPTION;
+            }
+            if (blank($page->excerpt)) {
+                $page->excerpt = InformationDesk::EXCERPT;
+            }
+        }
+
         $isProfil = $this->isProfilSlug($slug);
         $isDiumumkanBerkala = $this->isDiumumkanBerkalaSlug($slug);
         $isSopLayanan = $this->isSopLayananSlug($slug);
+        $isInformationDesk = $slug === InformationDesk::SLUG;
 
         // Academic Calendar data
         $academicCalendars = collect();
@@ -109,14 +123,17 @@ class PublicPageController extends Controller
             'selectedYear' => $selectedYear,
             'sopDocuments' => $slug === SopLayananDocuments::SLUG ? SopLayananDocuments::all() : [],
             'lhkpnDocuments' => $slug === LhkpnDocument::PAGE_SLUG ? $this->lhkpnDocuments() : collect(),
-            'label' => $isProfil
-                ? 'Profil PPID'
-                : ($isDiumumkanBerkala ? 'Diumumkan Berkala' : ($isSopLayanan ? 'SOP & Layanan' : null)),
+            'label' => $isInformationDesk
+                ? 'Informasi'
+                : ($isProfil
+                    ? 'Profil PPID'
+                    : ($isDiumumkanBerkala ? 'Diumumkan Berkala' : ($isSopLayanan ? 'SOP & Layanan' : null))),
             'breadcrumbs' => array_values(array_filter([
                 ['label' => 'Beranda', 'url' => route('home')],
                 $isProfil ? ['label' => 'Profil', 'url' => null] : null,
                 $isDiumumkanBerkala ? ['label' => 'Diumumkan Berkala', 'url' => null] : null,
                 $isSopLayanan ? ['label' => 'SOP & Layanan', 'url' => null] : null,
+                $isInformationDesk ? ['label' => 'Informasi', 'url' => null] : null,
                 ['label' => $this->breadcrumbLabel($slug, $page->title), 'url' => null],
             ])),
         ]);
@@ -185,6 +202,7 @@ class PublicPageController extends Controller
             'tata-cara-pengaduan-penyalahgunaan-wewenang' => 'Tata Cara Pengaduan Penyalahgunaan Wewenang',
             'ringkasan-laporan-layanan-informasi' => 'Ringkasan Laporan Layanan Informasi',
             'standar-operasional-prosedur-layanan-informasi-publik' => 'Standar Operasional Prosedur Layanan Informasi Publik',
+            InformationDesk::SLUG => InformationDesk::TITLE,
             'profil-singkat-ppid' => 'Profil Singkat PPID',
             'dasar-hukum-sk-ppid' => 'Dasar Hukum dan SK PPID',
             'visi-dan-misi' => 'Visi dan Misi',
