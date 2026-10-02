@@ -43,6 +43,7 @@ enum UserRole: string
             ],
             self::AdminPpid => [
                 'access-admin',
+                'manage-menus',
                 'manage-pages',
                 'manage-posts',
                 'manage-announcements',

@@ -6,6 +6,8 @@
 
 return [
 
+    'max_upload_mb' => (int) env('PPID_MAX_UPLOAD_MB', 20),
+
     'name' => 'PPID Poltekkes Kemenkes Banten',
 
     'name_long' => 'Pejabat Pengelola Informasi dan Dokumentasi Politeknik Kesehatan Kementerian Kesehatan Banten',

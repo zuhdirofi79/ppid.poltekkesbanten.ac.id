@@ -1,7 +1,7 @@
 @php
     use Illuminate\Support\Carbon;
 
-    $navigation = config('ppid.navigation', []);
+    $navigation = \App\Support\PublicNavigation::items();
     $contact = config('ppid.contact', []);
     $today = Carbon::now()->locale('id')->translatedFormat('l, d F Y');
 

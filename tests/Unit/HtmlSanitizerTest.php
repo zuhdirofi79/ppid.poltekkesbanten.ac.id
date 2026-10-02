@@ -31,4 +31,13 @@ class HtmlSanitizerTest extends TestCase
         $this->assertStringContainsString('<p>', $clean);
         $this->assertStringContainsString('Halo', $clean);
     }
+
+    #[Test]
+    public function it_keeps_media_library_images_and_drops_unsafe_sources(): void
+    {
+        $clean = HtmlSanitizer::clean('<img src="/media/abc" alt="Foto"><img src="javascript:alert(1)" alt="x">');
+
+        $this->assertStringContainsString('src="/media/abc"', $clean);
+        $this->assertStringNotContainsString('javascript:', $clean);
+    }
 }

@@ -50,11 +50,26 @@
         </a>
     @endcan
 
+    <p class="px-3 pt-4 text-[10px] font-bold uppercase tracking-wider text-white/40">SAQ Monev 2026</p>
+    {!! $link('admin.saq.index', 'Semua Indikator', 'manage-pages', 'admin.saq.*') !!}
+    @can('manage-pages')
+        <a href="{{ route('admin.saq.index', ['filter' => 'incomplete']) }}" class="block rounded-md px-3 py-2 hover:bg-white/5">Belum Lengkap</a>
+        <a href="{{ route('admin.saq.index', ['filter' => 'needs_review']) }}" class="block rounded-md px-3 py-2 hover:bg-white/5">Perlu Review</a>
+        <a href="{{ route('admin.saq.index', ['filter' => 'published']) }}" class="block rounded-md px-3 py-2 hover:bg-white/5">Sudah Dipublikasikan</a>
+    @endcan
+
     <p class="px-3 pt-4 text-[10px] font-bold uppercase tracking-wider text-white/40">Konten</p>
     {!! $link('admin.pages.index', 'Halaman', 'manage-pages', 'admin.pages.*') !!}
+    @can('manage-pages')
+        <a href="{{ route('admin.pages.create') }}" class="block rounded-md px-3 py-2 hover:bg-white/5">Tambah Halaman</a>
+    @endcan
     {!! $link('admin.posts.index', 'Berita', 'manage-posts', 'admin.posts.*') !!}
     {!! $link('admin.announcements.index', 'Pengumuman', 'manage-announcements', 'admin.announcements.*') !!}
     {!! $link('admin.documents.index', 'Dokumen', 'manage-documents', 'admin.documents.*') !!}
+    @can('manage-pages')
+        <a href="{{ route('admin.media.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.media.*') ? 'bg-white/10 text-gold' : 'hover:bg-white/5' }}">Media Library</a>
+        <a href="{{ route('admin.service-summaries.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.service-summaries.*') ? 'bg-white/10 text-gold' : 'hover:bg-white/5' }}">Ringkasan Layanan</a>
+    @endcan
     {!! $link('admin.faqs.index', 'FAQ', 'manage-faqs', 'admin.faqs.*') !!}
     {!! $link('admin.units.index', 'Unit PPID', 'manage-units', 'admin.units.*') !!}
     {!! $link('admin.services.index', 'Layanan', 'manage-services', 'admin.services.*') !!}

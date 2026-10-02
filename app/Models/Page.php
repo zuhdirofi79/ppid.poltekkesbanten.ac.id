@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\HasAuthors;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Page extends Model
@@ -22,6 +23,11 @@ class Page extends Model
             'published_at' => 'datetime',
             'sort_order' => 'integer',
         ];
+    }
+
+    public function attachments(): MorphMany
+    {
+        return $this->morphMany(Attachment::class, 'attachable')->orderBy('sort_order');
     }
 
     public function scopePublished(Builder $query): Builder

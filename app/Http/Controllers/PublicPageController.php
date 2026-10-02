@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\InformationServiceSummary;
 use App\Models\Page;
 use App\Support\HtmlSanitizer;
 use Illuminate\Http\RedirectResponse;
@@ -32,6 +33,10 @@ class PublicPageController extends Controller
             'description' => $seoDescription,
             'excerpt' => $page->excerpt,
             'body' => HtmlSanitizer::clean($page->body),
+            'publicAttachments' => $page->attachments()->with('media')->where('visibility', 'public')->orderBy('sort_order')->get(),
+            'serviceSummaries' => $slug === 'ringkasan-layanan-informasi-publik'
+                ? InformationServiceSummary::query()->orderByDesc('year')->get()
+                : collect(),
             'label' => $isProfil
                 ? 'Profil PPID'
                 : ($isDiumumkanBerkala ? 'Diumumkan Berkala' : null),

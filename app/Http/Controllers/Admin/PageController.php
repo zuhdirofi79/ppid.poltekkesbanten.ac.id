@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Page;
 use App\Support\HtmlSanitizer;
+use App\Support\PublicNavigation;
 use App\Support\UniqueSlug;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class PageController extends Controller
@@ -32,12 +35,13 @@ class PageController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $this->validated($request);
-        $data['slug'] = UniqueSlug::make($data['slug'] ?? $data['title'], Page::class);
+        $data['slug'] = $this->slugFor($data);
         $data['created_by'] = $request->user()->id;
         $data['updated_by'] = $request->user()->id;
 
         $page = Page::query()->create($data);
-        ActivityLog::record('created', $page, 'Membuat halaman: '.$page->title);
+        PublicNavigation::forget();
+        ActivityLog::record($data['status'] === 'published' ? 'page_published' : 'page_created', $page, 'Membuat halaman: '.$page->title);
 
         return redirect()->route('admin.pages.index')->with('status', 'Halaman berhasil dibuat.');
     }
@@ -50,11 +54,17 @@ class PageController extends Controller
     public function update(Request $request, Page $page): RedirectResponse
     {
         $data = $this->validated($request, $page);
-        $data['slug'] = UniqueSlug::make($data['slug'] ?? $data['title'], Page::class, $page->id);
+        $data['slug'] = $this->slugFor($data, $page);
         $data['updated_by'] = $request->user()->id;
 
         $page->update($data);
-        ActivityLog::record('updated', $page, 'Memperbarui halaman: '.$page->title);
+        PublicNavigation::forget();
+        $action = match ($data['status']) {
+            'published' => 'page_published',
+            'archived' => 'page_archived',
+            default => 'page_updated',
+        };
+        ActivityLog::record($action, $page, 'Memperbarui halaman: '.$page->title);
 
         return redirect()->route('admin.pages.index')->with('status', 'Halaman berhasil diperbarui.');
     }
@@ -77,7 +87,7 @@ class PageController extends Controller
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:500'],
             'body' => ['nullable', 'string'],
-            'status' => ['required', 'in:draft,published'],
+            'status' => ['required', 'in:draft,published,archived'],
             'published_at' => ['nullable', 'date'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
@@ -90,5 +100,37 @@ class PageController extends Controller
         }
 
         return $data;
+    }
+
+    /** @param  array<string, mixed>  $data */
+    private function slugFor(array $data, ?Page $page = null): string
+    {
+        $reserved = ['admin', 'login', 'logout', 'storage', 'build', 'api', 'vendor'];
+        $requested = trim((string) ($data['slug'] ?? ''));
+
+        if ($requested !== '') {
+            $slug = Str::slug($requested);
+            if ($slug === '' || in_array($slug, $reserved, true)) {
+                throw ValidationException::withMessages(['slug' => 'Slug tidak valid.']);
+            }
+
+            $exists = Page::withTrashed()
+                ->where('slug', $slug)
+                ->when($page, fn ($query) => $query->whereKeyNot($page->id))
+                ->exists();
+
+            if ($exists) {
+                throw ValidationException::withMessages(['slug' => 'Slug sudah digunakan.']);
+            }
+
+            return $slug;
+        }
+
+        $slug = UniqueSlug::make($data['title'], Page::class, $page?->id);
+        if (in_array($slug, $reserved, true)) {
+            throw ValidationException::withMessages(['slug' => 'Slug tidak valid.']);
+        }
+
+        return $slug;
     }
 }

@@ -4,6 +4,7 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MediaFileController;
 use App\Http\Controllers\InformationController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
@@ -14,6 +15,10 @@ use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+
+Route::get('/media/{uuid}', [MediaFileController::class, 'show'])
+    ->whereUuid('uuid')
+    ->name('media.show');
 
 Route::get('/cari', [SearchController::class, 'index'])
     ->middleware('throttle:60,1')

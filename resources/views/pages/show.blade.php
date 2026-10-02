@@ -125,5 +125,8 @@
             <article class="cms-page mx-auto max-w-3xl px-4 py-10">
                 {!! $body !!}
             </article>
+            @include('pages.partials.service-summary-table', ['rows' => $serviceSummaries ?? collect()])
     @endswitch
+
+    @include('pages.partials.public-attachments', ['publicAttachments' => $publicAttachments ?? collect()])
 @endsection

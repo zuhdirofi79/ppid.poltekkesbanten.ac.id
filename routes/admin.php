@@ -5,7 +5,10 @@ use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\InformasiBerkalaController;
+use App\Http\Controllers\Admin\InformationServiceSummaryController;
+use App\Http\Controllers\Admin\MediaAssetController;
 use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\SaqController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PpidAdminController;
 use App\Http\Controllers\Admin\PpidDashboardController;
@@ -84,10 +87,31 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 ->parameters(['services' => 'service']);
         });
 
+        Route::middleware(EnsureUserCanAccessAdmin::class.':manage-pages')->group(function () {
+            Route::get('saq', [SaqController::class, 'index'])->name('saq.index');
+            Route::get('saq/{saq}', [SaqController::class, 'show'])->name('saq.show');
+            Route::put('saq/{saq}', [SaqController::class, 'update'])->name('saq.update');
+            Route::post('saq/{saq}/evidences', [SaqController::class, 'storeEvidence'])->name('saq.evidences.store');
+            Route::delete('saq/{saq}/evidences/{evidence}', [SaqController::class, 'destroyEvidence'])->name('saq.evidences.destroy');
+
+            Route::get('media', [MediaAssetController::class, 'index'])->name('media.index');
+            Route::get('media/picker', [MediaAssetController::class, 'picker'])->name('media.picker');
+            Route::post('media', [MediaAssetController::class, 'store'])->name('media.store');
+            Route::put('media/{mediaAsset}', [MediaAssetController::class, 'update'])->name('media.update');
+            Route::post('media/{mediaAsset}/replace', [MediaAssetController::class, 'replace'])->name('media.replace');
+            Route::delete('media/{mediaAsset}', [MediaAssetController::class, 'destroy'])->name('media.destroy');
+            Route::get('media/{mediaAsset}/file', [MediaAssetController::class, 'download'])->name('media.download');
+
+            Route::get('layanan-informasi/ringkasan', [InformationServiceSummaryController::class, 'index'])->name('service-summaries.index');
+            Route::post('layanan-informasi/ringkasan', [InformationServiceSummaryController::class, 'store'])->name('service-summaries.store');
+        });
+
         Route::middleware(EnsureUserCanAccessAdmin::class.':manage-menus')->group(function () {
             Route::get('menus', [MenuController::class, 'edit'])->name('menus.edit');
+            Route::put('menus/source', [MenuController::class, 'updateSource'])->name('menus.source');
             Route::post('menus/items', [MenuController::class, 'storeItem'])->name('menus.items.store');
             Route::put('menus/items/{menuItem}', [MenuController::class, 'updateItem'])->name('menus.items.update');
+            Route::post('menus/items/{menuItem}/move', [MenuController::class, 'moveItem'])->name('menus.items.move');
             Route::delete('menus/items/{menuItem}', [MenuController::class, 'destroyItem'])->name('menus.items.destroy');
         });
 
