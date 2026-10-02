@@ -392,6 +392,7 @@ return [
                 ['label' => 'Kebijakan Mengikat bagi Publik', 'route' => 'pages.show', 'params' => ['slug' => 'kebijakan-mengikat-bagi-publik']],
                 ['label' => 'Kalender Akademik', 'route' => 'pages.show', 'params' => ['slug' => 'kalender-akademik']],
                 ['label' => 'Tata Cara Pengaduan Penyalahgunaan Wewenang', 'route' => 'pages.show', 'params' => ['slug' => 'tata-cara-pengaduan-penyalahgunaan-wewenang']],
+                ['label' => 'Ringkasan Laporan Layanan Informasi', 'route' => 'pages.show', 'params' => ['slug' => 'ringkasan-laporan-layanan-informasi']],
             ],
         ],
         [

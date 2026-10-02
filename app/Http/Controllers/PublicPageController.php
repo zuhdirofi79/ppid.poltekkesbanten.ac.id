@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\AcademicCalendar;
-use App\Models\InformationServiceSummary;
 use App\Models\LeadershipProfile;
 use App\Models\LhkpnDocument;
 use App\Models\Page;
 use App\Support\HtmlSanitizer;
+use App\Support\ServiceSummaryReport;
 use App\Support\SopLayananDocuments;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -96,8 +96,11 @@ class PublicPageController extends Controller
             'body' => HtmlSanitizer::clean($page->body),
             'publicAttachments' => $page->attachments()->with('media')->where('visibility', 'public')->orderBy('sort_order')->get(),
             'serviceSummaries' => $slug === 'ringkasan-layanan-informasi-publik'
-                ? InformationServiceSummary::query()->orderByDesc('year')->get()
+                ? ServiceSummaryReport::publishedRows()
                 : collect(),
+            'serviceReport' => $slug === ServiceSummaryReport::SLUG
+                ? ServiceSummaryReport::fromRequest($request)
+                : null,
             'leadershipProfiles' => $slug === 'profil-pimpinan-satuan-kerja'
                 ? LeadershipProfile::query()->with('photo')->published()->orderBy('sort_order')->orderBy('name')->get()
                 : collect(),
@@ -180,6 +183,7 @@ class PublicPageController extends Controller
             'kebijakan-mengikat-bagi-publik' => 'Kebijakan Mengikat bagi Publik',
             'kalender-akademik' => 'Kalender Akademik',
             'tata-cara-pengaduan-penyalahgunaan-wewenang' => 'Tata Cara Pengaduan Penyalahgunaan Wewenang',
+            'ringkasan-laporan-layanan-informasi' => 'Ringkasan Laporan Layanan Informasi',
             'standar-operasional-prosedur-layanan-informasi-publik' => 'Standar Operasional Prosedur Layanan Informasi Publik',
             'profil-singkat-ppid' => 'Profil Singkat PPID',
             'dasar-hukum-sk-ppid' => 'Dasar Hukum dan SK PPID',

@@ -9,6 +9,7 @@ use App\Http\Controllers\InformationController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicPageController;
+use App\Http\Controllers\ServiceSummaryPdfController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SitemapController;
@@ -44,6 +45,9 @@ Route::get('/kontak', function () {
 })->name('contact');
 
 Route::redirect('/halaman/informasi-berkala', '/informasi-publik/berkala', 301);
+
+Route::get('/halaman/ringkasan-laporan-layanan-informasi/pdf', ServiceSummaryPdfController::class)
+    ->name('pages.service-summary.pdf');
 
 Route::get('/halaman/{slug}', [PublicPageController::class, 'show'])
     ->where('slug', '[a-z0-9-]+')

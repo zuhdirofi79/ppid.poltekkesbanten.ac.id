@@ -128,7 +128,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('media/{mediaAsset}/file', [MediaAssetController::class, 'download'])->name('media.download');
 
             Route::get('layanan-informasi/ringkasan', [InformationServiceSummaryController::class, 'index'])->name('service-summaries.index');
+            Route::get('layanan-informasi/ringkasan/create', [InformationServiceSummaryController::class, 'create'])->name('service-summaries.create');
             Route::post('layanan-informasi/ringkasan', [InformationServiceSummaryController::class, 'store'])->name('service-summaries.store');
+            Route::get('layanan-informasi/ringkasan/{summary}/edit', [InformationServiceSummaryController::class, 'edit'])->name('service-summaries.edit');
+            Route::put('layanan-informasi/ringkasan/{summary}', [InformationServiceSummaryController::class, 'update'])->name('service-summaries.update');
+            Route::post('layanan-informasi/ringkasan/{summary}/publish', [InformationServiceSummaryController::class, 'publish'])->name('service-summaries.publish');
+            Route::delete('layanan-informasi/ringkasan/{summary}', [InformationServiceSummaryController::class, 'destroy'])->name('service-summaries.destroy');
         });
 
         Route::middleware(EnsureUserCanAccessAdmin::class.':manage-menus')->group(function () {

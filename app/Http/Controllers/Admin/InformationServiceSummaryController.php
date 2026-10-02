@@ -3,47 +3,74 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\SaveInformationServiceSummaryRequest;
 use App\Models\InformationServiceSummary;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class InformationServiceSummaryController extends Controller
 {
     public function index(): View
     {
-        $summaries = InformationServiceSummary::query()->orderByDesc('year')->get();
-
         return view('admin.service-summaries.index', [
-            'summaries' => $summaries,
-            'summary' => new InformationServiceSummary,
+            'summaries' => InformationServiceSummary::query()->orderByDesc('year')->get(),
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function create(): View
     {
-        $data = $this->validated($request);
-        InformationServiceSummary::query()->updateOrCreate(
-            ['year' => $data['year']],
-            $data,
-        );
-
-        return redirect()->route('admin.service-summaries.index')->with('status', 'Ringkasan layanan disimpan. Angka hanya berasal dari isian admin.');
+        return view('admin.service-summaries.create', [
+            'summary' => new InformationServiceSummary(['is_published' => false]),
+        ]);
     }
 
-    /** @return array<string, mixed> */
-    private function validated(Request $request): array
+    public function store(SaveInformationServiceSummaryRequest $request): RedirectResponse
     {
-        return $request->validate([
-            'year' => ['required', 'integer', 'min:2000', 'max:2100'],
-            'total_received' => ['nullable', 'integer', 'min:0'],
-            'fulfilled_full' => ['nullable', 'integer', 'min:0'],
-            'fulfilled_partial' => ['nullable', 'integer', 'min:0'],
-            'rejected' => ['nullable', 'integer', 'min:0'],
-            'average_response_days' => ['nullable', 'numeric', 'min:0'],
-            'response_time_description' => ['nullable', 'string', 'max:5000'],
-            'rejection_reasons' => ['nullable', 'string', 'max:5000'],
-            'notes' => ['nullable', 'string', 'max:5000'],
+        $summary = InformationServiceSummary::query()->create($request->summaryAttributes());
+
+        return redirect()
+            ->route('admin.service-summaries.index')
+            ->with('status', 'Laporan layanan informasi tahun '.$summary->year.' disimpan.');
+    }
+
+    public function edit(InformationServiceSummary $summary): View
+    {
+        return view('admin.service-summaries.edit', [
+            'summary' => $summary,
         ]);
+    }
+
+    public function update(SaveInformationServiceSummaryRequest $request, InformationServiceSummary $summary): RedirectResponse
+    {
+        $summary->update($request->summaryAttributes());
+
+        return redirect()
+            ->route('admin.service-summaries.index')
+            ->with('status', 'Laporan layanan informasi tahun '.$summary->year.' diperbarui.');
+    }
+
+    public function destroy(InformationServiceSummary $summary): RedirectResponse
+    {
+        $year = $summary->year;
+        $summary->delete();
+
+        return redirect()
+            ->route('admin.service-summaries.index')
+            ->with('status', 'Laporan layanan informasi tahun '.$year.' dihapus.');
+    }
+
+    public function publish(InformationServiceSummary $summary): RedirectResponse
+    {
+        $publish = ! $summary->is_published;
+        $summary->update([
+            'is_published' => $publish,
+            'published_at' => $publish ? now() : null,
+        ]);
+
+        return redirect()
+            ->route('admin.service-summaries.index')
+            ->with('status', $publish
+                ? 'Laporan tahun '.$summary->year.' dipublikasikan.'
+                : 'Laporan tahun '.$summary->year.' dikembalikan ke draft.');
     }
 }

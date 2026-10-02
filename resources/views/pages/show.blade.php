@@ -127,6 +127,16 @@
             ])
             @break
 
+        @case('ringkasan-laporan-layanan-informasi')
+            @include('pages.partials.ringkasan-laporan-layanan-informasi', [
+                'title' => $title ?? $page->title,
+                'excerpt' => $excerpt ?? $page->excerpt,
+                'label' => $label ?? null,
+                'breadcrumbs' => $breadcrumbs ?? [],
+                'report' => $serviceReport ?? [],
+            ])
+            @break
+
         @case('standar-operasional-prosedur-layanan-informasi-publik')
             @include('pages.partials.standar-operasional-prosedur-layanan-informasi-publik', [
                 'title' => $title ?? $page->title,
