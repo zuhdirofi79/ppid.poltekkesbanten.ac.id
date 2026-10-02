@@ -114,10 +114,10 @@
             id="public_asset_path"
             name="public_asset_path"
             value="{{ old('public_asset_path', $calendar->public_asset_path) }}"
-            placeholder="docs/kalender-akademik-2026.pdf"
+            placeholder="docs/Poltekkes Banten Academic Calendar 2026_2027.png"
             class="w-full rounded-md border border-line px-3 py-2 text-sm"
         >
-        <p class="mt-1 text-xs text-muted">Path relatif dari folder public. Contoh: docs/draft-kalender-akademik-2026-occasionally.pdf</p>
+        <p class="mt-1 text-xs text-muted">Path relatif dari folder public. Contoh: docs/Poltekkes Banten Academic Calendar 2026_2027.png</p>
         @error('public_asset_path')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
     </div>
 

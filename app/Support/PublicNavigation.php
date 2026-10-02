@@ -56,17 +56,24 @@ class PublicNavigation
      */
     private static function mapItem(MenuItem $item, array $publishedSlugs): ?array
     {
-        $mapped = self::target($item, $publishedSlugs);
-        if ($mapped === null) {
-            return null;
-        }
-
         $children = [];
         foreach ($item->children as $child) {
             $childMapped = self::target($child, $publishedSlugs);
             if ($childMapped !== null) {
                 $children[] = $childMapped;
             }
+        }
+
+        $mapped = self::target($item, $publishedSlugs);
+        if ($mapped === null && $children === []) {
+            return null;
+        }
+
+        if ($mapped === null) {
+            $mapped = [
+                'label' => $item->label,
+                'route' => null,
+            ];
         }
 
         if ($children !== []) {

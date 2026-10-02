@@ -1,4 +1,5 @@
 {{-- Template: /halaman/kalender-akademik — Kalender Akademik dengan selector tahun (format-aware) --}}
+<!-- PPID-KALENDER-AKADEMIK-V1 -->
 <!-- PPID-KALENDER-AKADEMIK-DEPLOY-20261002-B -->
 
 <main class="ppid-kalender-page">
@@ -135,7 +136,7 @@
                                     <path d="M4.75 4h4.5a.75.75 0 0 1 0 1.5H5.5v9h9v-3.75a.75.75 0 0 1 1.5 0V15a.5.5 0 0 1-.5.5H5a.5.5 0 0 1-.5-.5V4.5A.5.5 0 0 1 5 4h-.25Z"/>
                                     <path d="M11 4a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0V5.81l-5.22 5.22a.75.75 0 0 1-1.06-1.06l5.22-5.22H11.75A.75.75 0 0 1 11 4Z"/>
                                 </svg>
-                                {{ $isImage ? 'Lihat Ukuran Penuh' : 'Buka Dokumen' }}
+                                Lihat Dokumen
                             </a>
 
                             <a

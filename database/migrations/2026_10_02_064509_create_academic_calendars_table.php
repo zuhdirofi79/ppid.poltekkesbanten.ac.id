@@ -11,6 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('academic_calendars')) {
+            if (! Schema::hasColumn('academic_calendars', 'mime_type')) {
+                Schema::table('academic_calendars', function (Blueprint $table) {
+                    $table->string('mime_type')->nullable();
+                });
+            }
+
+            if (! Schema::hasColumn('academic_calendars', 'extension')) {
+                Schema::table('academic_calendars', function (Blueprint $table) {
+                    $table->string('extension', 10)->nullable();
+                });
+            }
+
+            return;
+        }
+
         Schema::create('academic_calendars', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();

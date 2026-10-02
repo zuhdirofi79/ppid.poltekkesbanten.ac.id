@@ -64,12 +64,9 @@ class PublicPageController extends Controller
             $requestedYear = $request->integer('tahun');
 
             if ($requestedYear > 0) {
-                $selectedCalendar = $academicCalendars->firstWhere('year', $requestedYear);
                 $selectedYear = $requestedYear;
-            }
-
-            // Default to latest year if none selected or requested year not found
-            if (! $selectedCalendar && $academicCalendars->isNotEmpty()) {
+                $selectedCalendar = $academicCalendars->firstWhere('year', $requestedYear);
+            } elseif ($academicCalendars->isNotEmpty()) {
                 $selectedCalendar = $academicCalendars->first();
                 $selectedYear = $selectedCalendar->year;
             }

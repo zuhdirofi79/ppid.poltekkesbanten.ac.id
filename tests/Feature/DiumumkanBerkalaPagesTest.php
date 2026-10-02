@@ -2,6 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\AcademicCalendar;
+use App\Models\Page;
+use App\Models\SiteSetting;
+use App\Support\PublicNavigation;
+use Database\Seeders\AcademicCalendarSeeder;
+use Database\Seeders\EnsureKalenderAkademikMenuItemSeeder;
+use Database\Seeders\KalenderAkademikPageSeeder;
 use Database\Seeders\MenuSeeder;
 use Database\Seeders\PageSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -219,13 +226,15 @@ class DiumumkanBerkalaPagesTest extends TestCase
         $response = $this->get('/halaman/kalender-akademik');
 
         $response->assertOk();
+        $response->assertSee('PPID-KALENDER-AKADEMIK-V1', false);
         $response->assertSee('PPID-KALENDER-AKADEMIK-DEPLOY-20261002-B', false);
         $response->assertSee('Kalender Akademik', false);
+        $response->assertSee('berdasarkan tahun akademik', false);
         $response->assertSee('Diumumkan Berkala', false);
         $response->assertSee('2026', false);
         // 2026 uses PNG, NOT PDF
         $response->assertSee('Poltekkes Banten Academic Calendar 2026_2027.png', false);
-        $response->assertSee('Lihat Ukuran Penuh', false);
+        $response->assertSee('Lihat Dokumen', false);
         $response->assertSee('Unduh Dokumen', false);
         // Should render image viewer, not PDF viewer
         $response->assertSee('ppid-kalender-image-viewer', false);
@@ -293,8 +302,101 @@ class DiumumkanBerkalaPagesTest extends TestCase
         $response = $this->get('/halaman/kalender-akademik?tahun=2099');
 
         $response->assertOk();
-        $response->assertSee('belum tersedia', false);
-        $response->assertDontSee('Error', false);
+        $response->assertSee('Kalender Akademik Tahun 2099 Belum Tersedia', false);
+        $response->assertDontSee('Poltekkes Banten Academic Calendar 2026_2027.png', false);
+        $response->assertDontSee('draft-kalender-akademik-2026-occasionally.pdf', false);
+    }
+
+    #[Test]
+    public function kalender_akademik_returns_not_found_without_page_record(): void
+    {
+        Page::query()->where('slug', 'kalender-akademik')->delete();
+
+        $this->get('/halaman/kalender-akademik')->assertNotFound();
+        $this->get('/halaman/kalender-akademik?tahun=2026')->assertNotFound();
+    }
+
+    #[Test]
+    public function kalender_page_seeder_does_not_overwrite_admin_excerpt(): void
+    {
+        $page = Page::query()->where('slug', 'kalender-akademik')->firstOrFail();
+        $page->update(['excerpt' => 'Diubah oleh admin PPID.']);
+
+        $this->seed(KalenderAkademikPageSeeder::class);
+
+        $this->assertSame('Diubah oleh admin PPID.', $page->fresh()->excerpt);
+        $this->assertSame(1, Page::query()->where('slug', 'kalender-akademik')->count());
+    }
+
+    #[Test]
+    public function academic_calendar_seeder_replaces_legacy_pdf_once(): void
+    {
+        $legacy = AcademicCalendar::query()->create([
+            'year' => 2026,
+            'title' => 'Judul yang diedit admin',
+            'description' => 'Deskripsi admin.',
+            'source_type' => AcademicCalendar::SOURCE_PUBLIC_ASSET,
+            'public_asset_path' => 'docs/draft-kalender-akademik-2026-occasionally.pdf',
+            'mime_type' => 'application/pdf',
+            'extension' => 'pdf',
+            'is_published' => true,
+            'published_at' => now(),
+        ]);
+
+        $this->seed(AcademicCalendarSeeder::class);
+
+        $legacy->refresh();
+        $this->assertSame('docs/Poltekkes Banten Academic Calendar 2026_2027.png', $legacy->public_asset_path);
+        $this->assertSame('image/png', $legacy->mime_type);
+        $this->assertSame('png', $legacy->extension);
+        $this->assertSame('Judul yang diedit admin', $legacy->title);
+
+        $legacy->update([
+            'public_asset_path' => 'docs/custom-admin.png',
+            'mime_type' => 'image/png',
+            'extension' => 'png',
+        ]);
+
+        $this->seed(AcademicCalendarSeeder::class);
+
+        $this->assertSame('docs/custom-admin.png', $legacy->fresh()->public_asset_path);
+        $this->assertSame(1, AcademicCalendar::query()->where('year', 2026)->count());
+    }
+
+    #[Test]
+    public function database_navigation_gains_kalender_item_without_rebuilding_the_menu(): void
+    {
+        $this->seed(MenuSeeder::class);
+
+        \App\Models\MenuItem::query()->where('label', 'Kalender Akademik')->delete();
+
+        SiteSetting::query()->updateOrCreate(
+            ['key' => 'navigation.public_source'],
+            ['group' => 'navigation', 'value' => 'database', 'type' => 'text', 'label' => 'Sumber navigasi publik'],
+        );
+        SiteSetting::forgetCache();
+        PublicNavigation::forget();
+        $this->assertSame('database', SiteSetting::getValue('navigation.public_source'));
+
+        $before = $this->get('/')->assertOk()->getContent();
+        $this->assertDoesNotMatchRegularExpression(
+            '/href="[^"]*\/halaman\/kalender-akademik"/',
+            $before
+        );
+
+        $this->seed(EnsureKalenderAkademikMenuItemSeeder::class);
+        PublicNavigation::forget();
+
+        $html = $this->get('/')->assertOk()->getContent();
+        $this->assertStringContainsString(route('pages.show', ['slug' => 'kalender-akademik'], false), $html);
+        $this->assertSame(1, preg_match(
+            '/aria-label="Navigasi utama"[\s\S]+?Kebijakan Mengikat bagi Publik[\s\S]+?Kalender Akademik/u',
+            $html
+        ));
+        $this->assertSame(1, preg_match(
+            '/aria-label="Navigasi seluler"[\s\S]+?Kebijakan Mengikat bagi Publik[\s\S]+?Kalender Akademik/u',
+            $html
+        ));
     }
 
     #[Test]
