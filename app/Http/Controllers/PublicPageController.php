@@ -2,19 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AcademicCalendar;
 use App\Models\InformationServiceSummary;
 use App\Models\LeadershipProfile;
 use App\Models\Page;
 use App\Support\HtmlSanitizer;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class PublicPageController extends Controller
 {
-    public function show(string $slug): View|RedirectResponse
+    public function show(Request $request, string $slug): View|RedirectResponse
     {
         if ($slug === 'informasi-berkala') {
             return redirect()->route('information.category', ['slug' => 'berkala'], 301);
+        }
+
+        // Handle kalender-akademik-YYYY alias redirect
+        if (preg_match('/^kalender-akademik-(\d{4})$/', $slug, $matches)) {
+            return redirect()->route('pages.show', [
+                'slug' => 'kalender-akademik',
+                'tahun' => $matches[1],
+            ], 301);
         }
 
         $page = Page::query()->published()->where('slug', $slug)->firstOrFail();
@@ -40,6 +50,36 @@ class PublicPageController extends Controller
         $isProfil = $this->isProfilSlug($slug);
         $isDiumumkanBerkala = $this->isDiumumkanBerkalaSlug($slug);
 
+        // Academic Calendar data
+        $academicCalendars = collect();
+        $selectedCalendar = null;
+        $selectedYear = null;
+
+        if ($slug === 'kalender-akademik') {
+            $academicCalendars = AcademicCalendar::query()
+                ->published()
+                ->yearOrdered('desc')
+                ->get();
+
+            $requestedYear = $request->integer('tahun');
+
+            if ($requestedYear > 0) {
+                $selectedCalendar = $academicCalendars->firstWhere('year', $requestedYear);
+                $selectedYear = $requestedYear;
+            }
+
+            // Default to latest year if none selected or requested year not found
+            if (! $selectedCalendar && $academicCalendars->isNotEmpty()) {
+                $selectedCalendar = $academicCalendars->first();
+                $selectedYear = $selectedCalendar->year;
+            }
+
+            // Update SEO for specific year
+            if ($selectedCalendar) {
+                $seoTitle = 'Kalender Akademik '.$selectedCalendar->year.' | '.config('ppid.name');
+            }
+        }
+
         return view('pages.show', [
             'page' => $page,
             'title' => $page->title,
@@ -54,6 +94,9 @@ class PublicPageController extends Controller
             'leadershipProfiles' => $slug === 'profil-pimpinan-satuan-kerja'
                 ? LeadershipProfile::query()->with('photo')->published()->orderBy('sort_order')->orderBy('name')->get()
                 : collect(),
+            'academicCalendars' => $academicCalendars,
+            'selectedCalendar' => $selectedCalendar,
+            'selectedYear' => $selectedYear,
             'label' => $isProfil
                 ? 'Profil PPID'
                 : ($isDiumumkanBerkala ? 'Diumumkan Berkala' : null),
@@ -103,6 +146,7 @@ class PublicPageController extends Controller
             'lhkpn-pimpinan-tertinggi' => 'LHKPN Pimpinan Tertinggi',
             'program-kegiatan-prioritas-2026' => 'Program atau Kegiatan Prioritas',
             'kebijakan-mengikat-bagi-publik' => 'Kebijakan Mengikat bagi Publik',
+            'kalender-akademik' => 'Kalender Akademik',
             'profil-singkat-ppid' => 'Profil Singkat PPID',
             'dasar-hukum-sk-ppid' => 'Dasar Hukum dan SK PPID',
             'visi-dan-misi' => 'Visi dan Misi',

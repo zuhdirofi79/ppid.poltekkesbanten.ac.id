@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AcademicCalendarController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -60,6 +61,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
             Route::delete('documents/{document}/file', [PublicDocumentController::class, 'removeFile'])
                 ->name('documents.remove-file');
+
+            Route::resource('academic-calendars', AcademicCalendarController::class)
+                ->except(['show'])
+                ->parameters(['academic-calendars' => 'academicCalendar']);
+
+            Route::delete('academic-calendars/{academicCalendar}/file', [AcademicCalendarController::class, 'removeFile'])
+                ->name('academic-calendars.remove-file');
         });
 
         Route::middleware(EnsureUserCanAccessAdmin::class.':manage-pages')->group(function () {

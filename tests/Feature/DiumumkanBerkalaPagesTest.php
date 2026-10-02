@@ -56,6 +56,12 @@ class DiumumkanBerkalaPagesTest extends TestCase
             '/Program atau Kegiatan Prioritas[\s\S]+?Kebijakan Mengikat bagi Publik/u',
             $html
         ));
+        $this->assertStringContainsString(route('pages.show', ['slug' => 'kalender-akademik'], false), $html);
+        $this->assertStringContainsString('Kalender Akademik', $html);
+        $this->assertSame(1, preg_match(
+            '/Kebijakan Mengikat bagi Publik[\s\S]+?Kalender Akademik/u',
+            $html
+        ));
     }
 
     #[Test]
@@ -203,6 +209,100 @@ class DiumumkanBerkalaPagesTest extends TestCase
         $response->assertSee('Download PDF', false);
         $response->assertSee('ppid-kebijakan-viewer', false);
         $this->assertSame(1, preg_match_all('/<h1\b/i', $response->getContent()));
+    }
+
+    #[Test]
+    public function kalender_akademik_page_renders_with_year_selector(): void
+    {
+        $this->seed(\Database\Seeders\AcademicCalendarSeeder::class);
+
+        $response = $this->get('/halaman/kalender-akademik');
+
+        $response->assertOk();
+        $response->assertSee('PPID-KALENDER-AKADEMIK-DEPLOY-20261002-B', false);
+        $response->assertSee('Kalender Akademik', false);
+        $response->assertSee('Diumumkan Berkala', false);
+        $response->assertSee('2026', false);
+        // 2026 uses PNG, NOT PDF
+        $response->assertSee('Poltekkes Banten Academic Calendar 2026_2027.png', false);
+        $response->assertSee('Lihat Ukuran Penuh', false);
+        $response->assertSee('Unduh Dokumen', false);
+        // Should render image viewer, not PDF viewer
+        $response->assertSee('ppid-kalender-image-viewer', false);
+        $response->assertSee('<img', false);
+        // Should NOT reference old PDF
+        $response->assertDontSee('draft-kalender-akademik-2026-occasionally.pdf', false);
+        $this->assertSame(1, preg_match_all('/<h1\b/i', $response->getContent()));
+    }
+
+    #[Test]
+    public function kalender_akademik_page_shows_specific_year(): void
+    {
+        $this->seed(\Database\Seeders\AcademicCalendarSeeder::class);
+
+        $response = $this->get('/halaman/kalender-akademik?tahun=2026');
+
+        $response->assertOk();
+        $response->assertSee('Kalender Akademik Tahun Akademik 2026/2027', false);
+        $response->assertSee('Poltekkes Banten Academic Calendar 2026_2027.png', false);
+        // Should NOT reference old PDF
+        $response->assertDontSee('draft-kalender-akademik-2026-occasionally.pdf', false);
+    }
+
+    #[Test]
+    public function kalender_akademik_2026_renders_as_image_not_pdf(): void
+    {
+        $this->seed(\Database\Seeders\AcademicCalendarSeeder::class);
+
+        $response = $this->get('/halaman/kalender-akademik?tahun=2026');
+        $html = $response->getContent();
+
+        $response->assertOk();
+        // Must have <img> tag for PNG
+        $this->assertStringContainsString('<img', $html);
+        // Must have the image viewer section element
+        $this->assertMatchesRegularExpression('/<section[^>]*class="ppid-kalender-image-viewer"/', $html);
+        // Must NOT have PDF iframe section element (note: CSS definitions may still exist)
+        $this->assertDoesNotMatchRegularExpression('/<section[^>]*class="ppid-kalender-pdf-viewer"/', $html);
+        // Must NOT have iframe element for PDF
+        $this->assertDoesNotMatchRegularExpression('/<iframe[^>]*ppid-kalender-pdf-frame/', $html);
+        // Must have alt text
+        $this->assertStringContainsString('alt="Kalender Akademik Poltekkes Kemenkes Banten Tahun Akademik 2026/2027"', $html);
+    }
+
+    #[Test]
+    public function kalender_akademik_model_correctly_detects_image_format(): void
+    {
+        $this->seed(\Database\Seeders\AcademicCalendarSeeder::class);
+
+        $calendar = \App\Models\AcademicCalendar::query()->where('year', 2026)->first();
+
+        $this->assertTrue($calendar->isImage());
+        $this->assertFalse($calendar->isPdf());
+        $this->assertSame('png', $calendar->getExtension());
+        $this->assertSame('image/png', $calendar->getMimeType());
+        $this->assertSame('PNG', $calendar->getFormatLabel());
+        $this->assertSame('2026/2027', $calendar->getYearLabel());
+    }
+
+    #[Test]
+    public function kalender_akademik_page_handles_unavailable_year_gracefully(): void
+    {
+        $this->seed(\Database\Seeders\AcademicCalendarSeeder::class);
+
+        $response = $this->get('/halaman/kalender-akademik?tahun=2099');
+
+        $response->assertOk();
+        $response->assertSee('belum tersedia', false);
+        $response->assertDontSee('Error', false);
+    }
+
+    #[Test]
+    public function kalender_akademik_alias_redirects_to_main_page(): void
+    {
+        $response = $this->get('/halaman/kalender-akademik-2026');
+
+        $response->assertRedirect('/halaman/kalender-akademik?tahun=2026');
     }
 
     #[Test]

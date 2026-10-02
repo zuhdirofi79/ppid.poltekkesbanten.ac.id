@@ -67,6 +67,7 @@
     {!! $link('admin.posts.index', 'Berita', 'manage-posts', 'admin.posts.*') !!}
     {!! $link('admin.announcements.index', 'Pengumuman', 'manage-announcements', 'admin.announcements.*') !!}
     {!! $link('admin.documents.index', 'Dokumen', 'manage-documents', 'admin.documents.*') !!}
+    {!! $link('admin.academic-calendars.index', 'Kalender Akademik', 'manage-documents', 'admin.academic-calendars.*') !!}
     @can('manage-pages')
         <a href="{{ route('admin.media.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.media.*') ? 'bg-white/10 text-gold' : 'hover:bg-white/5' }}">Media Library</a>
         <a href="{{ route('admin.service-summaries.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.service-summaries.*') ? 'bg-white/10 text-gold' : 'hover:bg-white/5' }}">Ringkasan Layanan</a>

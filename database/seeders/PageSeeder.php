@@ -181,6 +181,7 @@ class PageSeeder extends Seeder
         $this->seedProfilPimpinanPage($adminId);
         $this->seedProgramKegiatanPrioritasPage($adminId);
         $this->seedKebijakanMengikatBagiPublikPage($adminId);
+        $this->seedKalenderAkademikPage($adminId);
     }
 
     private function seedProfilPimpinanPage(?int $adminId): void
@@ -401,6 +402,25 @@ HTML;
             'status' => 'published',
             'published_at' => now(),
             'sort_order' => 37,
+            'created_by' => $adminId,
+            'updated_by' => $adminId,
+        ];
+
+        Page::query()->firstOrCreate(['slug' => $slug], $defaults);
+    }
+
+    private function seedKalenderAkademikPage(?int $adminId): void
+    {
+        $slug = 'kalender-akademik';
+        $defaults = [
+            'title' => 'Kalender Akademik',
+            'excerpt' => 'Kalender kegiatan akademik Poltekkes Kemenkes Banten berdasarkan tahun.',
+            'meta_title' => 'Kalender Akademik | PPID Poltekkes Kemenkes Banten',
+            'meta_description' => 'Kalender akademik Poltekkes Kemenkes Banten berdasarkan tahun.',
+            'body' => '',
+            'status' => 'published',
+            'published_at' => now(),
+            'sort_order' => 38,
             'created_by' => $adminId,
             'updated_by' => $adminId,
         ];

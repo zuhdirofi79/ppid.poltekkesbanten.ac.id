@@ -106,6 +106,18 @@
             ])
             @break
 
+        @case('kalender-akademik')
+            @include('pages.partials.kalender-akademik', [
+                'title' => $title ?? $page->title,
+                'excerpt' => $excerpt ?? $page->excerpt,
+                'label' => $label ?? null,
+                'breadcrumbs' => $breadcrumbs ?? [],
+                'calendars' => $academicCalendars ?? collect(),
+                'selectedCalendar' => $selectedCalendar ?? null,
+                'selectedYear' => $selectedYear ?? null,
+            ])
+            @break
+
         @default
             @if (($page->slug ?? '') === 'akreditasi')
                 <!-- PPID-AKREDITASI-DEPLOY-20260904-A -->

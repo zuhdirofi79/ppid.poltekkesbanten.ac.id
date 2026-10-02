@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             MenuSeeder::class,
             PageSeeder::class,
             InformasiBerkalaSeeder::class,
+            AcademicCalendarSeeder::class,
             ContentExampleSeeder::class,
         ]);
     }
