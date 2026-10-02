@@ -21,6 +21,12 @@ class LeadershipProfileSeeder extends Seeder
                 }
             }
 
+            $defaultPhoto = $attributes['photo_path'] ?? null;
+            $legacyPhotos = LeadershipProfile::LEGACY_PHOTOS[$positionKey] ?? [];
+            if (is_string($defaultPhoto) && $defaultPhoto !== '' && in_array($profile->photo_path, $legacyPhotos, true)) {
+                $profile->photo_path = $defaultPhoto;
+            }
+
             if ($profile->isDirty()) {
                 $profile->save();
             }
@@ -105,6 +111,31 @@ class LeadershipProfileSeeder extends Seeder
                 ]),
                 'photo_path' => LeadershipProfile::DEFAULT_PHOTOS['vice-director-2'],
                 'sort_order' => 30,
+                'is_published' => true,
+                'is_featured' => false,
+                'published_at' => now(),
+            ],
+            'vice-director-3' => [
+                'name' => 'Asmawati',
+                'credentials' => 'S.Kp., M.Kep.',
+                'position' => 'WAKIL DIREKTUR III POLTEKKES KEMENKES BANTEN',
+                'short_summary' => 'Asmawati, S.Kp., M.Kep. menjabat sebagai Wakil Direktur III Poltekkes Kemenkes Banten periode 2025–2029 setelah dilantik pada 3 Juni 2025 oleh Direktur Poltekkes Kemenkes Banten. Sebelumnya, beliau menjabat sebagai Ketua Jurusan Keperawatan hingga tahun 2024. Beliau juga merupakan dosen dengan jabatan fungsional Lektor yang mengajar di Jurusan Keperawatan Poltekkes Kemenkes Banten.',
+                'detail_body' => implode("\n\n", [
+                    'Asmawati, S.Kp., M.Kep.',
+                    'WAKIL DIREKTUR III POLTEKKES KEMENKES BANTEN',
+                    'Asmawati, S.Kp., M.Kep. dilantik sebagai Wakil Direktur III Politeknik Kesehatan Kementerian Kesehatan Banten pada tanggal 3 Juni 2025 oleh Direktur Poltekkes Kemenkes Banten untuk periode 2025–2029.',
+                    'Sebelumnya, beliau menjabat sebagai Ketua Jurusan Keperawatan Poltekkes Kemenkes Banten hingga tahun 2024. Pengalaman tersebut memperkuat perannya dalam pengelolaan pendidikan dan pelaksanaan tridarma perguruan tinggi di lingkungan Jurusan Keperawatan.',
+                    'Selain mengemban tugas manajerial, beliau merupakan dosen dengan jabatan fungsional Lektor yang aktif melaksanakan kegiatan pendidikan dan pengajaran di Jurusan Keperawatan Poltekkes Kemenkes Banten.',
+                ]),
+                'education' => null,
+                'work_history' => implode("\n", [
+                    'Wakil Direktur III Poltekkes Kemenkes Banten — periode 2025–2029',
+                    'Ketua Jurusan Keperawatan Poltekkes Kemenkes Banten — hingga 2024',
+                    'Dosen Jurusan Keperawatan Poltekkes Kemenkes Banten',
+                    'Jabatan fungsional: Lektor',
+                ]),
+                'photo_path' => LeadershipProfile::DEFAULT_PHOTOS['vice-director-3'],
+                'sort_order' => 40,
                 'is_published' => true,
                 'is_featured' => false,
                 'published_at' => now(),

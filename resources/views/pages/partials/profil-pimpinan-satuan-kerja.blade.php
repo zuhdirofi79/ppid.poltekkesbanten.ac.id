@@ -15,6 +15,18 @@
         overflow-x: clip;
     }
 
+    .ppid-leader-grid {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    @media (min-width: 768px) {
+        .ppid-leader-grid {
+            grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+        }
+    }
+
     .ppid-leader-detail summary {
         cursor: pointer;
         list-style: none;
@@ -85,7 +97,7 @@
             @endif
 
             @if ($others->isNotEmpty())
-                <div class="grid gap-6 lg:grid-cols-2">
+                <div class="ppid-leader-grid">
                     @foreach ($others as $profile)
                         @include('pages.partials.leadership-profile-card', ['profile' => $profile, 'featured' => false])
                     @endforeach

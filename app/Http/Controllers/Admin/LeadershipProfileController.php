@@ -24,7 +24,7 @@ class LeadershipProfileController extends Controller
     public function create(): View
     {
         return view('admin.leadership-profiles.create', [
-            'profile' => new LeadershipProfile(['is_published' => true, 'sort_order' => 40]),
+            'profile' => new LeadershipProfile(['is_published' => true, 'sort_order' => 50]),
         ]);
     }
 

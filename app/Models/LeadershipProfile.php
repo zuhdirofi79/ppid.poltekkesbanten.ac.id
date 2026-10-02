@@ -10,15 +10,16 @@ use Illuminate\Support\Str;
 class LeadershipProfile extends Model
 {
     public const DEFAULT_PHOTOS = [
-        'director' => 'images/pimpinan/direktur-dahrizal.png',
-        'vice-director-1' => 'images/pimpinan/wakil-direktur-1-kusniawati.png',
-        'vice-director-2' => 'images/pimpinan/wakil-direktur-2-sendy-cokro-wibowo.png',
+        'director' => 'images/ppid/direktur1.png',
+        'vice-director-1' => 'images/ppid/wakildirektur1.png',
+        'vice-director-2' => 'images/ppid/wakildirektur2-fotosementara.png',
+        'vice-director-3' => 'images/ppid/wakildirektur3.png',
     ];
 
-    public const REMOTE_PHOTOS = [
-        'director' => 'https://ppid.poltekkesbanten.ac.id/images/ppid/direktur.png',
-        'vice-director-1' => 'https://ppid.poltekkesbanten.ac.id/images/ppid/wakil%20direktur%201.png',
-        'vice-director-2' => 'https://ppid.poltekkesbanten.ac.id/images/ppid/wakil%20direktur%202.png',
+    public const LEGACY_PHOTOS = [
+        'director' => ['images/pimpinan/direktur-dahrizal.png'],
+        'vice-director-1' => ['images/pimpinan/wakil-direktur-1-kusniawati.png'],
+        'vice-director-2' => ['images/pimpinan/wakil-direktur-2-sendy-cokro-wibowo.png'],
     ];
 
     protected $fillable = [
@@ -75,11 +76,22 @@ class LeadershipProfile extends Model
         }
 
         $path = $this->photo_path ?: (self::DEFAULT_PHOTOS[$this->position_key] ?? null);
-        if (is_string($path) && $path !== '' && is_file(public_path($path))) {
-            return asset($path);
+        if (! is_string($path) || $path === '') {
+            return null;
         }
 
-        return self::REMOTE_PHOTOS[$this->position_key] ?? null;
+        return asset($path);
+    }
+
+    public function photoAlt(): string
+    {
+        return match ($this->position_key) {
+            'director' => 'Dr. Dahrizal, Direktur Poltekkes Kemenkes Banten',
+            'vice-director-1' => 'Kusniawati, Wakil Direktur I Poltekkes Kemenkes Banten',
+            'vice-director-2' => 'Sendy Cokro Wibowo, Wakil Direktur II Poltekkes Kemenkes Banten',
+            'vice-director-3' => 'Asmawati, Wakil Direktur III Poltekkes Kemenkes Banten',
+            default => trim($this->displayName().', '.$this->position, ' ,'),
+        };
     }
 
     public function initials(): string

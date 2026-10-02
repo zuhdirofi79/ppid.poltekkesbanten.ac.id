@@ -3,7 +3,7 @@
         @if ($url = $profile->photoUrl())
             <img
                 src="{{ $url }}"
-                alt="{{ $profile->displayName() }} — {{ $profile->position }}"
+                alt="{{ $profile->photoAlt() }}"
                 class="ppid-leader-photo"
                 width="1600"
                 height="900"

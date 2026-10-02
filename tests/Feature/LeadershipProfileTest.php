@@ -33,21 +33,32 @@ class LeadershipProfileTest extends TestCase
         $response->assertSee('Dr. Dahrizal', false);
         $response->assertSee('Kusniawati', false);
         $response->assertSee('Sendy Cokro Wibowo', false);
+        $response->assertSee('Asmawati', false);
+        $response->assertSee('WAKIL DIREKTUR III POLTEKKES KEMENKES BANTEN', false);
+        $response->assertSee('dilantik sebagai Wakil Direktur III Politeknik Kesehatan Kementerian Kesehatan Banten pada tanggal 3 Juni 2025', false);
         $response->assertSee('Riwayat Pendidikan', false);
         $response->assertSee('Riwayat Pekerjaan', false);
         $response->assertSee('Universitas Padjadjaran', false);
         $response->assertSee('Universitas Islam Negeri Syarif Hidayatullah Jakarta', false);
         $response->assertSee('Sarjana Ekonomi', false);
         $response->assertDontSee('Konten halaman ini sedang disiapkan', false);
-        $response->assertSee('direktur-dahrizal.png', false);
+        $response->assertSee('images/ppid/direktur1.png', false);
+        $response->assertSee('images/ppid/wakildirektur1.png', false);
+        $response->assertSee('images/ppid/wakildirektur2-fotosementara.png', false);
+        $response->assertSee('images/ppid/wakildirektur3.png', false);
+        $response->assertSee('alt="Asmawati, Wakil Direktur III Poltekkes Kemenkes Banten"', false);
 
         $html = $response->getContent();
         $director = strpos($html, 'Dr. Dahrizal');
         $viceOne = strpos($html, 'Kusniawati');
         $viceTwo = strpos($html, 'Sendy Cokro Wibowo');
+        $viceThree = strpos($html, 'Asmawati');
         $this->assertNotFalse($director);
         $this->assertLessThan($viceOne, $director);
         $this->assertLessThan($viceTwo, $viceOne);
+        $this->assertLessThan($viceThree, $viceTwo);
+        $this->assertSame(1, substr_count($html, 'Asmawati, S.Kp., M.Kep.</h2>'));
+        $this->assertSame(1, LeadershipProfile::query()->where('position_key', 'vice-director-3')->count());
     }
 
     #[Test]
@@ -76,8 +87,17 @@ class LeadershipProfileTest extends TestCase
         $director->refresh();
         $this->assertSame('Nama Hasil Suntingan Admin', $director->name);
         $this->assertSame('Pendidikan yang ditulis admin', $director->education);
-        $this->assertSame(4, LeadershipProfile::query()->count());
+        $this->assertSame(5, LeadershipProfile::query()->count());
         $this->assertTrue($hidden->fresh()->exists);
+
+        $director->update(['photo_path' => 'images/ppid/foto-suntingan-admin.png']);
+        $legacy = LeadershipProfile::query()->where('position_key', 'vice-director-1')->firstOrFail();
+        $legacy->update(['photo_path' => 'images/pimpinan/wakil-direktur-1-kusniawati.png']);
+        $this->seed(LeadershipProfileSeeder::class);
+
+        $this->assertSame('images/ppid/foto-suntingan-admin.png', $director->fresh()->photo_path);
+        $this->assertSame('images/ppid/wakildirektur1.png', $legacy->fresh()->photo_path);
+        $this->assertSame(1, LeadershipProfile::query()->where('position_key', 'vice-director-3')->count());
     }
 
     #[Test]
@@ -87,7 +107,10 @@ class LeadershipProfileTest extends TestCase
 
         $admin = User::factory()->adminPpid()->create();
 
-        $this->actingAs($admin)->get('/admin/profil-pimpinan')->assertOk()->assertSee('Dr. Dahrizal', false);
+        $this->actingAs($admin)->get('/admin/profil-pimpinan')
+            ->assertOk()
+            ->assertSee('Dr. Dahrizal', false)
+            ->assertSee('Asmawati', false);
 
         $this->actingAs($admin)->post(route('admin.leadership-profiles.store'), [
             'name' => 'Profil Baru',
