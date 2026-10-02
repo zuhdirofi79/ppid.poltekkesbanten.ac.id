@@ -58,6 +58,17 @@ class SopLayananNavTest extends TestCase
         $home->assertSee('Permohonan Informasi Publik');
         $home->assertSee('Pengajuan Keberatan');
         $home->assertSee('Maklumat Pelayanan');
+        $home->assertSee('Standar Operasional Prosedur Layanan Informasi Publik');
+        $home->assertSee(route('pages.show', ['slug' => 'standar-operasional-prosedur-layanan-informasi-publik'], false), false);
+        $html = $home->getContent();
+        $this->assertSame(1, preg_match(
+            '/SOP &amp; Layanan[\s\S]{0,4000}?Permohonan Informasi Publik[\s\S]+?Pengajuan Keberatan[\s\S]+?Maklumat Pelayanan[\s\S]+?Standar Operasional Prosedur Layanan Informasi Publik/u',
+            $html
+        ));
+        $this->assertSame(1, preg_match(
+            '/aria-label="Navigasi seluler"[\s\S]+?SOP &amp; Layanan[\s\S]+?Maklumat Pelayanan[\s\S]+?Standar Operasional Prosedur Layanan Informasi Publik/u',
+            $html
+        ));
         $home->assertDontSee('SOP Pelayanan Informasi', false);
         $home->assertDontSee('Tata Cara Permohonan Informasi', false);
         $home->assertDontSee('Tata Cara Pengajuan Keberatan', false);
@@ -97,6 +108,9 @@ class SopLayananNavTest extends TestCase
 
         $maklumat = $this->get('/profil/maklumat-pelayanan')->assertOk()->getContent();
         $this->assertSopMenuCurrent($maklumat, true);
+
+        $sop = $this->get('/halaman/standar-operasional-prosedur-layanan-informasi-publik')->assertOk()->getContent();
+        $this->assertSopMenuCurrent($sop, true);
 
         $otherService = $this->get('/layanan/surat-keterangan')->assertOk()->getContent();
         $this->assertSopMenuCurrent($otherService, false);

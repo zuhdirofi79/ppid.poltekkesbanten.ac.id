@@ -7,6 +7,7 @@ use App\Models\InformationServiceSummary;
 use App\Models\LeadershipProfile;
 use App\Models\Page;
 use App\Support\HtmlSanitizer;
+use App\Support\SopLayananDocuments;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -49,6 +50,7 @@ class PublicPageController extends Controller
 
         $isProfil = $this->isProfilSlug($slug);
         $isDiumumkanBerkala = $this->isDiumumkanBerkalaSlug($slug);
+        $isSopLayanan = $this->isSopLayananSlug($slug);
 
         // Academic Calendar data
         $academicCalendars = collect();
@@ -94,13 +96,15 @@ class PublicPageController extends Controller
             'academicCalendars' => $academicCalendars,
             'selectedCalendar' => $selectedCalendar,
             'selectedYear' => $selectedYear,
+            'sopDocuments' => $slug === SopLayananDocuments::SLUG ? SopLayananDocuments::all() : [],
             'label' => $isProfil
                 ? 'Profil PPID'
-                : ($isDiumumkanBerkala ? 'Diumumkan Berkala' : null),
+                : ($isDiumumkanBerkala ? 'Diumumkan Berkala' : ($isSopLayanan ? 'SOP & Layanan' : null)),
             'breadcrumbs' => array_values(array_filter([
                 ['label' => 'Beranda', 'url' => route('home')],
                 $isProfil ? ['label' => 'Profil', 'url' => null] : null,
                 $isDiumumkanBerkala ? ['label' => 'Diumumkan Berkala', 'url' => null] : null,
+                $isSopLayanan ? ['label' => 'SOP & Layanan', 'url' => null] : null,
                 ['label' => $this->breadcrumbLabel($slug, $page->title), 'url' => null],
             ])),
         ]);
@@ -132,6 +136,19 @@ class PublicPageController extends Controller
         return in_array($slug, $slugs, true);
     }
 
+    private function isSopLayananSlug(string $slug): bool
+    {
+        $menu = collect(config('ppid.navigation', []))
+            ->firstWhere('label', 'SOP & Layanan');
+
+        $slugs = collect($menu['children'] ?? [])
+            ->map(fn (array $child) => $child['params']['slug'] ?? null)
+            ->filter()
+            ->all();
+
+        return in_array($slug, $slugs, true);
+    }
+
     private function breadcrumbLabel(string $slug, string $title): string
     {
         return match ($slug) {
@@ -144,6 +161,7 @@ class PublicPageController extends Controller
             'program-kegiatan-prioritas-2026' => 'Program atau Kegiatan Prioritas',
             'kebijakan-mengikat-bagi-publik' => 'Kebijakan Mengikat bagi Publik',
             'kalender-akademik' => 'Kalender Akademik',
+            'standar-operasional-prosedur-layanan-informasi-publik' => 'Standar Operasional Prosedur Layanan Informasi Publik',
             'profil-singkat-ppid' => 'Profil Singkat PPID',
             'dasar-hukum-sk-ppid' => 'Dasar Hukum dan SK PPID',
             'visi-dan-misi' => 'Visi dan Misi',

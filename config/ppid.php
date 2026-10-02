@@ -435,6 +435,7 @@ return [
                 ['label' => 'Permohonan Informasi Publik', 'route' => 'services.show', 'params' => ['slug' => 'permohonan-informasi']],
                 ['label' => 'Pengajuan Keberatan', 'route' => 'services.show', 'params' => ['slug' => 'pengajuan-keberatan']],
                 ['label' => 'Maklumat Pelayanan', 'route' => 'profil.maklumat-pelayanan', 'params' => []],
+                ['label' => 'Standar Operasional Prosedur Layanan Informasi Publik', 'route' => 'pages.show', 'params' => ['slug' => 'standar-operasional-prosedur-layanan-informasi-publik']],
             ],
         ],
         [
