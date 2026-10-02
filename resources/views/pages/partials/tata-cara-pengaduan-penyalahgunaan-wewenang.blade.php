@@ -94,6 +94,9 @@
                         Download Infografis
                     </a>
                 </div>
+                <p class="ppid-tata-cara-more">
+                    <a href="{{ route('services.show', ['slug' => 'alur-pengajuan-sengketa']) }}">Baca tata cara lengkap dan kanal pengaduan</a>
+                </p>
             @else
                 <p class="ppid-tata-cara-fallback" role="status">
                     Infografis tata cara pengaduan belum tersedia.
@@ -217,6 +220,9 @@
         background: var(--surface);
     }
 
+    .ppid-tata-cara-more { margin: 1rem 0 0; font-size: 0.95rem; }
+    .ppid-tata-cara-more a { color: var(--green, #008d70); font-weight: 600; text-decoration: underline; text-underline-offset: 0.15em; }
+    .ppid-tata-cara-more a:focus-visible { outline: 2px solid var(--gold, #d7ae62); outline-offset: 2px; }
     .ppid-tata-cara-fallback {
         margin: 0;
         border: 1px dashed var(--border);

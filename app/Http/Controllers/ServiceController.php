@@ -59,6 +59,26 @@ class ServiceController extends Controller
             ]);
         }
 
+        if ($slug === 'pengaduan-penyalahgunaan-wewenang') {
+            return redirect()->route('services.show', ['slug' => 'alur-pengajuan-sengketa'], 301);
+        }
+
+        if ($slug === 'alur-pengajuan-sengketa') {
+            $title = 'Tata Cara Pengaduan Penyalahgunaan Wewenang dan Pelanggaran';
+            $description = 'Politeknik Kesehatan Kementerian Kesehatan Banten berkomitmen mewujudkan tata kelola pemerintahan yang bersih, transparan, akuntabel, dan bebas dari penyalahgunaan wewenang. Masyarakat, mahasiswa, pegawai, maupun pihak lainnya dapat menyampaikan pengaduan apabila mengetahui atau mengalami dugaan pelanggaran yang dilakukan oleh pejabat atau pegawai di lingkungan Poltekkes Kemenkes Banten.';
+
+            return view('pages.service', [
+                'service' => array_merge($service, [
+                    'slug' => $slug,
+                    'title' => $title,
+                    'excerpt' => $description,
+                ]),
+                'title' => $title,
+                'description' => $description,
+                'complaintFormUrl' => $this->safeHttpUrl(config('ppid.complaint_request.external_url')),
+            ]);
+        }
+
         $external = $service['external_url'] ?? null;
         if (is_string($external) && $this->safeHttpUrl($external)) {
             return redirect()->away($external);

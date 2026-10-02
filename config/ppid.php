@@ -191,8 +191,8 @@ return [
         ],
         [
             'slug' => 'alur-pengajuan-sengketa',
-            'title' => 'Tata Cara Pengajuan Permohonan Penyelesaian Sengketa Ke Komisi Informasi',
-            'excerpt' => 'Pelajari tahapan penyelesaian sengketa informasi publik melalui Komisi Informasi.',
+            'title' => 'Tata Cara Pengaduan Penyalahgunaan Wewenang dan Pelanggaran',
+            'excerpt' => 'Informasi tata cara pengaduan dugaan penyalahgunaan wewenang, pelanggaran, pungutan liar, konflik kepentingan, gratifikasi, dan pelanggaran pelayanan publik di lingkungan Poltekkes Kemenkes Banten.',
             'external_url' => null,
             'is_featured' => false,
             'sort_order' => 8,
@@ -222,6 +222,17 @@ return [
             'PPID_OBJECTION_FORM_URL',
             'https://docs.google.com/forms/d/e/1FAIpQLScE8lH-ihPiy_FbzWJ6zQIk8eiFgd9bUeckJerQPsNHNIMbew/viewform'
         ),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Formulir pengaduan penyalahgunaan wewenang
+    | Kosongkan sampai URL resmi tersedia. Jangan memakai form permohonan
+    | informasi atau form pengajuan keberatan.
+    |--------------------------------------------------------------------------
+    */
+    'complaint_request' => [
+        'external_url' => env('PPID_COMPLAINT_FORM_URL'),
     ],
 
     /*
@@ -401,12 +412,11 @@ return [
             'children' => [
                 ['label' => 'Permohonan Informasi', 'route' => 'services.show', 'params' => ['slug' => 'permohonan-informasi']],
                 ['label' => 'Pengajuan Keberatan', 'route' => 'services.show', 'params' => ['slug' => 'pengajuan-keberatan']],
-                ['label' => 'Pengaduan Penyalahgunaan Wewenang', 'route' => 'services.show', 'params' => ['slug' => 'pengaduan-penyalahgunaan-wewenang']],
+                ['label' => 'Pengaduan Penyalahgunaan Wewenang', 'route' => 'services.show', 'params' => ['slug' => 'alur-pengajuan-sengketa']],
                 ['label' => 'Keluhan Pelayanan', 'route' => 'services.show', 'params' => ['slug' => 'keluhan-pelayanan']],
                 ['label' => 'Surat Keterangan', 'route' => 'services.show', 'params' => ['slug' => 'surat-keterangan']],
                 ['label' => 'Alur Permohonan Informasi', 'route' => 'services.show', 'params' => ['slug' => 'alur-permohonan-informasi']],
                 ['label' => 'Alur Pengajuan Keberatan', 'route' => 'services.show', 'params' => ['slug' => 'alur-pengajuan-keberatan']],
-                ['label' => 'Tata Cara Pengajuan Permohonan Penyelesaian Sengketa Ke Komisi Informasi', 'route' => 'services.show', 'params' => ['slug' => 'alur-pengajuan-sengketa']],
             ],
         ],
         [
