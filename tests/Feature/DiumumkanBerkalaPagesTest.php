@@ -69,6 +69,16 @@ class DiumumkanBerkalaPagesTest extends TestCase
             '/Kebijakan Mengikat bagi Publik[\s\S]+?Kalender Akademik/u',
             $html
         ));
+        $this->assertStringContainsString(route('pages.show', ['slug' => 'tata-cara-pengaduan-penyalahgunaan-wewenang'], false), $html);
+        $this->assertStringContainsString('Tata Cara Pengaduan Penyalahgunaan Wewenang', $html);
+        $this->assertSame(1, preg_match(
+            '/aria-label="Navigasi utama"[\s\S]+?Kalender Akademik[\s\S]+?Tata Cara Pengaduan Penyalahgunaan Wewenang/u',
+            $html
+        ));
+        $this->assertSame(1, preg_match(
+            '/aria-label="Navigasi seluler"[\s\S]+?Kalender Akademik[\s\S]+?Tata Cara Pengaduan Penyalahgunaan Wewenang/u',
+            $html
+        ));
     }
 
     #[Test]

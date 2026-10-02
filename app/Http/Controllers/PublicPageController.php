@@ -179,6 +179,7 @@ class PublicPageController extends Controller
             'program-kegiatan-prioritas-2026' => 'Program atau Kegiatan Prioritas',
             'kebijakan-mengikat-bagi-publik' => 'Kebijakan Mengikat bagi Publik',
             'kalender-akademik' => 'Kalender Akademik',
+            'tata-cara-pengaduan-penyalahgunaan-wewenang' => 'Tata Cara Pengaduan Penyalahgunaan Wewenang',
             'standar-operasional-prosedur-layanan-informasi-publik' => 'Standar Operasional Prosedur Layanan Informasi Publik',
             'profil-singkat-ppid' => 'Profil Singkat PPID',
             'dasar-hukum-sk-ppid' => 'Dasar Hukum dan SK PPID',

@@ -182,6 +182,7 @@ class PageSeeder extends Seeder
         $this->seedProgramKegiatanPrioritasPage($adminId);
         $this->seedKebijakanMengikatBagiPublikPage($adminId);
         $this->call(KalenderAkademikPageSeeder::class);
+        $this->call(TataCaraPengaduanPenyalahgunaanWewenangPageSeeder::class);
         $this->call(SopLayananInformasiPageSeeder::class);
     }
 

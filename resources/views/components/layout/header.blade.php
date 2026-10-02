@@ -159,11 +159,13 @@
                                 >
                                     <ul class="rounded-lg border border-line bg-white py-2 shadow-lg" role="menu" @if ($wideMenu) style="width: min(22rem, calc(100vw - 2rem))" @endif>
                                         @foreach ($item['children'] as $child)
+                                            @php $childActive = $isChildActive($child); @endphp
                                             <li role="none">
                                                 <a
                                                     role="menuitem"
                                                     href="{{ $resolveUrl($child) }}"
-                                                    class="block px-4 py-2 text-sm text-ink hover:bg-surface hover:text-green"
+                                                    class="block break-words px-4 py-2.5 text-sm leading-snug hover:bg-surface hover:text-green focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold {{ $childActive ? 'bg-surface font-semibold text-green' : 'text-ink' }}"
+                                                    @if ($childActive) aria-current="page" @endif
                                                 >
                                                     {{ $child['label'] }}
                                                 </a>
@@ -222,11 +224,13 @@
                             </button>
                             <ul id="{{ $panelId }}" x-cloak x-show="openMobile === '{{ $key }}'" x-transition class="space-y-1 pb-3 pl-3">
                                 @foreach ($item['children'] as $child)
+                                    @php $childActive = $isChildActive($child); @endphp
                                     <li>
                                         <a
                                             href="{{ $resolveUrl($child) }}"
-                                            class="block rounded-md px-2 py-2 text-sm text-muted hover:bg-surface hover:text-green"
+                                            class="block min-h-11 break-words rounded-md px-2 py-2.5 text-sm leading-snug hover:bg-surface hover:text-green focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold {{ $childActive ? 'bg-surface font-semibold text-green' : 'text-muted' }}"
                                             @click="closeMobileMenu()"
+                                            @if ($childActive) aria-current="page" @endif
                                         >
                                             {{ $child['label'] }}
                                         </a>

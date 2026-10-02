@@ -391,6 +391,7 @@ return [
                 ['label' => 'Program atau Kegiatan Prioritas', 'route' => 'pages.show', 'params' => ['slug' => 'program-kegiatan-prioritas-2026']],
                 ['label' => 'Kebijakan Mengikat bagi Publik', 'route' => 'pages.show', 'params' => ['slug' => 'kebijakan-mengikat-bagi-publik']],
                 ['label' => 'Kalender Akademik', 'route' => 'pages.show', 'params' => ['slug' => 'kalender-akademik']],
+                ['label' => 'Tata Cara Pengaduan Penyalahgunaan Wewenang', 'route' => 'pages.show', 'params' => ['slug' => 'tata-cara-pengaduan-penyalahgunaan-wewenang']],
             ],
         ],
         [

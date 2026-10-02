@@ -118,6 +118,15 @@
             ])
             @break
 
+        @case('tata-cara-pengaduan-penyalahgunaan-wewenang')
+            @include('pages.partials.tata-cara-pengaduan-penyalahgunaan-wewenang', [
+                'title' => $title ?? $page->title,
+                'excerpt' => $excerpt ?? $page->excerpt,
+                'label' => $label ?? null,
+                'breadcrumbs' => $breadcrumbs ?? [],
+            ])
+            @break
+
         @case('standar-operasional-prosedur-layanan-informasi-publik')
             @include('pages.partials.standar-operasional-prosedur-layanan-informasi-publik', [
                 'title' => $title ?? $page->title,
