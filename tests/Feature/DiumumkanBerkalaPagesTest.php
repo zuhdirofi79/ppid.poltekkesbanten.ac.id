@@ -118,7 +118,7 @@ class DiumumkanBerkalaPagesTest extends TestCase
         $this->get('/halaman/profil-pimpinan-satuan-kerja')
             ->assertOk()
             ->assertSee('Profil Pimpinan Satuan Kerja', false)
-            ->assertSee('Konten halaman ini sedang disiapkan', false);
+            ->assertDontSee('Konten halaman ini sedang disiapkan', false);
 
         $this->get('/halaman/lhkpn-pimpinan-tertinggi')
             ->assertOk()

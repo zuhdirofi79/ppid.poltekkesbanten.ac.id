@@ -28,6 +28,7 @@ cd ~/domains/ppid.poltekkesbanten.ac.id/ppid-poltekkesbanten
 php artisan optimize:clear
 php artisan migrate --force
 php artisan db:seed --class=SaqItemSeeder --force
+php artisan db:seed --class=LeadershipProfileSeeder --force
 php artisan storage:link
 php artisan config:cache
 php artisan route:cache

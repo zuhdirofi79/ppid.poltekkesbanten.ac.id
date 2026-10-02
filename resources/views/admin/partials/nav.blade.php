@@ -62,6 +62,7 @@
     {!! $link('admin.pages.index', 'Halaman', 'manage-pages', 'admin.pages.*') !!}
     @can('manage-pages')
         <a href="{{ route('admin.pages.create') }}" class="block rounded-md px-3 py-2 hover:bg-white/5">Tambah Halaman</a>
+        <a href="{{ route('admin.leadership-profiles.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.leadership-profiles.*') ? 'bg-white/10 text-gold' : 'hover:bg-white/5' }}">Profil Pimpinan</a>
     @endcan
     {!! $link('admin.posts.index', 'Berita', 'manage-posts', 'admin.posts.*') !!}
     {!! $link('admin.announcements.index', 'Pengumuman', 'manage-announcements', 'admin.announcements.*') !!}

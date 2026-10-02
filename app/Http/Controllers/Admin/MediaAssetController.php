@@ -90,7 +90,9 @@ class MediaAssetController extends Controller
 
     public function destroy(MediaAsset $mediaAsset): RedirectResponse
     {
-        $used = $mediaAsset->attachments()->count() + $mediaAsset->evidences()->count();
+        $used = $mediaAsset->attachments()->count()
+            + $mediaAsset->evidences()->count()
+            + \App\Models\LeadershipProfile::query()->where('photo_media_asset_id', $mediaAsset->id)->count();
         if ($used > 0) {
             return back()->withErrors([
                 'file' => 'Berkas masih dipakai oleh '.$used.' halaman atau indikator. Lepas relasinya dahulu.',

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\InformationServiceSummary;
+use App\Models\LeadershipProfile;
 use App\Models\Page;
 use App\Support\HtmlSanitizer;
 use Illuminate\Http\RedirectResponse;
@@ -23,6 +24,19 @@ class PublicPageController extends Controller
             ?: $page->excerpt
             ?: config('ppid.name_long');
 
+        if ($slug === 'profil-pimpinan-satuan-kerja') {
+            if (blank($page->meta_title) || str_contains((string) $page->meta_title, 'sedang disiapkan')) {
+                $seoTitle = 'Profil Pimpinan Satuan Kerja';
+            }
+            if (blank($page->meta_description) || str_contains((string) $page->meta_description, 'sedang disiapkan')) {
+                $seoDescription = 'Profil pimpinan Poltekkes Kemenkes Banten yang memuat nama, jabatan, riwayat pendidikan, dan riwayat pekerjaan.';
+            }
+            $excerpt = mb_strtolower((string) $page->excerpt);
+            if (blank($page->excerpt) || str_contains($excerpt, 'sedang disiapkan') || ! str_contains($excerpt, 'pendidikan')) {
+                $page->excerpt = 'Profil pimpinan Poltekkes Kemenkes Banten beserta riwayat pendidikan dan riwayat pekerjaan.';
+            }
+        }
+
         $isProfil = $this->isProfilSlug($slug);
         $isDiumumkanBerkala = $this->isDiumumkanBerkalaSlug($slug);
 
@@ -36,6 +50,9 @@ class PublicPageController extends Controller
             'publicAttachments' => $page->attachments()->with('media')->where('visibility', 'public')->orderBy('sort_order')->get(),
             'serviceSummaries' => $slug === 'ringkasan-layanan-informasi-publik'
                 ? InformationServiceSummary::query()->orderByDesc('year')->get()
+                : collect(),
+            'leadershipProfiles' => $slug === 'profil-pimpinan-satuan-kerja'
+                ? LeadershipProfile::query()->with('photo')->published()->orderBy('sort_order')->orderBy('name')->get()
                 : collect(),
             'label' => $isProfil
                 ? 'Profil PPID'

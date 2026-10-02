@@ -31,7 +31,7 @@ class MediaAsset extends Model
 
     public function isImage(): bool
     {
-        return in_array($this->extension, ['png', 'jpg', 'jpeg'], true);
+        return in_array($this->extension, ['png', 'jpg', 'jpeg', 'webp'], true);
     }
 
     public function publicUrl(): ?string

@@ -41,6 +41,7 @@ class StoreMediaAssetRequest extends FormRequest
                 'png' => ['image/png'],
                 'jpg' => ['image/jpeg'],
                 'jpeg' => ['image/jpeg'],
+                'webp' => ['image/webp'],
                 'pdf' => ['application/pdf'],
                 'doc' => ['application/msword', 'application/vnd.ms-word'],
                 'docx' => [
@@ -51,7 +52,7 @@ class StoreMediaAssetRequest extends FormRequest
             ];
 
             if (! isset($allowed[$extension]) || ! in_array($mime, $allowed[$extension], true)) {
-                $validator->errors()->add('file', 'Hanya PNG, JPG, PDF, DOC, dan DOCX yang diizinkan.');
+                $validator->errors()->add('file', 'Hanya PNG, JPG, WebP, PDF, DOC, dan DOCX yang diizinkan.');
 
                 return;
             }

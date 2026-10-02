@@ -77,6 +77,16 @@
             ])
             @break
 
+        @case('profil-pimpinan-satuan-kerja')
+            @include('pages.partials.profil-pimpinan-satuan-kerja', [
+                'title' => $title ?? $page->title,
+                'excerpt' => $excerpt ?? $page->excerpt,
+                'label' => $label ?? null,
+                'breadcrumbs' => $breadcrumbs ?? [],
+                'profiles' => $leadershipProfiles ?? collect(),
+            ])
+            @break
+
         @case('program-kegiatan-prioritas-2026')
             @include('pages.partials.program-kegiatan-prioritas-2026', [
                 'title' => $title ?? $page->title,

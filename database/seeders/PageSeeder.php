@@ -151,14 +151,6 @@ class PageSeeder extends Seeder
                 'sort_order' => 33,
             ],
             [
-                'slug' => 'profil-pimpinan-satuan-kerja',
-                'title' => 'Profil Pimpinan Satuan Kerja',
-                'excerpt' => 'Profil pimpinan satuan kerja Poltekkes Kemenkes Banten.',
-                'meta_description' => 'Profil pimpinan satuan kerja Poltekkes Kemenkes Banten. Konten lengkap sedang disiapkan.',
-                'body' => HtmlSanitizer::clean($this->placeholderBody('Profil Pimpinan Satuan Kerja')),
-                'sort_order' => 34,
-            ],
-            [
                 'slug' => 'lhkpn-pimpinan-tertinggi',
                 'title' => 'LHKPN Pimpinan Tertinggi',
                 'excerpt' => 'Laporan Harta Kekayaan Penyelenggara Negara (LHKPN) pimpinan tertinggi.',
@@ -186,7 +178,51 @@ class PageSeeder extends Seeder
             );
         }
 
+        $this->seedProfilPimpinanPage($adminId);
         $this->seedProgramKegiatanPrioritasPage($adminId);
+    }
+
+    private function seedProfilPimpinanPage(?int $adminId): void
+    {
+        $excerpt = 'Profil pimpinan Poltekkes Kemenkes Banten beserta riwayat pendidikan dan riwayat pekerjaan.';
+        $meta = 'Profil pimpinan Poltekkes Kemenkes Banten yang memuat nama, jabatan, riwayat pendidikan, dan riwayat pekerjaan.';
+        $existing = Page::withTrashed()->where('slug', 'profil-pimpinan-satuan-kerja')->first();
+
+        if (! $existing) {
+            Page::query()->create([
+                'title' => 'Profil Pimpinan Satuan Kerja',
+                'slug' => 'profil-pimpinan-satuan-kerja',
+                'excerpt' => $excerpt,
+                'meta_title' => 'Profil Pimpinan Satuan Kerja',
+                'meta_description' => $meta,
+                'body' => '',
+                'status' => 'published',
+                'published_at' => now(),
+                'sort_order' => 34,
+                'created_by' => $adminId,
+                'updated_by' => $adminId,
+            ]);
+
+            return;
+        }
+
+        $updates = [];
+        if (str_contains((string) $existing->body, 'sedang disiapkan')) {
+            $updates['body'] = '';
+        }
+        if (blank($existing->excerpt) || str_contains((string) $existing->excerpt, 'sedang disiapkan')) {
+            $updates['excerpt'] = $excerpt;
+        }
+        if (blank($existing->meta_description) || str_contains((string) $existing->meta_description, 'sedang disiapkan')) {
+            $updates['meta_description'] = $meta;
+            $updates['meta_title'] = 'Profil Pimpinan Satuan Kerja';
+        }
+        if ($existing->trashed()) {
+            $existing->restore();
+        }
+        if ($updates !== []) {
+            $existing->update($updates);
+        }
     }
 
     private function seedProgramKegiatanPrioritasPage(?int $adminId): void

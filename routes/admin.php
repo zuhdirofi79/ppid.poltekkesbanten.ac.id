@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\InformasiBerkalaController;
 use App\Http\Controllers\Admin\InformationServiceSummaryController;
+use App\Http\Controllers\Admin\LeadershipProfileController;
 use App\Http\Controllers\Admin\MediaAssetController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\SaqController;
@@ -93,6 +94,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('saq/{saq}', [SaqController::class, 'update'])->name('saq.update');
             Route::post('saq/{saq}/evidences', [SaqController::class, 'storeEvidence'])->name('saq.evidences.store');
             Route::delete('saq/{saq}/evidences/{evidence}', [SaqController::class, 'destroyEvidence'])->name('saq.evidences.destroy');
+
+            Route::get('profil-pimpinan', [LeadershipProfileController::class, 'index'])->name('leadership-profiles.index');
+            Route::get('profil-pimpinan/create', [LeadershipProfileController::class, 'create'])->name('leadership-profiles.create');
+            Route::post('profil-pimpinan', [LeadershipProfileController::class, 'store'])->name('leadership-profiles.store');
+            Route::get('profil-pimpinan/{leadershipProfile}/edit', [LeadershipProfileController::class, 'edit'])->name('leadership-profiles.edit');
+            Route::put('profil-pimpinan/{leadershipProfile}', [LeadershipProfileController::class, 'update'])->name('leadership-profiles.update');
+            Route::post('profil-pimpinan/{leadershipProfile}/publish', [LeadershipProfileController::class, 'publish'])->name('leadership-profiles.publish');
+            Route::delete('profil-pimpinan/{leadershipProfile}', [LeadershipProfileController::class, 'destroy'])->name('leadership-profiles.destroy');
 
             Route::get('media', [MediaAssetController::class, 'index'])->name('media.index');
             Route::get('media/picker', [MediaAssetController::class, 'picker'])->name('media.picker');
