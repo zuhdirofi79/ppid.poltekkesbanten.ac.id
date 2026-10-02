@@ -19,16 +19,22 @@
     </div>
 </div>
 <div class="mx-auto max-w-7xl px-4 py-8">
-    <ul class="space-y-3">
-        @forelse ($documents as $document)
-            <li class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-white p-4">
-                <a href="{{ route('documents.show', $document->slug) }}" class="font-medium text-navy hover:text-green">{{ $document->title }}</a>
-                <a href="{{ route('documents.download', $document->slug) }}" class="text-sm font-semibold text-green">Unduh</a>
-            </li>
-        @empty
-            <li class="rounded-xl border border-dashed border-line p-6 text-sm text-muted">Belum ada dokumen pada kategori ini.</li>
-        @endforelse
-    </ul>
-    <div class="mt-4">{{ $documents->links() }}</div>
+    @if (($staffingChartGroups ?? collect())->isNotEmpty())
+        @include('pages.information.partials.statistik-kepegawaian', ['groups' => $staffingChartGroups])
+    @endif
+
+    @if ($documents->isNotEmpty())
+        <ul class="space-y-3">
+            @foreach ($documents as $document)
+                <li class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-white p-4">
+                    <a href="{{ route('documents.show', $document->slug) }}" class="font-medium text-navy hover:text-green">{{ $document->title }}</a>
+                    <a href="{{ route('documents.download', $document->slug) }}" class="text-sm font-semibold text-green">Unduh</a>
+                </li>
+            @endforeach
+        </ul>
+        <div class="mt-4">{{ $documents->links() }}</div>
+    @elseif (($staffingChartGroups ?? collect())->isEmpty())
+        <p class="rounded-xl border border-dashed border-line p-6 text-sm text-muted">Belum ada dokumen pada kategori ini.</p>
+    @endif
 </div>
 @endsection

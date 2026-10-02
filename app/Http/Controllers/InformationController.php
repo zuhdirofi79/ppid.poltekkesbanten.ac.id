@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PublicDocument;
 use App\Models\PublicInformationCategory;
+use App\Support\StatistikKepegawaian;
 use Illuminate\View\View;
 
 class InformationController extends Controller
@@ -45,12 +46,22 @@ class InformationController extends Controller
             return view('pages.information.berkala', compact('category', 'sections', 'documents'));
         }
 
+        $staffingChartGroups = $slug === 'setiap-saat'
+            ? StatistikKepegawaian::groupsFor($category)
+            : collect();
+
         $documents = PublicDocument::query()
             ->published()
             ->where('public_information_category_id', $category->id)
+            ->when($slug === 'setiap-saat', function ($query) {
+                $query->where(function ($inner) {
+                    $inner->whereNull('section_title')
+                        ->orWhere('section_title', '!=', StatistikKepegawaian::SECTION);
+                });
+            })
             ->latest('published_at')
             ->paginate(12);
 
-        return view('pages.information.category', compact('category', 'documents'));
+        return view('pages.information.category', compact('category', 'documents', 'staffingChartGroups'));
     }
 }
