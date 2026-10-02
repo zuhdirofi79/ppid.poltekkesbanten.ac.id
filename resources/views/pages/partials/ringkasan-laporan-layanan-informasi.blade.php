@@ -40,7 +40,12 @@
                 {{ $title }}
             </h1>
 
-            @if (! empty($excerpt))
+            @if ($summary)
+                <p class="mt-3 max-w-[52rem] text-base leading-relaxed text-muted sm:text-[1.0625rem]">
+                    Ringkasan statistik pelayanan informasi publik PPID Poltekkes Kemenkes Banten berdasarkan Laporan Layanan Informasi Publik Tahun {{ $summary->year }}.
+                </p>
+                <p class="mt-4 inline-flex rounded-full bg-navy px-3 py-1 text-xs font-semibold tracking-wide text-white">LAPORAN TAHUN {{ $summary->year }}</p>
+            @elseif (! empty($excerpt))
                 <p class="mt-3 max-w-[52rem] text-base leading-relaxed text-muted sm:text-[1.0625rem]">
                     {{ $excerpt }}
                 </p>
@@ -79,38 +84,41 @@
             <section aria-label="Ringkasan angka layanan informasi tahun {{ $summary->year }}">
                 <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
                     @foreach ([
-                        ['Permohonan Diterima', 'total_received', 'Tahun '.$summary->year],
-                        ['Dikabulkan Seluruhnya', 'fulfilled_full', null],
-                        ['Dikabulkan Sebagian', 'fulfilled_partial', null],
-                        ['Ditolak', 'rejected', null],
-                    ] as [$cardLabel, $attribute, $extra])
+                        ['Jumlah Permohonan Diterima', 'total_received'],
+                        ['Informasi Diberikan', 'provided_total'],
+                        ['Permohonan Ditolak', 'rejected'],
+                        ['Dalam Proses', 'in_progress'],
+                    ] as [$cardLabel, $attribute])
                         <article class="ppid-laporan-card">
                             <h2 class="ppid-laporan-card-label">{{ $cardLabel }}</h2>
                             <p class="ppid-laporan-card-value">{{ $summary->countText($attribute) }}</p>
                             @if ($caption = $summary->countCaption($attribute))
                                 <p class="ppid-laporan-card-caption">{{ $caption }}</p>
-                            @elseif ($extra && $summary->getAttribute($attribute) !== null)
-                                <p class="ppid-laporan-card-caption">{{ $extra }}</p>
                             @endif
                         </article>
                     @endforeach
 
                     <article class="ppid-laporan-card">
-                        <h2 class="ppid-laporan-card-label">Rata-rata Waktu Respons</h2>
-                        <p class="ppid-laporan-card-value">{{ $summary->responseDaysText() }}</p>
-                        @if ($dayCaption = $summary->responseDaysCaption())
-                            <p class="ppid-laporan-card-caption">{{ $dayCaption }}</p>
-                        @endif
+                        <h2 class="ppid-laporan-card-label">Tingkat Pemenuhan</h2>
+                        <p class="ppid-laporan-card-value">{{ $summary->formatRate($summary->fulfillmentRate()) }}</p>
+                        <p class="ppid-laporan-card-caption">Ditolak / tidak dipenuhi: {{ $summary->formatRate($summary->unfulfilledRate()) }}</p>
                     </article>
                 </div>
             </section>
 
             <section class="ppid-laporan-panel" aria-labelledby="status-pemenuhan-title">
                 <h2 id="status-pemenuhan-title" class="ppid-laporan-panel-title">Status Pemenuhan Permohonan Informasi</h2>
+                @if ($split = $summary->fulfillmentSplitText())
+                    <p class="mt-3 text-sm leading-relaxed text-ink">{{ $split }}</p>
+                @else
+                    <ul class="ppid-laporan-fallback">
+                        <li>Dikabulkan seluruhnya: {{ $summary->countText('fulfilled_full') }}</li>
+                        <li>Dikabulkan sebagian: {{ $summary->countText('fulfilled_partial') }}</li>
+                    </ul>
+                @endif
                 <ul class="ppid-laporan-fallback">
-                    <li>Dikabulkan seluruhnya: {{ $summary->countText('fulfilled_full') }}</li>
-                    <li>Dikabulkan sebagian: {{ $summary->countText('fulfilled_partial') }}</li>
                     <li>Ditolak: {{ $summary->countText('rejected') }}</li>
+                    <li>Dalam proses: {{ $summary->countText('in_progress') }}</li>
                 </ul>
                 @if (! empty($charts['status']['segments']))
                     <div class="ppid-laporan-chart">
@@ -118,6 +126,75 @@
                     </div>
                 @endif
             </section>
+
+            @php $periods = $summary->periodRows(); @endphp
+            @if ($periods !== [])
+                <section class="ppid-laporan-panel" aria-labelledby="perkembangan-title">
+                    <h2 id="perkembangan-title" class="ppid-laporan-panel-title">Perkembangan Permohonan Informasi Tahun {{ $summary->year }}</h2>
+                    <div class="ppid-laporan-chart ppid-laporan-chart-tall">
+                        <canvas id="chart-periods" role="img" aria-label="{{ $charts['periods']['aria'] }}"></canvas>
+                    </div>
+                    <div class="ppid-laporan-table-wrap">
+                        <table class="ppid-laporan-table">
+                            <caption class="sr-only">Rekap permohonan informasi per periode tahun {{ $summary->year }}</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Periode</th>
+                                    <th scope="col">Permintaan Masuk</th>
+                                    <th scope="col">Informasi Diberikan</th>
+                                    <th scope="col">Ditolak</th>
+                                    <th scope="col">Dalam Proses</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php
+                                    $periodTotals = ['received' => 0, 'provided' => 0, 'rejected' => 0, 'in_progress' => 0];
+                                    $periodComplete = ['received' => true, 'provided' => true, 'rejected' => true, 'in_progress' => true];
+                                @endphp
+                                @foreach ($periods as $row)
+                                    <tr>
+                                        <th scope="row">{{ $row['label'] }}</th>
+                                        @foreach (['received', 'provided', 'rejected', 'in_progress'] as $key)
+                                            <td>{{ $summary->displayCount($row[$key]) }}</td>
+                                            @php
+                                                if ($row[$key] === null) { $periodComplete[$key] = false; }
+                                                else { $periodTotals[$key] += $row[$key]; }
+                                            @endphp
+                                        @endforeach
+                                    </tr>
+                                @endforeach
+                                <tr>
+                                    <th scope="row">TOTAL</th>
+                                    @foreach (['received', 'provided', 'rejected', 'in_progress'] as $key)
+                                        <td>{{ $periodComplete[$key] ? $periodTotals[$key] : 'Data belum tersedia' }}</td>
+                                    @endforeach
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            @endif
+
+            @php $types = $summary->informationTypes(); @endphp
+            @if ($types !== [])
+                <section class="ppid-laporan-panel" aria-labelledby="jenis-informasi-title">
+                    <h2 id="jenis-informasi-title" class="ppid-laporan-panel-title">Jenis Informasi yang Diminta</h2>
+                    <div class="ppid-laporan-chart ppid-laporan-chart-wide">
+                        <canvas id="chart-types" role="img" aria-label="{{ $charts['types']['aria'] }}"></canvas>
+                    </div>
+                    <ul class="ppid-laporan-fallback">
+                        @php $typeTotal = 0; $typeComplete = true; @endphp
+                        @foreach ($types as $row)
+                            <li>{{ $row['label'] }}: {{ $summary->displayCount($row['count']) }} permohonan</li>
+                            @php
+                                if ($row['count'] === null) { $typeComplete = false; }
+                                else { $typeTotal += $row['count']; }
+                            @endphp
+                        @endforeach
+                        <li>Total: {{ $typeComplete ? $typeTotal : 'Data belum tersedia' }}</li>
+                    </ul>
+                </section>
+            @endif
 
             <section class="ppid-laporan-panel" aria-labelledby="jumlah-permohonan-title">
                 <h2 id="jumlah-permohonan-title" class="ppid-laporan-panel-title">Jumlah Permohonan Informasi Publik</h2>
@@ -131,26 +208,33 @@
                             <li>{{ $row->year }}: {{ $row->countText('total_received') }} permohonan diterima</li>
                         @endforeach
                     </ul>
-                    <div class="ppid-laporan-chart">
-                        <canvas id="chart-volume" role="img" aria-label="{{ $charts['volume']['aria'] }}"></canvas>
-                    </div>
+                    @if (($report['comparison'] ?? collect())->count() > 1)
+                        <div class="ppid-laporan-chart">
+                            <canvas id="chart-volume" role="img" aria-label="{{ $charts['volume']['aria'] }}"></canvas>
+                        </div>
+                    @endif
                 @endif
             </section>
 
             <section class="ppid-laporan-panel" aria-labelledby="waktu-pemenuhan-title">
                 <h2 id="waktu-pemenuhan-title" class="ppid-laporan-panel-title">Waktu Pemenuhan Permohonan Informasi</h2>
-                <p class="ppid-laporan-metric">
-                    Rata-rata penyelesaian
-                    <span>{{ $summary->average_response_days === null ? 'Data belum tersedia' : $summary->responseDaysText().' Hari Kerja' }}</span>
-                </p>
-                <p class="mt-3 text-sm leading-relaxed text-ink">
-                    <span class="font-semibold text-navy">Keterangan:</span>
-                    {{ trim((string) $summary->response_time_description) !== '' ? $summary->response_time_description : 'Data belum tersedia' }}
-                </p>
+                @if ($summary->average_response_days !== null)
+                    <p class="ppid-laporan-metric">
+                        Rata-rata penyelesaian
+                        <span>{{ $summary->responseDaysText() }} hari kerja</span>
+                    </p>
+                @endif
+                <p class="mt-3 whitespace-pre-line text-sm leading-relaxed text-ink">{{ $summary->responseTimeNarrative() !== '' ? $summary->responseTimeNarrative() : 'Data belum tersedia' }}</p>
             </section>
 
             <section class="ppid-laporan-panel" aria-labelledby="alasan-penolakan-title">
                 <h2 id="alasan-penolakan-title" class="ppid-laporan-panel-title">Alasan Penolakan Permohonan Informasi</h2>
+                @if ($summary->rejected !== null)
+                    <p class="mt-3 text-sm leading-relaxed text-ink">Selama tahun {{ $summary->year }} terdapat {{ (int) $summary->rejected }} permohonan informasi yang tidak dapat diberikan.</p>
+                    @if ($summary->rejectionReasonLines() !== [])
+                        <p class="mt-2 text-sm leading-relaxed text-ink">Dasar/kondisi tidak diberikannya informasi berdasarkan laporan:</p>
+                    @endif
+                @endif
                 @if ($summary->rejectionReasonLines() === [] && $summary->rejectionBreakdown() === [])
                     <p class="text-sm text-muted">Data belum tersedia</p>
                 @endif
@@ -172,6 +256,50 @@
                     </div>
                 @endif
             </section>
+
+            <section class="ppid-laporan-panel" aria-labelledby="capaian-title">
+                <h2 id="capaian-title" class="ppid-laporan-panel-title">Capaian Pelayanan Informasi Publik</h2>
+                <dl class="ppid-laporan-capaian">
+                    <div><dt>Permohonan diterima</dt><dd>{{ $summary->countText('total_received') }}</dd></div>
+                    <div><dt>Permohonan diberikan</dt><dd>{{ $summary->countText('provided_total') }}</dd></div>
+                    <div><dt>Tingkat pemenuhan</dt><dd>{{ $summary->formatRate($summary->fulfillmentRate()) }}</dd></div>
+                    <div><dt>Tidak dapat dipenuhi</dt><dd>{{ $summary->countText('rejected') }}</dd></div>
+                    <div><dt>Persentase tidak dipenuhi</dt><dd>{{ $summary->formatRate($summary->unfulfilledRate()) }}</dd></div>
+                    <div><dt>Permohonan tersisa dalam proses</dt><dd>{{ $summary->countText('in_progress') }}</dd></div>
+                </dl>
+                @if ($summary->everyRequestWasFollowedUp())
+                    <p class="mt-4 text-sm leading-relaxed text-ink">Seluruh permohonan yang diterima sepanjang tahun {{ $summary->year }} telah memperoleh tindak lanjut berupa pemberian informasi maupun keputusan tidak diberikannya informasi.</p>
+                @endif
+            </section>
+
+            @if ($summary->analysisParagraphs() !== [])
+                <section class="ppid-laporan-panel" aria-labelledby="analisis-title">
+                    <h2 id="analisis-title" class="ppid-laporan-panel-title">Analisis Singkat</h2>
+                    @foreach ($summary->analysisParagraphs() as $paragraph)
+                        <p class="mt-3 text-sm leading-relaxed text-ink">{{ $paragraph }}</p>
+                    @endforeach
+                </section>
+            @endif
+
+            @if ($summary->improvementPoints() !== [])
+                <section class="ppid-laporan-panel" aria-labelledby="peningkatan-title">
+                    <h2 id="peningkatan-title" class="ppid-laporan-panel-title">Upaya Peningkatan Layanan</h2>
+                    <ol class="ppid-laporan-reasons">
+                        @foreach ($summary->improvementPoints() as $point)
+                            <li>{{ $point }}</li>
+                        @endforeach
+                    </ol>
+                </section>
+            @endif
+
+            @if ($sourceUrl = $summary->sourceDocumentUrl())
+                <section class="ppid-laporan-panel" aria-labelledby="dokumen-sumber-title">
+                    <h2 id="dokumen-sumber-title" class="ppid-laporan-panel-title">Dokumen Sumber</h2>
+                    <p class="mt-3 text-sm font-semibold text-navy">Laporan Layanan Informasi Publik Tahun {{ $summary->year }}</p>
+                    <p class="mt-1 text-sm text-muted">PPID Poltekkes Kemenkes Banten</p>
+                    <a href="{{ $sourceUrl }}" class="ppid-laporan-button mt-4" target="_blank" rel="noopener noreferrer">Lihat / Unduh Laporan {{ $summary->year }}</a>
+                </section>
+            @endif
 
             @if (trim((string) $summary->notes) !== '')
                 <section class="ppid-laporan-panel">
@@ -260,7 +388,25 @@
         line-height: 1.6;
     }
     .ppid-laporan-chart { position: relative; height: 18rem; margin-top: 1rem; max-width: 100%; }
-    .ppid-laporan-chart-wide { height: 16rem; }
+    .ppid-laporan-chart-wide { height: 18rem; }
+    .ppid-laporan-chart-tall { height: 22rem; }
+    .ppid-laporan-table-wrap { margin-top: 1rem; overflow-x: auto; }
+    .ppid-laporan-table { width: 100%; min-width: 36rem; border-collapse: collapse; font-size: 0.9rem; }
+    .ppid-laporan-table th,
+    .ppid-laporan-table td { border-bottom: 1px solid var(--border); padding: 0.65rem 0.7rem; text-align: left; }
+    .ppid-laporan-table thead th { color: var(--navy); font-family: var(--font-heading); font-size: 0.78rem; }
+    .ppid-laporan-table tbody th { color: var(--navy); font-weight: 650; }
+    .ppid-laporan-capaian { display: grid; gap: 0.85rem; margin-top: 1rem; }
+    .ppid-laporan-capaian div { min-width: 0; }
+    .ppid-laporan-capaian dt { color: var(--muted); font-size: 0.82rem; }
+    .ppid-laporan-capaian dd { margin: 0.2rem 0 0; color: var(--navy); font-family: var(--font-heading); font-size: 1.35rem; font-weight: 700; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    @media (min-width: 640px) {
+        .ppid-laporan-capaian { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (min-width: 1024px) {
+        .ppid-laporan-capaian { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
     .ppid-laporan-metric { margin: 0.8rem 0 0; color: var(--muted); }
     .ppid-laporan-metric span {
         display: block;

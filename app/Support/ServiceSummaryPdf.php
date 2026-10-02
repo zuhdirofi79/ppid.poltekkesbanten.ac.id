@@ -29,17 +29,24 @@ class ServiceSummaryPdf
         }
 
         $pdf->numbered(1, 'Jumlah permohonan diterima', $summary->countText('total_received'));
-        $pdf->numbered(2, 'Dikabulkan seluruhnya', $summary->countText('fulfilled_full'));
-        $pdf->numbered(3, 'Dikabulkan sebagian', $summary->countText('fulfilled_partial'));
-        $pdf->numbered(4, 'Ditolak', $summary->countText('rejected'));
-        $pdf->numbered(5, 'Rata-rata waktu respons', $summary->average_response_days === null
+        $pdf->numbered(2, 'Informasi diberikan', $summary->countText('provided_total'));
+        $pdf->numbered(3, 'Ditolak', $summary->countText('rejected'));
+        $pdf->numbered(4, 'Dalam proses', $summary->countText('in_progress'));
+        $pdf->numbered(5, 'Tingkat pemenuhan', $summary->formatRate($summary->fulfillmentRate()));
+        $pdf->line('Tidak dipenuhi: '.$summary->formatRate($summary->unfulfilledRate()), 11);
+        if ($split = $summary->fulfillmentSplitText()) {
+            $pdf->paragraph($split);
+        } else {
+            $pdf->line('Dikabulkan seluruhnya: '.$summary->countText('fulfilled_full'), 11);
+            $pdf->line('Dikabulkan sebagian: '.$summary->countText('fulfilled_partial'), 11);
+        }
+        $pdf->line('Rata-rata waktu respons: '.($summary->average_response_days === null
             ? 'Data belum tersedia'
-            : $summary->responseDaysText().' hari kerja');
+            : $summary->responseDaysText().' hari kerja'), 11);
         $pdf->gap(6);
         $pdf->line('Keterangan waktu respons', 11, true);
-        $pdf->paragraph(trim((string) $summary->response_time_description) !== ''
-            ? (string) $summary->response_time_description
-            : 'Data belum tersedia');
+        $narrative = $summary->responseTimeNarrative();
+        $pdf->paragraph($narrative !== '' ? $narrative : 'Data belum tersedia');
         $pdf->gap(6);
         $pdf->line('Alasan penolakan', 11, true);
 
@@ -59,21 +66,52 @@ class ServiceSummaryPdf
             }
         }
 
-        $pdf->gap(8);
-        $pdf->line('Status pemenuhan', 11, true);
-        $status = [
-            ['Dikabulkan seluruhnya', $summary->fulfilled_full],
-            ['Dikabulkan sebagian', $summary->fulfilled_partial],
-            ['Ditolak', $summary->rejected],
-        ];
-        $known = array_values(array_filter($status, fn (array $row) => $row[1] !== null));
-        if ($known === []) {
-            $pdf->paragraph('Data belum tersedia');
-        } else {
-            $max = max(1, ...array_map(fn (array $row) => (int) $row[1], $known));
-            foreach ($known as [$label, $value]) {
-                $pdf->bar($label.' ('.(int) $value.')', (int) $value, $max);
+        if ($summary->fulfillmentSplitText() === null) {
+            $pdf->gap(8);
+            $pdf->line('Status pemenuhan', 11, true);
+            $status = [
+                ['Dikabulkan seluruhnya', $summary->fulfilled_full],
+                ['Dikabulkan sebagian', $summary->fulfilled_partial],
+                ['Ditolak', $summary->rejected],
+            ];
+            $known = array_values(array_filter($status, fn (array $row) => $row[1] !== null));
+            if ($known === []) {
+                $pdf->paragraph('Data belum tersedia');
+            } else {
+                $max = max(1, ...array_map(fn (array $row) => (int) $row[1], $known));
+                foreach ($known as [$label, $value]) {
+                    $pdf->bar($label.' ('.(int) $value.')', (int) $value, $max);
+                }
             }
+        }
+
+        $periods = $summary->periodRows();
+        if ($periods !== []) {
+            $pdf->gap(8);
+            $pdf->line('Rekap periode', 11, true);
+            foreach ($periods as $row) {
+                $pdf->paragraph($row['label'].': masuk '.$summary->displayCount($row['received']).', diberikan '.$summary->displayCount($row['provided']).', ditolak '.$summary->displayCount($row['rejected']).', dalam proses '.$summary->displayCount($row['in_progress']));
+            }
+        }
+
+        $types = $summary->informationTypes();
+        if ($types !== []) {
+            $pdf->gap(6);
+            $pdf->line('Jenis informasi yang diminta', 11, true);
+            foreach ($types as $row) {
+                $pdf->paragraph($row['label'].': '.$summary->displayCount($row['count']));
+            }
+        }
+
+        foreach ($summary->analysisParagraphs() as $paragraph) {
+            $pdf->paragraph($paragraph);
+        }
+
+        if (trim((string) $summary->source_document_path) !== '') {
+            $pdf->gap(6);
+            $pdf->line('Sumber', 11, true);
+            $pdf->paragraph('Laporan Layanan Informasi Publik Tahun '.$summary->year);
+            $pdf->paragraph('PPID Poltekkes Kemenkes Banten');
         }
 
         $pdf->gap(10);

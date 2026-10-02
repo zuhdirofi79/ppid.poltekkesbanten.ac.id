@@ -45,6 +45,7 @@ Route::get('/kontak', function () {
 })->name('contact');
 
 Route::redirect('/halaman/informasi-berkala', '/informasi-publik/berkala', 301);
+Route::redirect('/halaman/statistik-layanan-informasi', '/halaman/ringkasan-laporan-layanan-informasi', 301);
 
 Route::get('/halaman/ringkasan-laporan-layanan-informasi/pdf', ServiceSummaryPdfController::class)
     ->name('pages.service-summary.pdf');

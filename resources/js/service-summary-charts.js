@@ -56,6 +56,58 @@ if (node) {
         });
     }
 
+    const periodCanvas = document.getElementById('chart-periods');
+    const periodLabels = data.periods?.labels ?? [];
+    if (periodCanvas && periodLabels.length) {
+        new Chart(periodCanvas, {
+            type: 'bar',
+            data: {
+                labels: periodLabels,
+                datasets: [
+                    { label: 'Permintaan Masuk', data: data.periods?.received ?? [], backgroundColor: navy, borderRadius: 4, maxBarThickness: 28 },
+                    { label: 'Informasi Diberikan', data: data.periods?.provided ?? [], backgroundColor: green, borderRadius: 4, maxBarThickness: 28 },
+                    { label: 'Ditolak', data: data.periods?.rejected ?? [], backgroundColor: gold, borderRadius: 4, maxBarThickness: 28 },
+                    { label: 'Dalam Proses', data: data.periods?.in_progress ?? [], backgroundColor: '#94a3b8', borderRadius: 4, maxBarThickness: 28 },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { precision: 0 } },
+                },
+            },
+        });
+    }
+
+    const typeCanvas = document.getElementById('chart-types');
+    const typeLabels = data.types?.labels ?? [];
+    if (typeCanvas && typeLabels.length) {
+        new Chart(typeCanvas, {
+            type: 'bar',
+            data: {
+                labels: typeLabels,
+                datasets: [{
+                    label: 'Jumlah permohonan',
+                    data: data.types?.values ?? [],
+                    backgroundColor: navy,
+                    borderRadius: 6,
+                    maxBarThickness: 28,
+                }],
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { beginAtZero: true, ticks: { precision: 0 } },
+                },
+            },
+        });
+    }
+
     const reasonCanvas = document.getElementById('chart-reasons');
     const reasonLabels = data.reasons?.labels ?? [];
     if (reasonCanvas && reasonLabels.length) {

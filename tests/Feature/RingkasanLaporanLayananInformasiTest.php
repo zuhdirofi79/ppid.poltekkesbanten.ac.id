@@ -11,6 +11,8 @@ use App\Support\PublicNavigation;
 use App\Support\ServiceSummaryReport;
 use Database\Seeders\CategorySeeder;
 use Database\Seeders\EnsureRingkasanLaporanLayananInformasiMenuItemSeeder;
+use Database\Seeders\EnsureStatistikLayananInformasiCanonicalMenuSeeder;
+use Database\Seeders\LaporanLayananInformasiPublik2025Seeder;
 use Database\Seeders\MenuSeeder;
 use Database\Seeders\PageSeeder;
 use Database\Seeders\RingkasanLaporanLayananInformasiPageSeeder;
@@ -275,6 +277,133 @@ class RingkasanLaporanLayananInformasiTest extends TestCase
         $this->get('/halaman/kebijakan-mengikat-bagi-publik')->assertOk();
         $this->get('/halaman/tata-cara-pengaduan-penyalahgunaan-wewenang')->assertOk();
         $this->get('/informasi-publik/berkala')->assertOk();
+        $this->get('/informasi-publik/serta-merta')->assertOk();
+        $this->get('/halaman/profil-pimpinan-satuan-kerja')->assertOk();
+        $this->get('/halaman/lhkpn-pimpinan-tertinggi')->assertOk();
+    }
+
+    #[Test]
+    public function legacy_statistik_url_redirects_permanently_to_the_canonical_report(): void
+    {
+        $this->get('/halaman/statistik-layanan-informasi')
+            ->assertStatus(301)
+            ->assertRedirect('/halaman/ringkasan-laporan-layanan-informasi');
+
+        $this->get('/halaman/'.ServiceSummaryReport::SLUG)->assertOk();
+    }
+
+    #[Test]
+    public function navbar_statistik_layanan_points_at_the_canonical_report(): void
+    {
+        $html = $this->get('/halaman/'.ServiceSummaryReport::SLUG)->assertOk()->getContent();
+
+        $this->assertSame(2, preg_match_all(
+            '/href="[^"]*\/halaman\/'.ServiceSummaryReport::SLUG.'"[^>]*>\s*Statistik Layanan Informasi/u',
+            $html
+        ));
+        $this->assertSame(0, preg_match_all(
+            '/href="[^"]*\/halaman\/statistik-layanan-informasi"/',
+            $html
+        ));
+    }
+
+    #[Test]
+    public function database_navigation_rewrites_the_old_statistik_slug_without_duplicating_it(): void
+    {
+        $this->seed(MenuSeeder::class);
+        SiteSetting::query()->updateOrCreate(
+            ['key' => 'navigation.public_source'],
+            ['group' => 'navigation', 'value' => 'database', 'type' => 'text', 'label' => 'Sumber navigasi publik'],
+        );
+        SiteSetting::forgetCache();
+
+        $item = MenuItem::query()->where('label', 'Statistik Layanan Informasi')->firstOrFail();
+        $item->update(['route_params' => ['slug' => 'statistik-layanan-informasi']]);
+        PublicNavigation::forget();
+
+        $this->seed(EnsureStatistikLayananInformasiCanonicalMenuSeeder::class);
+        $this->seed(EnsureStatistikLayananInformasiCanonicalMenuSeeder::class);
+
+        $this->assertSame(1, MenuItem::query()->where('label', 'Statistik Layanan Informasi')->count());
+        $this->assertSame(
+            ServiceSummaryReport::SLUG,
+            MenuItem::query()->where('label', 'Statistik Layanan Informasi')->firstOrFail()->route_params['slug']
+        );
+    }
+
+    #[Test]
+    public function official_2025_report_uses_only_figures_from_the_source_document(): void
+    {
+        $this->seed(LaporanLayananInformasiPublik2025Seeder::class);
+        $this->seed(LaporanLayananInformasiPublik2025Seeder::class);
+
+        $summary = InformationServiceSummary::query()->where('year', 2025)->firstOrFail();
+        $this->assertSame(1, InformationServiceSummary::query()->where('year', 2025)->count());
+        $this->assertSame(35, $summary->total_received);
+        $this->assertSame(33, $summary->provided_total);
+        $this->assertNull($summary->fulfilled_full);
+        $this->assertNull($summary->fulfilled_partial);
+        $this->assertSame(2, $summary->rejected);
+        $this->assertSame(0, $summary->in_progress);
+        $this->assertNull($summary->average_response_days);
+        $this->assertNull($summary->rejection_reason_breakdown);
+        $this->assertSame(94.3, $summary->fulfillmentRate());
+        $this->assertSame(5.7, $summary->unfulfilledRate());
+
+        $page = $this->get('/halaman/'.ServiceSummaryReport::SLUG.'?tahun=2025');
+        $page->assertOk();
+        $page->assertSee('LAPORAN TAHUN 2025', false);
+        $page->assertSee('35', false);
+        $page->assertSee('33', false);
+        $page->assertSee('94,3%', false);
+        $page->assertSee('5,7%', false);
+        $page->assertSee('Januari–Maret', false);
+        $page->assertSee('April–Juni', false);
+        $page->assertSee('Juli–September', false);
+        $page->assertSee('Oktober–Desember', false);
+        $page->assertSee('Data jumlah mahasiswa dan dosen', false);
+        $page->assertSee('Informasi beasiswa', false);
+        $page->assertSee('Informasi pengadaan barang/jasa', false);
+        $page->assertSee('Data kurikulum dan jadwal kuliah', false);
+        $page->assertSee('Surat Keterangan Aktif Mahasiswa', false);
+        $page->assertSee('Belum tersedia secara terpisah dalam Laporan Layanan Informasi Publik Tahun 2025.', false);
+        $page->assertSee('belum tersedia secara kuantitatif dalam Laporan Layanan Informasi Publik Tahun 2025.', false);
+        $page->assertSee('LAPORAN%20LAYANAN%20INFORMASI%20PUBLIK%202025.docx', false);
+        $page->assertSee('target="_blank"', false);
+        $page->assertSee('rel="noopener noreferrer"', false);
+        $page->assertDontSee('5 hari', false);
+        $page->assertDontSee('3 hari', false);
+        $page->assertDontSee('10 hari', false);
+        $page->assertDontSee('hari kerja', false);
+        $page->assertDontSee('Dikabulkan seluruhnya: 33', false);
+        $page->assertDontSee('chart-reasons', false);
+
+        $pdf = $this->get(route('pages.service-summary.pdf', ['tahun' => 2025]));
+        $pdf->assertOk();
+        $pdf->assertHeader('content-type', 'application/pdf');
+        $contents = $pdf->getContent();
+        $this->assertStringContainsString('Jumlah permohonan diterima', $contents);
+        $this->assertStringContainsString('94,3%', $contents);
+        $this->assertStringContainsString('tersedia secara kuantitatif', $contents);
+        $this->assertStringNotContainsString('5 hari', $contents);
+        $this->assertStringNotContainsString('hari kerja', $contents);
+    }
+
+    #[Test]
+    public function official_2025_seeder_does_not_overwrite_an_existing_total(): void
+    {
+        InformationServiceSummary::query()->create([
+            'year' => 2025,
+            'total_received' => 40,
+            'is_published' => true,
+            'published_at' => now(),
+        ]);
+
+        $this->seed(LaporanLayananInformasiPublik2025Seeder::class);
+
+        $summary = InformationServiceSummary::query()->where('year', 2025)->firstOrFail();
+        $this->assertSame(40, $summary->total_received);
+        $this->assertNull($summary->provided_total);
     }
 
     /**

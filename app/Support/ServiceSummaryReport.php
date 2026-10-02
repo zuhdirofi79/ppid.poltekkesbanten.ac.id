@@ -82,7 +82,8 @@ class ServiceSummaryReport
     private static function charts(?InformationServiceSummary $summary, Collection $comparison, ?int $year): array
     {
         $status = [];
-        if ($summary) {
+        $hasSplit = $summary && ($summary->fulfilled_full !== null || $summary->fulfilled_partial !== null);
+        if ($hasSplit) {
             foreach ([
                 'Dikabulkan seluruhnya' => $summary->fulfilled_full,
                 'Dikabulkan sebagian' => $summary->fulfilled_partial,
@@ -91,6 +92,30 @@ class ServiceSummaryReport
                 if ($value !== null && (int) $value > 0) {
                     $status[] = ['label' => $label, 'value' => (int) $value];
                 }
+            }
+        }
+
+        $periodLabels = [];
+        $periodReceived = [];
+        $periodProvided = [];
+        $periodRejected = [];
+        $periodProgress = [];
+        if ($summary) {
+            foreach ($summary->periodRows() as $row) {
+                $periodLabels[] = $row['label'];
+                $periodReceived[] = $row['received'];
+                $periodProvided[] = $row['provided'];
+                $periodRejected[] = $row['rejected'];
+                $periodProgress[] = $row['in_progress'];
+            }
+        }
+
+        $typeLabels = [];
+        $typeValues = [];
+        if ($summary) {
+            foreach ($summary->informationTypes() as $row) {
+                $typeLabels[] = $row['label'];
+                $typeValues[] = $row['count'];
             }
         }
 
@@ -128,6 +153,19 @@ class ServiceSummaryReport
                 'aria' => 'Diagram alasan penolakan permohonan informasi tahun '.$yearLabel,
                 'labels' => $reasonLabels,
                 'values' => $reasonValues,
+            ],
+            'periods' => [
+                'aria' => 'Diagram perkembangan permohonan informasi tahun '.$yearLabel,
+                'labels' => $periodLabels,
+                'received' => $periodReceived,
+                'provided' => $periodProvided,
+                'rejected' => $periodRejected,
+                'in_progress' => $periodProgress,
+            ],
+            'types' => [
+                'aria' => 'Diagram jenis informasi yang diminta tahun '.$yearLabel,
+                'labels' => $typeLabels,
+                'values' => $typeValues,
             ],
         ];
     }

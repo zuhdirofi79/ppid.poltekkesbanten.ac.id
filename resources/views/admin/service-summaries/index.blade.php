@@ -18,6 +18,7 @@
             <tr>
                 <th class="px-4 py-3">Tahun</th>
                 <th class="px-4 py-3">Diterima</th>
+                <th class="px-4 py-3">Diberikan</th>
                 <th class="px-4 py-3">Dikabulkan</th>
                 <th class="px-4 py-3">Sebagian</th>
                 <th class="px-4 py-3">Ditolak</th>
@@ -30,6 +31,7 @@
                 <tr class="border-b border-line/70">
                     <td class="px-4 py-3 font-heading text-lg font-bold text-navy">{{ $row->year }}</td>
                     <td class="px-4 py-3">{{ $row->total_received ?? '—' }}</td>
+                    <td class="px-4 py-3">{{ $row->provided_total ?? '—' }}</td>
                     <td class="px-4 py-3">{{ $row->fulfilled_full ?? '—' }}</td>
                     <td class="px-4 py-3">{{ $row->fulfilled_partial ?? '—' }}</td>
                     <td class="px-4 py-3">{{ $row->rejected ?? '—' }}</td>
@@ -58,7 +60,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="px-4 py-8 text-center text-muted">Belum ada laporan. Jangan mengarang angka.</td>
+                    <td colspan="8" class="px-4 py-8 text-center text-muted">Belum ada laporan. Jangan mengarang angka.</td>
                 </tr>
             @endforelse
         </tbody>

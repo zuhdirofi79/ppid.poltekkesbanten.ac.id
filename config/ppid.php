@@ -416,7 +416,7 @@ return [
                 ['label' => 'Akreditasi', 'route' => 'pages.show', 'params' => ['slug' => 'akreditasi']],
                 ['label' => 'Kerja Sama', 'route' => 'pages.show', 'params' => ['slug' => 'kerja-sama']],
                 ['label' => 'Pengadaan Barang dan Jasa', 'route' => 'pages.show', 'params' => ['slug' => 'pengadaan-barang-dan-jasa']],
-                ['label' => 'Statistik Layanan Informasi', 'route' => 'pages.show', 'params' => ['slug' => 'statistik-layanan-informasi']],
+                ['label' => 'Statistik Layanan Informasi', 'route' => 'pages.show', 'params' => ['slug' => 'ringkasan-laporan-layanan-informasi']],
             ],
         ],
         [
