@@ -153,9 +153,9 @@ class PageSeeder extends Seeder
             [
                 'slug' => 'lhkpn-pimpinan-tertinggi',
                 'title' => 'LHKPN Pimpinan Tertinggi',
-                'excerpt' => 'Laporan Harta Kekayaan Penyelenggara Negara (LHKPN) pimpinan tertinggi.',
-                'meta_description' => 'Informasi LHKPN pimpinan tertinggi Poltekkes Kemenkes Banten. Konten lengkap sedang disiapkan.',
-                'body' => HtmlSanitizer::clean($this->placeholderBody('LHKPN Pimpinan Tertinggi')),
+                'excerpt' => 'Laporan Harta Kekayaan Penyelenggara Negara (LHKPN) pimpinan dan pejabat terkait Poltekkes Kemenkes Banten berdasarkan dokumen resmi yang tersedia.',
+                'meta_description' => 'Laporan Harta Kekayaan Penyelenggara Negara (LHKPN) pimpinan dan pejabat terkait Poltekkes Kemenkes Banten berdasarkan dokumen resmi yang tersedia.',
+                'body' => '',
                 'sort_order' => 35,
             ],
         ];

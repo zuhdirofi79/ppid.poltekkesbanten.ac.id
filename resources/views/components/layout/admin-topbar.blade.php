@@ -8,8 +8,14 @@
         'missingCount' => 0,
         'badgeLabel' => '',
         'missingDocuments' => collect(),
+        'missingLhkpn' => collect(),
+        'lhkpnMissingCount' => 0,
+        'notificationTotal' => 0,
     ];
     $user = auth()->user();
+    $bellCount = (int) ($chrome['notificationTotal'] ?? $chrome['missingCount'] ?? 0);
+    $bellLabel = $bellCount > 99 ? '99+' : ($bellCount > 0 ? (string) $bellCount : '');
+    $missingLhkpn = $chrome['missingLhkpn'] ?? collect();
 @endphp
 
 @if ($chrome['showLogin'])
@@ -43,11 +49,11 @@
                 <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
                 <path d="M13.73 21a2 2 0 01-3.46 0"></path>
             </svg>
-            @if ($chrome['badgeLabel'] !== '')
+            @if ($bellLabel !== '')
                 <span
                     class="absolute -right-0.5 -top-0.5 inline-flex min-w-[1.15rem] items-center justify-center rounded-full bg-amber-400 px-1 text-[10px] font-bold leading-4 text-navy-dark"
-                    aria-label="{{ $chrome['missingCount'] }} dokumen belum lengkap"
-                >{{ $chrome['badgeLabel'] }}</span>
+                    aria-label="{{ $bellCount }} dokumen belum lengkap"
+                >{{ $bellLabel }}</span>
             @endif
         </button>
 
@@ -67,9 +73,14 @@
                         Masih terdapat {{ $chrome['missingCount'] }} dokumen Informasi Berkala yang belum tersedia.
                     </p>
                 @endif
+                @if ($missingLhkpn->isNotEmpty())
+                    <p class="mt-1 text-xs text-muted">
+                        {{ $missingLhkpn->count() }} dokumen LHKPN belum diunggah.
+                    </p>
+                @endif
             </div>
 
-            @if ($chrome['missingCount'] === 0)
+            @if ($bellCount === 0)
                 <p class="px-4 py-6 text-sm text-green">✓ Seluruh dokumen Informasi Berkala telah tersedia.</p>
             @else
                 <ul class="max-h-80 divide-y divide-line overflow-y-auto">
@@ -95,11 +106,40 @@
                             </a>
                         </li>
                     @endforeach
+                    @foreach ($missingLhkpn as $lhkpn)
+                        <li>
+                            <a
+                                role="menuitem"
+                                href="{{ route('admin.lhkpn.edit', $lhkpn) }}"
+                                class="flex gap-3 px-4 py-3 hover:bg-surface"
+                            >
+                                <span class="mt-0.5 text-navy" aria-hidden="true">
+                                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M7 3h8l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"></path>
+                                        <path d="M15 3v5h5"></path>
+                                    </svg>
+                                </span>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block text-sm font-medium text-navy">{{ $lhkpn->person_name }}</span>
+                                    <span class="mt-0.5 block text-xs text-muted">{{ $lhkpn->position }}</span>
+                                    <span class="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-900">Wajib dilengkapi</span>
+                                    <span class="mt-1 block text-xs font-semibold text-green">Upload Dokumen →</span>
+                                </span>
+                            </a>
+                        </li>
+                    @endforeach
                 </ul>
-                <div class="border-t border-line px-4 py-3">
-                    <a href="{{ route('admin.informasi-publik.berkala', ['status' => 'missing']) }}" class="text-sm font-semibold text-green hover:underline">
-                        Lihat Semua Dokumen Belum Lengkap
-                    </a>
+                <div class="border-t border-line px-4 py-3 space-y-2">
+                    @if ($chrome['missingCount'] > 0)
+                        <a href="{{ route('admin.informasi-publik.berkala', ['status' => 'missing']) }}" class="block text-sm font-semibold text-green hover:underline">
+                            Lihat Semua Dokumen Belum Lengkap
+                        </a>
+                    @endif
+                    @if ($missingLhkpn->isNotEmpty())
+                        <a href="{{ route('admin.lhkpn.index') }}" class="block text-sm font-semibold text-green hover:underline">
+                            Lengkapi LHKPN Pimpinan
+                        </a>
+                    @endif
                 </div>
             @endif
         </div>

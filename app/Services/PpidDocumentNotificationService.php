@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Models\LhkpnDocument;
 use App\Models\PublicDocument;
 use App\Models\PublicInformationCategory;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 
 class PpidDocumentNotificationService
 {
@@ -49,6 +51,25 @@ class PpidDocumentNotificationService
         }
 
         return $missing;
+    }
+
+    /**
+     * LHKPN yang ditayangkan tetapi belum memiliki berkas.
+     *
+     * @return Collection<int, LhkpnDocument>
+     */
+    public function missingLhkpnDocuments(): Collection
+    {
+        if (! Schema::hasTable('lhkpn_documents')) {
+            return collect();
+        }
+
+        return LhkpnDocument::query()
+            ->where('is_published', true)
+            ->ordered()
+            ->get()
+            ->filter(fn (LhkpnDocument $document) => ! $document->isAvailable())
+            ->values();
     }
 
     public function missingCount(): int

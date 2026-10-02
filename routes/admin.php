@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\InformasiBerkalaController;
 use App\Http\Controllers\Admin\InformationServiceSummaryController;
 use App\Http\Controllers\Admin\LeadershipProfileController;
+use App\Http\Controllers\Admin\LhkpnDocumentController;
 use App\Http\Controllers\Admin\MediaAssetController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\SaqController;
@@ -68,6 +69,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
             Route::delete('academic-calendars/{academicCalendar}/file', [AcademicCalendarController::class, 'removeFile'])
                 ->name('academic-calendars.remove-file');
+
+            Route::get('lhkpn', [LhkpnDocumentController::class, 'index'])->name('lhkpn.index');
+            Route::get('lhkpn/{lhkpnDocument}/edit', [LhkpnDocumentController::class, 'edit'])->name('lhkpn.edit');
+            Route::put('lhkpn/{lhkpnDocument}', [LhkpnDocumentController::class, 'update'])->name('lhkpn.update');
+            Route::post('lhkpn/{lhkpnDocument}/file', [LhkpnDocumentController::class, 'upload'])->name('lhkpn.upload');
+            Route::delete('lhkpn/{lhkpnDocument}/file', [LhkpnDocumentController::class, 'removeFile'])->name('lhkpn.remove-file');
+            Route::post('lhkpn/{lhkpnDocument}/publish', [LhkpnDocumentController::class, 'publish'])->name('lhkpn.publish');
         });
 
         Route::middleware(EnsureUserCanAccessAdmin::class.':manage-pages')->group(function () {

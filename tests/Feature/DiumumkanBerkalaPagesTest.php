@@ -142,7 +142,8 @@ class DiumumkanBerkalaPagesTest extends TestCase
         $this->get('/halaman/lhkpn-pimpinan-tertinggi')
             ->assertOk()
             ->assertSee('LHKPN Pimpinan Tertinggi', false)
-            ->assertSee('Konten halaman ini sedang disiapkan', false);
+            ->assertSee('PPID-LHKPN-PIMPINAN-V1', false)
+            ->assertDontSee('Konten halaman ini sedang disiapkan', false);
     }
 
     #[Test]

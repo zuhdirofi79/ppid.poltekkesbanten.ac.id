@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\LhkpnDocument;
 use App\Models\PublicDocument;
 use App\Models\ServiceLink;
 use App\Models\User;
+use App\Observers\LhkpnDocumentObserver;
 use App\Observers\PublicDocumentObserver;
 use App\Policies\UserPolicy;
 use App\Services\PpidAdminService;
@@ -31,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
         Route::bind('service', fn (string $value) => ServiceLink::query()->whereKey($value)->firstOrFail());
 
         PublicDocument::observe(PublicDocumentObserver::class);
+        LhkpnDocument::observe(LhkpnDocumentObserver::class);
 
         $abilities = [
             'access-admin',
@@ -86,7 +89,10 @@ class AppServiceProvider extends ServiceProvider
      *     isProtected: bool,
      *     missingCount: int,
      *     badgeLabel: string,
-     *     missingDocuments: \Illuminate\Support\Collection
+     *     missingDocuments: \Illuminate\Support\Collection,
+     *     missingLhkpn: \Illuminate\Support\Collection,
+     *     lhkpnMissingCount: int,
+     *     notificationTotal: int
      * }
      */
     private function adminChromePayload(): array
@@ -98,6 +104,9 @@ class AppServiceProvider extends ServiceProvider
         $canAdmin = $user instanceof User && $user->canAccessAdmin();
         $showBell = $canAdmin && $user->canDo('manage-documents');
         $missingCount = $showBell ? $notifications->missingCount() : 0;
+        $missingLhkpn = $showBell ? $notifications->missingLhkpnDocuments() : collect();
+        $lhkpnMissingCount = $missingLhkpn->count();
+        $notificationTotal = $missingCount + $lhkpnMissingCount;
 
         return [
             'showLogin' => ! $canAdmin,
@@ -107,6 +116,9 @@ class AppServiceProvider extends ServiceProvider
             'missingCount' => $missingCount,
             'badgeLabel' => $showBell ? $notifications->badgeLabel($missingCount) : '',
             'missingDocuments' => $showBell ? $notifications->missingDocuments(8) : collect(),
+            'missingLhkpn' => $missingLhkpn,
+            'lhkpnMissingCount' => $lhkpnMissingCount,
+            'notificationTotal' => $notificationTotal,
         ];
     }
 }

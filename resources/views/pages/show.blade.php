@@ -128,6 +128,16 @@
             ])
             @break
 
+        @case('lhkpn-pimpinan-tertinggi')
+            @include('pages.partials.lhkpn-pimpinan-tertinggi', [
+                'title' => $title ?? $page->title,
+                'excerpt' => $excerpt ?? $page->excerpt,
+                'label' => $label ?? null,
+                'breadcrumbs' => $breadcrumbs ?? [],
+                'documents' => $lhkpnDocuments ?? collect(),
+            ])
+            @break
+
         @default
             @if (($page->slug ?? '') === 'akreditasi')
                 <!-- PPID-AKREDITASI-DEPLOY-20260904-A -->

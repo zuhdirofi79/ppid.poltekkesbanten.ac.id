@@ -4,11 +4,13 @@ namespace App\Services;
 
 use App\Models\Announcement;
 use App\Models\Faq;
+use App\Models\LhkpnDocument;
 use App\Models\Page;
 use App\Models\Post;
 use App\Models\PublicDocument;
 use App\Models\ServiceLink;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class GlobalSearchService
@@ -40,6 +42,7 @@ class GlobalSearchService
             $this->group('services', 'Layanan', $this->searchServices($normalized, $limitPerGroup)),
             $this->group('documents', 'Dokumen Publik', $this->searchDocuments($normalized, $limitPerGroup)),
             $this->group('pages', 'Halaman', $this->searchPages($normalized, $limitPerGroup)),
+            $this->group('lhkpn', 'LHKPN', $this->searchLhkpn($normalized, $limitPerGroup)),
             $this->group('posts', 'Berita', $this->searchPosts($normalized, $limitPerGroup)),
             $this->group('announcements', 'Pengumuman', $this->searchAnnouncements($normalized, $limitPerGroup)),
             $this->group('faqs', 'FAQ', $this->searchFaqs($normalized, $limitPerGroup)),
@@ -226,6 +229,41 @@ class GlobalSearchService
                 'available' => true,
                 'external' => false,
                 'fields' => [$page->title, (string) $page->excerpt, (string) $page->body, $page->slug],
+            ];
+        });
+    }
+
+    /** @return list<array<string, mixed>> */
+    private function searchLhkpn(string $query, int $limit): array
+    {
+        if (! Schema::hasTable('lhkpn_documents')) {
+            return [];
+        }
+
+        $like = $this->like($query);
+        $rows = LhkpnDocument::query()
+            ->published()
+            ->where(function ($q) use ($like) {
+                $q->whereRaw('LOWER(person_name) LIKE ?', [$like])
+                    ->orWhereRaw('LOWER(position) LIKE ?', [$like])
+                    ->orWhereRaw("LOWER(COALESCE(document_label, '')) LIKE ?", [$like])
+                    ->orWhereRaw('LOWER(position_key) LIKE ?', [$like]);
+            })
+            ->ordered()
+            ->limit(40)
+            ->get();
+
+        return $this->rank($rows, $query, $limit, function (LhkpnDocument $document) {
+            return [
+                'type' => 'lhkpn',
+                'title' => $document->person_name,
+                'description' => $document->position,
+                'url' => route('pages.show', ['slug' => LhkpnDocument::PAGE_SLUG]).'#'.$document->anchor(),
+                'badge' => 'LHKPN',
+                'metadata' => $document->statusLabel(),
+                'available' => true,
+                'external' => false,
+                'fields' => [$document->person_name, $document->position, (string) $document->document_label, 'LHKPN'],
             ];
         });
     }

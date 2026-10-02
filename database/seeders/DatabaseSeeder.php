@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             PageSeeder::class,
             InformasiBerkalaSeeder::class,
             AcademicCalendarSeeder::class,
+            LhkpnDocumentSeeder::class,
             ContentExampleSeeder::class,
         ]);
     }

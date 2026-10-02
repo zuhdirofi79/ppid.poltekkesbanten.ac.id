@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\AcademicCalendar;
 use App\Models\InformationServiceSummary;
 use App\Models\LeadershipProfile;
+use App\Models\LhkpnDocument;
 use App\Models\Page;
 use App\Support\HtmlSanitizer;
 use App\Support\SopLayananDocuments;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class PublicPageController extends Controller
@@ -46,6 +48,12 @@ class PublicPageController extends Controller
             if (blank($page->excerpt) || str_contains($excerpt, 'sedang disiapkan') || ! str_contains($excerpt, 'pendidikan')) {
                 $page->excerpt = 'Profil pimpinan Poltekkes Kemenkes Banten beserta riwayat pendidikan dan riwayat pekerjaan.';
             }
+        }
+
+        if ($slug === LhkpnDocument::PAGE_SLUG) {
+            $seoTitle = 'LHKPN Pimpinan Tertinggi';
+            $seoDescription = 'Laporan Harta Kekayaan Penyelenggara Negara (LHKPN) pimpinan dan pejabat terkait Poltekkes Kemenkes Banten berdasarkan dokumen resmi yang tersedia.';
+            $page->excerpt = $seoDescription;
         }
 
         $isProfil = $this->isProfilSlug($slug);
@@ -97,6 +105,7 @@ class PublicPageController extends Controller
             'selectedCalendar' => $selectedCalendar,
             'selectedYear' => $selectedYear,
             'sopDocuments' => $slug === SopLayananDocuments::SLUG ? SopLayananDocuments::all() : [],
+            'lhkpnDocuments' => $slug === LhkpnDocument::PAGE_SLUG ? $this->lhkpnDocuments() : collect(),
             'label' => $isProfil
                 ? 'Profil PPID'
                 : ($isDiumumkanBerkala ? 'Diumumkan Berkala' : ($isSopLayanan ? 'SOP & Layanan' : null)),
@@ -108,6 +117,15 @@ class PublicPageController extends Controller
                 ['label' => $this->breadcrumbLabel($slug, $page->title), 'url' => null],
             ])),
         ]);
+    }
+
+    private function lhkpnDocuments()
+    {
+        if (! Schema::hasTable('lhkpn_documents')) {
+            return collect();
+        }
+
+        return LhkpnDocument::query()->with('mediaAsset')->published()->ordered()->get();
     }
 
     private function isProfilSlug(string $slug): bool
