@@ -102,6 +102,7 @@ class PublicPageController extends Controller
             'profil-pimpinan-satuan-kerja' => 'Profil Pimpinan Satuan Kerja',
             'lhkpn-pimpinan-tertinggi' => 'LHKPN Pimpinan Tertinggi',
             'program-kegiatan-prioritas-2026' => 'Program atau Kegiatan Prioritas',
+            'kebijakan-mengikat-bagi-publik' => 'Kebijakan Mengikat bagi Publik',
             'profil-singkat-ppid' => 'Profil Singkat PPID',
             'dasar-hukum-sk-ppid' => 'Dasar Hukum dan SK PPID',
             'visi-dan-misi' => 'Visi dan Misi',

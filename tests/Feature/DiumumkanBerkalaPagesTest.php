@@ -50,6 +50,12 @@ class DiumumkanBerkalaPagesTest extends TestCase
             '/Informasi Berkala[\s\S]+?Program atau Kegiatan Prioritas/u',
             $html
         ));
+        $this->assertStringContainsString(route('pages.show', ['slug' => 'kebijakan-mengikat-bagi-publik'], false), $html);
+        $this->assertStringContainsString('Kebijakan Mengikat bagi Publik', $html);
+        $this->assertSame(1, preg_match(
+            '/Program atau Kegiatan Prioritas[\s\S]+?Kebijakan Mengikat bagi Publik/u',
+            $html
+        ));
     }
 
     #[Test]
@@ -179,6 +185,24 @@ class DiumumkanBerkalaPagesTest extends TestCase
             ->assertSee('Program Baru Admin', false)
             ->assertSee('Ditambahkan via form CMS.', false)
             ->assertDontSee('Seleksi Kantor Akuntan Publik (KAP)', false);
+    }
+
+    #[Test]
+    public function kebijakan_mengikat_bagi_publik_page_renders_pdf_viewer(): void
+    {
+        $response = $this->get('/halaman/kebijakan-mengikat-bagi-publik');
+
+        $response->assertOk();
+        $response->assertSee('PPID-KEBIJAKAN-MENGIKAT-BAGI-PUBLIK-DEPLOY-20261002-A', false);
+        $response->assertSee('Kebijakan Mengikat bagi Publik', false);
+        $response->assertSee('Diumumkan Berkala', false);
+        $response->assertSee('Peraturan Menteri Kesehatan Republik Indonesia Nomor 13 Tahun 2026', false);
+        $response->assertSee('Perubahan Kedua atas Peraturan Menteri Kesehatan Nomor 71 Tahun 2020', false);
+        $response->assertSee('2026permenkes013.pdf', false);
+        $response->assertSee('Buka PDF', false);
+        $response->assertSee('Download PDF', false);
+        $response->assertSee('ppid-kebijakan-viewer', false);
+        $this->assertSame(1, preg_match_all('/<h1\b/i', $response->getContent()));
     }
 
     #[Test]

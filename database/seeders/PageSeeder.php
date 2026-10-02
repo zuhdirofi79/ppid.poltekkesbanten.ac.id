@@ -180,6 +180,7 @@ class PageSeeder extends Seeder
 
         $this->seedProfilPimpinanPage($adminId);
         $this->seedProgramKegiatanPrioritasPage($adminId);
+        $this->seedKebijakanMengikatBagiPublikPage($adminId);
     }
 
     private function seedProfilPimpinanPage(?int $adminId): void
@@ -386,5 +387,24 @@ HTML;
     <p>Dokumen dan status akreditasi resmi akan ditampilkan pada halaman ini setelah data diverifikasi oleh Admin PPID.</p>
 </section>
 HTML;
+    }
+
+    private function seedKebijakanMengikatBagiPublikPage(?int $adminId): void
+    {
+        $slug = 'kebijakan-mengikat-bagi-publik';
+        $defaults = [
+            'title' => 'Kebijakan Mengikat bagi Publik',
+            'excerpt' => 'Peraturan, keputusan, dan/atau kebijakan yang mengikat bagi publik serta berkaitan dengan penyelenggaraan Politeknik Kesehatan Kementerian Kesehatan.',
+            'meta_title' => 'Kebijakan Mengikat bagi Publik | PPID Poltekkes Kemenkes Banten',
+            'meta_description' => 'Peraturan, keputusan, dan kebijakan yang mengikat bagi publik pada Poltekkes Kemenkes Banten.',
+            'body' => '',
+            'status' => 'published',
+            'published_at' => now(),
+            'sort_order' => 37,
+            'created_by' => $adminId,
+            'updated_by' => $adminId,
+        ];
+
+        Page::query()->firstOrCreate(['slug' => $slug], $defaults);
     }
 }
