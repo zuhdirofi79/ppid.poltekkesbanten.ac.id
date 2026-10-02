@@ -132,6 +132,46 @@ html.a11y-grayscale {
     height: 0.75rem;
 }
 
+/* Diumumkan Berkala: scroll di dalam panel, bukan memanjang melewati viewport */
+.diumumkan-berkala-dropdown {
+    max-height: min(72vh, calc(100dvh - 10.5rem));
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(23, 24, 79, 0.28) transparent;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 0.25rem;
+    padding-bottom: 0.65rem;
+    scroll-padding-block: 0.5rem;
+}
+
+.diumumkan-berkala-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.diumumkan-berkala-dropdown::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.diumumkan-berkala-dropdown::-webkit-scrollbar-thumb {
+    background: rgba(23, 24, 79, 0.22);
+    border-radius: 999px;
+}
+
+.diumumkan-berkala-dropdown::-webkit-scrollbar-thumb:hover {
+    background: rgba(23, 24, 79, 0.38);
+}
+
+.site-mobile-nav {
+    max-height: calc(100dvh - 8rem);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
 /* Hero */
 .hero-banner {
     position: relative;

@@ -79,6 +79,7 @@ class DiumumkanBerkalaPagesTest extends TestCase
             '/aria-label="Navigasi seluler"[\s\S]+?Kalender Akademik[\s\S]+?Tata Cara Pengaduan Penyalahgunaan Wewenang/u',
             $html
         ));
+        $this->assertSame(1, substr_count($html, 'diumumkan-berkala-dropdown'));
     }
 
     #[Test]

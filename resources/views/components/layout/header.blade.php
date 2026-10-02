@@ -126,6 +126,7 @@
                             $wideMenu = collect($item['children'] ?? [])->contains(
                                 fn (array $child) => mb_strlen((string) ($child['label'] ?? '')) > 42
                             );
+                            $scrollableMenu = ($item['label'] ?? '') === 'Diumumkan Berkala';
                         @endphp
                         <li
                             class="relative"
@@ -157,7 +158,7 @@
                                     class="nav-dropdown-panel absolute left-0 z-50 min-w-[16rem]"
                                     @keydown.escape="closeDesktop()"
                                 >
-                                    <ul class="rounded-lg border border-line bg-white py-2 shadow-lg" role="menu" @if ($wideMenu) style="width: min(22rem, calc(100vw - 2rem))" @endif>
+                                    <ul class="rounded-lg border border-line bg-white py-2 shadow-lg {{ $scrollableMenu ? 'diumumkan-berkala-dropdown' : '' }}" role="menu" @if ($wideMenu) style="width: min(22rem, calc(100vw - 2rem))" @endif>
                                         @foreach ($item['children'] as $child)
                                             @php $childActive = $isChildActive($child); @endphp
                                             <li role="none">
@@ -195,7 +196,7 @@
         x-cloak
         x-show="mobileOpen"
         x-transition
-        class="border-b border-line bg-white lg:hidden"
+        class="site-mobile-nav border-b border-line bg-white lg:hidden"
     >
         <nav class="mx-auto max-w-7xl px-4 py-3" aria-label="Navigasi seluler">
             <ul class="space-y-1">
