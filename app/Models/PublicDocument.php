@@ -171,7 +171,7 @@ class PublicDocument extends Model
     public function publicHref(): ?string
     {
         if ($this->hasInternalUrl()) {
-            return url($this->internal_url);
+            return url(self::encodeInternalPath((string) $this->internal_url));
         }
 
         if ($this->hasSafeExternalUrl()) {
@@ -187,7 +187,30 @@ class PublicDocument extends Model
 
     public function opensInNewTab(): bool
     {
+        $internalPath = strtolower((string) (parse_url((string) $this->internal_url, PHP_URL_PATH) ?: $this->internal_url));
+        if ($this->hasInternalUrl() && str_ends_with($internalPath, '.pdf')) {
+            return true;
+        }
+
         return $this->hasSafeExternalUrl() && ! $this->hasInternalUrl();
+    }
+
+    public static function encodeInternalPath(string $path): string
+    {
+        $path = str_replace('\\', '/', trim($path));
+        $query = '';
+        if (str_contains($path, '?')) {
+            [$path, $query] = explode('?', $path, 2);
+            $query = '?'.$query;
+        }
+
+        $prefix = str_starts_with($path, '/') ? '/' : '';
+        $encoded = implode('/', array_map(
+            static fn (string $segment) => rawurlencode(rawurldecode($segment)),
+            explode('/', trim($path, '/')),
+        ));
+
+        return $prefix.$encoded.$query;
     }
 
     public function resolveSourceType(): string

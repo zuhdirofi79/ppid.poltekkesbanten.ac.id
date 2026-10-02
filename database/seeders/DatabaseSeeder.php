@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             MenuSeeder::class,
             PageSeeder::class,
             InformasiBerkalaSeeder::class,
+            InformasiSertaMertaSeeder::class,
             AcademicCalendarSeeder::class,
             LhkpnDocumentSeeder::class,
             ContentExampleSeeder::class,

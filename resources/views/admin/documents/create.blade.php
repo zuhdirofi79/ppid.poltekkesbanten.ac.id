@@ -58,11 +58,18 @@
         <label class="mb-1 block text-sm font-medium text-navy">Halaman Internal</label>
         <select name="internal_url" class="w-full rounded-md border border-line px-3 py-2 text-sm">
             <option value="">— Pilih halaman —</option>
+            @php $currentInternal = old('internal_url', $document->internal_url); @endphp
+            @if (filled($currentInternal) && ! $pages->contains(fn ($page) => '/halaman/'.$page->slug === $currentInternal))
+                <option value="{{ $currentInternal }}" selected>Path dokumen saat ini</option>
+            @endif
             @foreach ($pages as $page)
                 @php $path = '/halaman/'.$page->slug; @endphp
-                <option value="{{ $path }}" @selected(old('internal_url', $document->internal_url) === $path)>{{ $page->title }}</option>
+                <option value="{{ $path }}" @selected($currentInternal === $path)>{{ $page->title }}</option>
             @endforeach
         </select>
+        @if (isset($document->id) && $document->publicHref())
+            <a href="{{ $document->publicHref() }}" target="_blank" rel="noopener noreferrer" class="mt-2 inline-block text-sm font-semibold text-green hover:underline">Lihat dokumen saat ini</a>
+        @endif
         @error('internal_url')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
     </div>
 

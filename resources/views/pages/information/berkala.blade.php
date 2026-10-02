@@ -50,7 +50,7 @@
                                 <p class="ppid-berkala-item-title">{{ $document->title }}</p>
                                 <p class="ppid-berkala-item-meta">
                                     @if ($available)
-                                        <span class="ppid-berkala-badge is-available">Tersedia</span>
+                                        <span class="ppid-berkala-badge is-available">TERSEDIA</span>
                                         <span>PDF / Dokumen</span>
                                     @else
                                         <span class="ppid-berkala-badge is-missing">Dokumen belum tersedia</span>
