@@ -19,6 +19,10 @@
     </div>
 </div>
 <div class="mx-auto max-w-7xl px-4 py-8">
+    @if (! empty($procurementAccess))
+        @include('pages.information.partials.dokumen-pengadaan-barang-jasa', ['access' => $procurementAccess])
+    @endif
+
     @if (($staffingChartGroups ?? collect())->isNotEmpty())
         @include('pages.information.partials.statistik-kepegawaian', ['groups' => $staffingChartGroups])
     @endif
@@ -33,7 +37,7 @@
             @endforeach
         </ul>
         <div class="mt-4">{{ $documents->links() }}</div>
-    @elseif (($staffingChartGroups ?? collect())->isEmpty())
+    @elseif (($staffingChartGroups ?? collect())->isEmpty() && empty($procurementAccess))
         <p class="rounded-xl border border-dashed border-line p-6 text-sm text-muted">Belum ada dokumen pada kategori ini.</p>
     @endif
 </div>

@@ -96,7 +96,7 @@ class StatistikKepegawaianTest extends TestCase
             ->assertOk()
             ->assertDontSee('id="statistik-kepegawaian"', false)
             ->assertDontSee('grafik-1.jpeg', false)
-            ->assertSee('Belum ada dokumen pada kategori ini.', false);
+            ->assertDontSee('Belum ada dokumen pada kategori ini.', false);
 
         $this->assertTrue(Route::has('information.category'));
 

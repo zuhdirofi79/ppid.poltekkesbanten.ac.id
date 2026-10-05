@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PublicDocument;
 use App\Models\PublicInformationCategory;
+use App\Support\DokumenPengadaanBarangJasa;
 use App\Support\StatistikKepegawaian;
 use Illuminate\View\View;
 
@@ -46,6 +47,10 @@ class InformationController extends Controller
             return view('pages.information.berkala', compact('category', 'sections', 'documents'));
         }
 
+        $procurementAccess = $slug === 'setiap-saat'
+            ? DokumenPengadaanBarangJasa::presentation($category)
+            : null;
+
         $staffingChartGroups = $slug === 'setiap-saat'
             ? StatistikKepegawaian::groupsFor($category)
             : collect();
@@ -56,12 +61,15 @@ class InformationController extends Controller
             ->when($slug === 'setiap-saat', function ($query) {
                 $query->where(function ($inner) {
                     $inner->whereNull('section_title')
-                        ->orWhere('section_title', '!=', StatistikKepegawaian::SECTION);
+                        ->orWhereNotIn('section_title', [
+                            StatistikKepegawaian::SECTION,
+                            DokumenPengadaanBarangJasa::SECTION,
+                        ]);
                 });
             })
             ->latest('published_at')
             ->paginate(12);
 
-        return view('pages.information.category', compact('category', 'documents', 'staffingChartGroups'));
+        return view('pages.information.category', compact('category', 'documents', 'staffingChartGroups', 'procurementAccess'));
     }
 }
