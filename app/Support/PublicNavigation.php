@@ -107,10 +107,26 @@ class PublicNavigation
                 return null;
             }
 
-            return [
+            $mapped = [
                 'label' => $item->label,
                 'url' => $url,
+                'external' => true,
             ];
+
+            $configured = collect(config('ppid.navigation', []))
+                ->flatMap(fn (array $entry) => $entry['children'] ?? [])
+                ->first(fn (array $child) => ($child['url'] ?? null) === $url);
+
+            if (is_array($configured)) {
+                if (! empty($configured['title'])) {
+                    $mapped['title'] = $configured['title'];
+                }
+                if (! empty($configured['aria_label'])) {
+                    $mapped['aria_label'] = $configured['aria_label'];
+                }
+            }
+
+            return $mapped;
         }
 
         if ($item->type === 'route' && filled($item->route_name)) {

@@ -34,13 +34,18 @@ class MenuSeeder extends Seeder
             ]);
 
             foreach ($item['children'] ?? [] as $child) {
+                $childUrl = $child['url'] ?? null;
+                $childRoute = $child['route'] ?? null;
+                $isExternal = is_string($childUrl) && $childUrl !== '' && $childRoute === null;
+
                 MenuItem::query()->create([
                     'menu_id' => $menu->id,
                     'parent_id' => $parent->id,
                     'label' => $child['label'],
-                    'type' => 'route',
-                    'route_name' => $child['route'] ?? null,
-                    'route_params' => $child['params'] ?? [],
+                    'type' => $isExternal ? 'url' : 'route',
+                    'route_name' => $isExternal ? null : $childRoute,
+                    'route_params' => $isExternal ? [] : ($child['params'] ?? []),
+                    'url' => $isExternal ? $childUrl : null,
                     'sort_order' => $order++,
                     'is_active' => true,
                 ]);

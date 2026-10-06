@@ -160,15 +160,31 @@
                                 >
                                     <ul class="rounded-lg border border-line bg-white py-2 shadow-lg {{ $scrollableMenu ? 'diumumkan-berkala-dropdown' : '' }}" role="menu" @if ($wideMenu) style="width: min(22rem, calc(100vw - 2rem))" @endif>
                                         @foreach ($item['children'] as $child)
-                                            @php $childActive = $isChildActive($child); @endphp
+                                            @php
+                                                $childActive = $isChildActive($child);
+                                                $childExternal = ! empty($child['external']);
+                                            @endphp
                                             <li role="none">
                                                 <a
                                                     role="menuitem"
                                                     href="{{ $resolveUrl($child) }}"
-                                                    class="block break-words px-4 py-2.5 text-sm leading-snug hover:bg-surface hover:text-green focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold {{ $childActive ? 'bg-surface font-semibold text-green' : 'text-ink' }}"
+                                                    class="{{ $childExternal ? 'flex items-center gap-2' : 'block' }} break-words px-4 py-2.5 text-sm leading-snug hover:bg-surface hover:text-green focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold {{ $childActive ? 'bg-surface font-semibold text-green' : 'text-ink' }}"
+                                                    @if ($childExternal)
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        title="{{ $child['title'] ?? 'Membuka tautan eksternal' }}"
+                                                        aria-label="{{ $child['aria_label'] ?? ($child['label'].' — membuka tab baru') }}"
+                                                    @endif
                                                     @if ($childActive) aria-current="page" @endif
                                                 >
-                                                    {{ $child['label'] }}
+                                                    @if ($childExternal)
+                                                        <span class="min-w-0 flex-1">{{ $child['label'] }}</span>
+                                                        <svg class="h-3.5 w-3.5 shrink-0 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                                            <path d="M14 4h6v6M10 14 20 4M20 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h5" />
+                                                        </svg>
+                                                    @else
+                                                        {{ $child['label'] }}
+                                                    @endif
                                                 </a>
                                             </li>
                                         @endforeach
@@ -225,15 +241,31 @@
                             </button>
                             <ul id="{{ $panelId }}" x-cloak x-show="openMobile === '{{ $key }}'" x-transition class="space-y-1 pb-3 pl-3">
                                 @foreach ($item['children'] as $child)
-                                    @php $childActive = $isChildActive($child); @endphp
+                                    @php
+                                        $childActive = $isChildActive($child);
+                                        $childExternal = ! empty($child['external']);
+                                    @endphp
                                     <li>
                                         <a
                                             href="{{ $resolveUrl($child) }}"
-                                            class="block min-h-11 break-words rounded-md px-2 py-2.5 text-sm leading-snug hover:bg-surface hover:text-green focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold {{ $childActive ? 'bg-surface font-semibold text-green' : 'text-muted' }}"
+                                            class="{{ $childExternal ? 'flex items-center gap-2' : 'block' }} min-h-11 break-words rounded-md px-2 py-2.5 text-sm leading-snug hover:bg-surface hover:text-green focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold {{ $childActive ? 'bg-surface font-semibold text-green' : 'text-muted' }}"
                                             @click="closeMobileMenu()"
+                                            @if ($childExternal)
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                title="{{ $child['title'] ?? 'Membuka tautan eksternal' }}"
+                                                aria-label="{{ $child['aria_label'] ?? ($child['label'].' — membuka tab baru') }}"
+                                            @endif
                                             @if ($childActive) aria-current="page" @endif
                                         >
-                                            {{ $child['label'] }}
+                                            @if ($childExternal)
+                                                <span class="min-w-0 flex-1">{{ $child['label'] }}</span>
+                                                <svg class="h-3.5 w-3.5 shrink-0 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                                    <path d="M14 4h6v6M10 14 20 4M20 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h5" />
+                                                </svg>
+                                            @else
+                                                {{ $child['label'] }}
+                                            @endif
                                         </a>
                                     </li>
                                 @endforeach

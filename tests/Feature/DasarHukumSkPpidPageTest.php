@@ -39,11 +39,12 @@ class DasarHukumSkPpidPageTest extends TestCase
         $response->assertSee('download="SK-PPID-Poltekkes-Kemenkes-Banten-2025.pdf"', false);
         $response->assertDontSee('hstgr.io', false);
         $response->assertDontSee('srv1863-files', false);
-        $response->assertDontSee('bmn.poltekkesbanten.ac.id', false);
         $response->assertDontSee('public_html', false);
         $response->assertDontSee('2025070308315420250702075057SK-PPID-2025.pdf', false);
 
         $html = $response->getContent();
+        $document = substr($html, (int) strpos($html, 'ppid-sk-page'));
+        $this->assertStringNotContainsString('bmn.poltekkesbanten.ac.id', $document);
         $this->assertSame(1, preg_match_all('/<h1\b/i', $html));
     }
 

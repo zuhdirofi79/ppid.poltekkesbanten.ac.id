@@ -429,6 +429,13 @@ return [
                 ['label' => 'Statistik Layanan Informasi', 'route' => 'pages.show', 'params' => ['slug' => 'ringkasan-laporan-layanan-informasi']],
                 ['label' => 'Information Desk', 'route' => 'pages.show', 'params' => ['slug' => 'information-desk']],
                 ['label' => 'Statistik Keuangan', 'route' => 'pages.show', 'params' => ['slug' => 'statistik-keuangan']],
+                [
+                    'label' => 'Inventaris Barang Milik Negara',
+                    'url' => 'https://bmn.poltekkesbanten.ac.id/',
+                    'external' => true,
+                    'title' => 'Sistem Informasi Barang Milik Negara Poltekkes Kemenkes Banten',
+                    'aria_label' => 'Inventaris Barang Milik Negara Poltekkes Kemenkes Banten — buka Sistem BMN',
+                ],
             ],
         ],
         [
