@@ -10,6 +10,7 @@ use Database\Seeders\DokumenPengadaanBarangJasaSeeder;
 use Database\Seeders\StatistikKepegawaianSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
+use ReflectionMethod;
 use Tests\TestCase;
 
 class DokumenPengadaanBarangJasaTest extends TestCase
@@ -22,6 +23,32 @@ class DokumenPengadaanBarangJasaTest extends TestCase
         $this->seed(CategorySeeder::class);
         $this->seed(DokumenPengadaanBarangJasaSeeder::class);
         $this->seed(StatistikKepegawaianSeeder::class);
+    }
+
+    #[Test]
+    public function presentation_builds_the_local_image_without_a_category_argument(): void
+    {
+        $method = new ReflectionMethod(DokumenPengadaanBarangJasa::class, 'presentation');
+
+        $this->assertSame(0, $method->getNumberOfRequiredParameters());
+
+        $data = DokumenPengadaanBarangJasa::presentation();
+
+        $this->assertIsArray($data);
+        $this->assertSame(DokumenPengadaanBarangJasa::SECTION, $data['title']);
+        $this->assertSame(DokumenPengadaanBarangJasa::DESCRIPTION, $data['description']);
+        $this->assertSame('docs/dok-pbaj.jpeg', DokumenPengadaanBarangJasa::IMAGE_PATH);
+        $this->assertSame(DokumenPengadaanBarangJasa::imageUrl(), $data['image_url']);
+        $this->assertStringContainsString('docs/dok-pbaj.jpeg', $data['image_url']);
+        $this->assertSame(DokumenPengadaanBarangJasa::IMAGE_ALT, $data['image_alt']);
+        $this->assertSame(DokumenPengadaanBarangJasa::FORMAT_LABEL, $data['format_label']);
+        $this->assertSame(DokumenPengadaanBarangJasa::DOCUMENT_LABEL, $data['document_label']);
+
+        foreach ($data as $value) {
+            $this->assertIsString($value);
+            $this->assertStringNotContainsString('DokumenPBJPolkesten', $value);
+            $this->assertStringNotContainsString('s.kemkes.go.id', $value);
+        }
     }
 
     #[Test]
