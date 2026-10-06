@@ -436,6 +436,7 @@ return [
                     'title' => 'Sistem Informasi Barang Milik Negara Poltekkes Kemenkes Banten',
                     'aria_label' => 'Inventaris Barang Milik Negara Poltekkes Kemenkes Banten — buka Sistem BMN',
                 ],
+                ['label' => 'Daftar Informasi Publik', 'route' => 'pages.show', 'params' => ['slug' => 'daftar-informasi-publik']],
             ],
         ],
         [
