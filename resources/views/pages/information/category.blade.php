@@ -11,14 +11,18 @@
                 <li>/</li>
                 <li><a href="{{ route('information.index') }}" class="hover:text-green">Informasi Publik</a></li>
                 <li>/</li>
-                <li class="text-navy" aria-current="page">{{ $category->name }}</li>
+                <li class="text-navy" aria-current="page">{{ $pageTitle ?? $category->name }}</li>
             </ol>
         </nav>
-        <h1 class="font-heading text-2xl font-bold text-navy">{{ $category->name }}</h1>
-        <p class="mt-2 text-muted">{{ $category->excerpt }}</p>
+        <h1 class="font-heading text-2xl font-bold text-navy">{{ $pageTitle ?? $category->name }}</h1>
+        <p class="mt-2 max-w-3xl text-muted">{{ $pageExcerpt ?? $category->excerpt }}</p>
     </div>
 </div>
 <div class="mx-auto max-w-7xl px-4 py-8">
+    @if (! empty($excludedInformation))
+        @include('pages.information.partials.informasi-dikecualikan', ['excluded' => $excludedInformation])
+    @endif
+
     @if (! empty($procurementAccess))
         @include('pages.information.partials.dokumen-pengadaan-barang-jasa', ['access' => $procurementAccess])
     @endif
@@ -37,7 +41,7 @@
             @endforeach
         </ul>
         <div class="mt-4">{{ $documents->links() }}</div>
-    @elseif (($staffingChartGroups ?? collect())->isEmpty() && empty($procurementAccess))
+    @elseif (($staffingChartGroups ?? collect())->isEmpty() && empty($procurementAccess) && empty($excludedInformation))
         <p class="rounded-xl border border-dashed border-line p-6 text-sm text-muted">Belum ada dokumen pada kategori ini.</p>
     @endif
 </div>

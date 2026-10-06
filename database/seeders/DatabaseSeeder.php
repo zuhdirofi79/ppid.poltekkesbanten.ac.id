@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             InformasiSertaMertaSeeder::class,
             StatistikKepegawaianSeeder::class,
             DokumenPengadaanBarangJasaSeeder::class,
+            InformasiDikecualikanSeeder::class,
             AcademicCalendarSeeder::class,
             LhkpnDocumentSeeder::class,
             ContentExampleSeeder::class,

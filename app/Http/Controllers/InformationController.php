@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\PublicDocument;
 use App\Models\PublicInformationCategory;
 use App\Support\DokumenPengadaanBarangJasa;
+use App\Support\InformasiDikecualikan;
 use App\Support\StatistikKepegawaian;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class InformationController extends Controller
@@ -20,7 +22,7 @@ class InformationController extends Controller
         return view('pages.information.index', compact('categories'));
     }
 
-    public function category(string $slug): View
+    public function category(Request $request, string $slug): View
     {
         $category = PublicInformationCategory::query()
             ->where('slug', $slug)
@@ -47,6 +49,10 @@ class InformationController extends Controller
             return view('pages.information.berkala', compact('category', 'sections', 'documents'));
         }
 
+        $excludedInformation = $slug === InformasiDikecualikan::SLUG
+            ? InformasiDikecualikan::presentation($request->query('tahun'))
+            : null;
+
         $procurementAccess = $slug === 'setiap-saat'
             ? DokumenPengadaanBarangJasa::presentation()
             : null;
@@ -58,6 +64,7 @@ class InformationController extends Controller
         $documents = PublicDocument::query()
             ->published()
             ->where('public_information_category_id', $category->id)
+            ->when($slug === InformasiDikecualikan::SLUG, fn ($query) => $query->whereKey([]))
             ->when($slug === 'setiap-saat', function ($query) {
                 $query->where(function ($inner) {
                     $inner->whereNull('section_title')
@@ -70,6 +77,17 @@ class InformationController extends Controller
             ->latest('published_at')
             ->paginate(12);
 
-        return view('pages.information.category', compact('category', 'documents', 'staffingChartGroups', 'procurementAccess'));
+        $pageTitle = $slug === InformasiDikecualikan::SLUG ? InformasiDikecualikan::TITLE : $category->name;
+        $pageExcerpt = $slug === InformasiDikecualikan::SLUG ? InformasiDikecualikan::EXCERPT : $category->excerpt;
+
+        return view('pages.information.category', compact(
+            'category',
+            'documents',
+            'staffingChartGroups',
+            'procurementAccess',
+            'excludedInformation',
+            'pageTitle',
+            'pageExcerpt',
+        ));
     }
 }

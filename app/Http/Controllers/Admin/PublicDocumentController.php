@@ -8,6 +8,7 @@ use App\Models\DocumentCategory;
 use App\Models\Page;
 use App\Models\PublicDocument;
 use App\Models\PublicInformationCategory;
+use App\Support\InformasiDikecualikan;
 use App\Support\UniqueSlug;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -213,8 +214,8 @@ class PublicDocumentController extends Controller
                 'nullable',
                 'file',
                 'max:20480',
-                'mimes:pdf',
-                'mimetypes:application/pdf',
+                'mimes:pdf,doc,docx',
+                'mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             ],
         ]);
 
@@ -322,21 +323,34 @@ class PublicDocumentController extends Controller
 
         $file = $request->file('file');
         $mime = (string) $file->getMimeType();
-        if ($mime !== 'application/pdf') {
+        $categoryId = $data['public_information_category_id'] ?? $document?->public_information_category_id;
+        $isDikecualikan = PublicInformationCategory::query()
+            ->whereKey($categoryId)
+            ->where('slug', InformasiDikecualikan::SLUG)
+            ->exists();
+        $allowed = ['application/pdf' => 'pdf'];
+        if ($isDikecualikan) {
+            $allowed['application/msword'] = 'doc';
+            $allowed['application/vnd.openxmlformats-officedocument.wordprocessingml.document'] = 'docx';
+        }
+        if (! isset($allowed[$mime])) {
             throw ValidationException::withMessages([
-                'file' => 'Hanya berkas PDF yang diizinkan.',
+                'file' => $isDikecualikan
+                    ? 'Berkas Informasi Dikecualikan harus PDF, DOC, atau DOCX.'
+                    : 'Hanya berkas PDF yang diizinkan.',
             ]);
         }
 
+        $extension = $allowed[$mime];
         $base = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) ?: 'dokumen';
-        $safeName = now()->format('Y-m-d').'-'.$base.'-'.Str::lower(Str::random(8)).'.pdf';
+        $safeName = now()->format('Y-m-d').'-'.$base.'-'.Str::lower(Str::random(8)).'.'.$extension;
         $path = $file->storeAs('ppid/documents/'.date('Y/m'), $safeName, 'public');
 
         $oldPath = $document?->file_path;
 
         $data['file_path'] = $path;
         $data['file_name'] = $safeName;
-        $data['file_type'] = 'pdf';
+        $data['file_type'] = $extension;
         $data['file_size'] = $file->getSize();
         $data['is_external'] = false;
         $data['external_url'] = null;

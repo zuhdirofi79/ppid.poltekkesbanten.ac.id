@@ -42,8 +42,9 @@
     </div>
 
     <div x-show="source === 'uploaded_file'" x-cloak class="space-y-1">
-        <label class="block text-sm font-medium text-navy">File PDF</label>
-        <input type="file" name="file" accept="application/pdf,.pdf" class="block w-full text-sm">
+        <label class="block text-sm font-medium text-navy">Berkas dokumen</label>
+        <input type="file" name="file" accept="application/pdf,.pdf,application/msword,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.docx" class="block w-full text-sm">
+        <p class="text-xs text-muted">PDF. Untuk Informasi Dikecualikan, PDF, DOC, atau DOCX.</p>
         @if($document->file_path)
             <p class="text-xs text-muted">File saat ini: {{ $document->file_name }}</p>
         @endif
