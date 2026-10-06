@@ -8,6 +8,7 @@ use App\Models\LhkpnDocument;
 use App\Models\Page;
 use App\Support\DaftarInformasiPublik;
 use App\Support\HtmlSanitizer;
+use App\Support\RapatKoordinasiPpid;
 use App\Support\InformationDesk;
 use App\Support\StatistikKeuangan;
 use App\Support\ServiceSummaryReport;
@@ -85,12 +86,20 @@ class PublicPageController extends Controller
             $page->excerpt = DaftarInformasiPublik::EXCERPT;
         }
 
+        if ($slug === RapatKoordinasiPpid::SLUG) {
+            $seoTitle = RapatKoordinasiPpid::TITLE;
+            $seoDescription = RapatKoordinasiPpid::META_DESCRIPTION;
+            $page->title = RapatKoordinasiPpid::TITLE;
+            $page->excerpt = RapatKoordinasiPpid::EXCERPT;
+        }
+
         $isProfil = $this->isProfilSlug($slug);
         $isDiumumkanBerkala = $this->isDiumumkanBerkalaSlug($slug);
         $isSopLayanan = $this->isSopLayananSlug($slug);
         $isInformationDesk = $slug === InformationDesk::SLUG;
         $isDaftarInformasiPublik = $slug === DaftarInformasiPublik::SLUG;
-        $isInformasi = $isInformationDesk || $slug === StatistikKeuangan::SLUG || $isDaftarInformasiPublik;
+        $isRapatKoordinasi = $slug === RapatKoordinasiPpid::SLUG;
+        $isInformasi = $isInformationDesk || $slug === StatistikKeuangan::SLUG || $isDaftarInformasiPublik || $isRapatKoordinasi;
 
         // Academic Calendar data
         $academicCalendars = collect();
@@ -141,13 +150,15 @@ class PublicPageController extends Controller
             'selectedYear' => $selectedYear,
             'sopDocuments' => $slug === SopLayananDocuments::SLUG ? SopLayananDocuments::all() : [],
             'lhkpnDocuments' => $slug === LhkpnDocument::PAGE_SLUG ? $this->lhkpnDocuments() : collect(),
-            'label' => $isDaftarInformasiPublik
-                ? DaftarInformasiPublik::EYEBROW
-                : ($isInformasi
-                ? 'Informasi'
-                : ($isProfil
-                    ? 'Profil PPID'
-                    : ($isDiumumkanBerkala ? 'Diumumkan Berkala' : ($isSopLayanan ? 'SOP & Layanan' : null)))),
+            'label' => match (true) {
+                $isDaftarInformasiPublik => DaftarInformasiPublik::EYEBROW,
+                $isRapatKoordinasi => RapatKoordinasiPpid::EYEBROW,
+                $isInformasi => 'Informasi',
+                $isProfil => 'Profil PPID',
+                $isDiumumkanBerkala => 'Diumumkan Berkala',
+                $isSopLayanan => 'SOP & Layanan',
+                default => null,
+            },
             'breadcrumbs' => array_values(array_filter([
                 ['label' => 'Beranda', 'url' => route('home')],
                 $isProfil ? ['label' => 'Profil', 'url' => null] : null,
@@ -225,6 +236,7 @@ class PublicPageController extends Controller
             InformationDesk::SLUG => InformationDesk::TITLE,
             StatistikKeuangan::SLUG => StatistikKeuangan::TITLE,
             DaftarInformasiPublik::SLUG => DaftarInformasiPublik::TITLE,
+            RapatKoordinasiPpid::SLUG => RapatKoordinasiPpid::TITLE,
             'profil-singkat-ppid' => 'Profil Singkat PPID',
             'dasar-hukum-sk-ppid' => 'Dasar Hukum dan SK PPID',
             'visi-dan-misi' => 'Visi dan Misi',

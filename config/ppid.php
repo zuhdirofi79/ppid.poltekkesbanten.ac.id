@@ -437,6 +437,7 @@ return [
                     'aria_label' => 'Inventaris Barang Milik Negara Poltekkes Kemenkes Banten — buka Sistem BMN',
                 ],
                 ['label' => 'Daftar Informasi Publik', 'route' => 'pages.show', 'params' => ['slug' => 'daftar-informasi-publik']],
+                ['label' => 'Rapat Koordinasi PPID', 'route' => 'pages.show', 'params' => ['slug' => 'rapat-koordinasi-ppid']],
             ],
         ],
         [

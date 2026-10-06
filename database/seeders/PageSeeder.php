@@ -117,6 +117,7 @@ class PageSeeder extends Seeder
         $this->call(InformationDeskPageSeeder::class);
         $this->call(StatistikKeuanganPageSeeder::class);
         $this->call(DaftarInformasiPublikPageSeeder::class);
+        $this->call(RapatKoordinasiPpidPageSeeder::class);
     }
 
     private function seedDiumumkanBerkalaPages(?int $adminId): void

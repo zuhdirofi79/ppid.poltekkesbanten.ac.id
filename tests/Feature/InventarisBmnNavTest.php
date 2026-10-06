@@ -49,7 +49,7 @@ class InventarisBmnNavTest extends TestCase
             $html
         ));
         $this->assertSame(1, preg_match(
-            '/aria-label="Navigasi utama"[\s\S]+?Statistik Keuangan[\s\S]+?'.preg_quote(self::LABEL, '/').'[\s\S]+?Daftar Informasi Publik[\s\S]+?aria-label="Navigasi seluler"/u',
+            '/aria-label="Navigasi utama"[\s\S]+?Statistik Keuangan[\s\S]+?'.preg_quote(self::LABEL, '/').'[\s\S]+?Daftar Informasi Publik[\s\S]+?Rapat Koordinasi PPID[\s\S]+?aria-label="Navigasi seluler"/u',
             $html
         ));
         $this->assertSame(1, preg_match(

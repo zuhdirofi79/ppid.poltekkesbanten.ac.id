@@ -76,7 +76,7 @@ class StatistikKeuanganPageTest extends TestCase
 
         $this->assertSame(2, substr_count($home, 'Statistik Keuangan'));
         $this->assertSame(1, preg_match(
-            '/aria-label="Navigasi utama"[\s\S]+?Statistik Layanan Informasi[\s\S]+?Information Desk[\s\S]+?Statistik Keuangan[\s\S]+?Inventaris Barang Milik Negara[\s\S]+?Daftar Informasi Publik[\s\S]+?aria-label="Navigasi seluler"/u',
+            '/aria-label="Navigasi utama"[\s\S]+?Statistik Layanan Informasi[\s\S]+?Information Desk[\s\S]+?Statistik Keuangan[\s\S]+?Inventaris Barang Milik Negara[\s\S]+?Daftar Informasi Publik[\s\S]+?Rapat Koordinasi PPID[\s\S]+?aria-label="Navigasi seluler"/u',
             $home
         ));
         $this->assertSame(1, preg_match(
@@ -153,7 +153,7 @@ class StatistikKeuanganPageTest extends TestCase
 
         $html = $this->get('/')->assertOk()->getContent();
         $this->assertSame(1, preg_match(
-            '/aria-label="Navigasi utama"[\s\S]+?Information Desk[\s\S]+?Statistik Keuangan[\s\S]+?Inventaris Barang Milik Negara[\s\S]+?Daftar Informasi Publik[\s\S]+?aria-label="Navigasi seluler"/u',
+            '/aria-label="Navigasi utama"[\s\S]+?Information Desk[\s\S]+?Statistik Keuangan[\s\S]+?Inventaris Barang Milik Negara[\s\S]+?Daftar Informasi Publik[\s\S]+?Rapat Koordinasi PPID[\s\S]+?aria-label="Navigasi seluler"/u',
             $html
         ));
         $this->assertSame(1, preg_match(

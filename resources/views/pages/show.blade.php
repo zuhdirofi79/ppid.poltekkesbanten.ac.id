@@ -187,6 +187,15 @@
             ])
             @break
 
+        @case('rapat-koordinasi-ppid')
+            @include('pages.partials.rapat-koordinasi-ppid', [
+                'title' => $title ?? $page->title,
+                'excerpt' => $excerpt ?? $page->excerpt,
+                'label' => $label ?? null,
+                'breadcrumbs' => $breadcrumbs ?? [],
+            ])
+            @break
+
         @default
             @if (($page->slug ?? '') === 'akreditasi')
                 <!-- PPID-AKREDITASI-DEPLOY-20260904-A -->
