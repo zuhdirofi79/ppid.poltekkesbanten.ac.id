@@ -48,7 +48,7 @@ class InformationController extends Controller
         }
 
         $procurementAccess = $slug === 'setiap-saat'
-            ? DokumenPengadaanBarangJasa::presentation($category)
+            ? DokumenPengadaanBarangJasa::presentation()
             : null;
 
         $staffingChartGroups = $slug === 'setiap-saat'

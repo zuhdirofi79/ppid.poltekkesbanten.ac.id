@@ -1,151 +1,192 @@
-{{-- Section pada /informasi-publik/setiap-saat, tepat sebelum Statistik Kepegawaian --}}
-<!-- PPID-DOKUMEN-PBJ-DEPLOY-20261005-A -->
-<section id="surat-perjanjian-pengadaan-barang-jasa" class="dokumen-pbj" aria-labelledby="surat-perjanjian-pengadaan-title">
-    <h2 id="surat-perjanjian-pengadaan-title" class="font-heading text-xl font-bold text-navy sm:text-2xl">{{ $access['title'] }}</h2>
-    <p class="mt-2 max-w-3xl text-base leading-relaxed text-ink">{{ $access['description'] }}</p>
+{{-- PPID-DOKUMEN-PBJ-DEPLOY-20261006-B --}}
+<section class="dokumen-pbj" id="surat-perjanjian-pengadaan-barang-jasa" aria-labelledby="dokumen-pbj-title">
+    <h2 id="dokumen-pbj-title" class="dokumen-pbj-title">{{ $access['title'] }}</h2>
+    <p class="dokumen-pbj-desc">{{ $access['description'] }}</p>
 
-    <div class="dokumen-pbj-card">
-        <div class="dokumen-pbj-layout">
-            @if ($access['qr_available'])
-                <div class="dokumen-pbj-qr">
-                    <a href="{{ $access['url'] }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $access['link_label'] }}">
-                        <img
-                            src="{{ asset($access['qr_path']) }}"
-                            alt="{{ $access['qr_alt'] }}"
-                            class="dokumen-pbj-qr-image"
-                            width="360"
-                            height="360"
-                            loading="lazy"
-                            decoding="async"
-                        >
-                    </a>
-                </div>
-            @endif
-
-            <div class="dokumen-pbj-copy">
-                <p class="dokumen-pbj-meta">
-                    <span class="ppid-berkala-badge is-available">TERSEDIA</span>
-                    <span>Tautan / Dokumen PBJ</span>
-                </p>
-                <p class="dokumen-pbj-kicker">Dokumen Pengadaan Barang dan Jasa</p>
-                <p class="mt-2 text-sm leading-relaxed text-ink sm:text-base">{{ $access['hint'] }}</p>
-                <a class="dokumen-pbj-cta" href="{{ $access['url'] }}" target="_blank" rel="noopener noreferrer">
-                    {{ $access['cta'] }}
-                    <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path d="M5.22 14.78a.75.75 0 0 1 0-1.06L12.94 6H8.75a.75.75 0 0 1 0-1.5h6.5a.75.75 0 0 1 .75.75v6.5a.75.75 0 0 1-1.5 0V7.06l-7.72 7.72a.75.75 0 0 1-1.06 0Z"/>
-                    </svg>
-                </a>
-                <a class="dokumen-pbj-url" href="{{ $access['url'] }}" target="_blank" rel="noopener noreferrer">{{ $access['display_url'] }}</a>
-            </div>
+    <article class="dokumen-pbj-card">
+        <div class="dokumen-pbj-meta">
+            <span class="dokumen-pbj-badge">TERSEDIA</span>
+            <span class="dokumen-pbj-type">{{ $access['format_label'] }}</span>
         </div>
-    </div>
+        <p class="dokumen-pbj-kicker">{{ $access['document_label'] }}</p>
+
+        <figure class="dokumen-pbj-figure">
+            <a class="dokumen-pbj-image-link"
+               href="{{ $access['image_url'] }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="{{ $access['open_aria'] }}">
+                <img
+                    class="dokumen-pbj-image"
+                    src="{{ $access['image_url'] }}"
+                    alt="{{ $access['image_alt'] }}"
+                    loading="lazy"
+                >
+            </a>
+        </figure>
+
+        <div class="dokumen-pbj-actions">
+            <a class="dokumen-pbj-cta"
+               href="{{ $access['image_url'] }}"
+               target="_blank"
+               rel="noopener noreferrer">{{ $access['open_label'] }}</a>
+            <a class="dokumen-pbj-download"
+               href="{{ $access['image_url'] }}"
+               download="{{ $access['download_name'] }}">{{ $access['download_label'] }}</a>
+        </div>
+    </article>
 </section>
 
 <style>
     .dokumen-pbj {
-        margin-bottom: 2.5rem;
+        margin-bottom: 2rem;
+        max-width: 100%;
+    }
+
+    .dokumen-pbj-title {
+        color: var(--navy, #17184f);
+        font-family: var(--font-heading, Georgia, serif);
+        font-size: clamp(1.35rem, 2vw, 1.75rem);
+        font-weight: 700;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+    }
+
+    .dokumen-pbj-desc {
+        margin-top: 0.75rem;
+        max-width: 46rem;
+        color: var(--muted, #5c6570);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
     }
 
     .dokumen-pbj-card {
         margin-top: 1.25rem;
-        overflow: hidden;
+        max-width: 100%;
         border: 1px solid var(--line, #e6e8ee);
         border-radius: 0.75rem;
         background: #fff;
         padding: 1.25rem;
-        box-shadow: 0 1px 2px rgba(23, 24, 79, 0.06);
-    }
-
-    .dokumen-pbj-layout {
-        display: grid;
-        gap: 1.5rem;
-        align-items: center;
-    }
-
-    .dokumen-pbj-qr {
-        display: flex;
-        justify-content: center;
-    }
-
-    .dokumen-pbj-qr a:focus-visible,
-    .dokumen-pbj-cta:focus-visible,
-    .dokumen-pbj-url:focus-visible {
-        outline: 2px solid var(--navy, #17184f);
-        outline-offset: 3px;
-    }
-
-    .dokumen-pbj-qr-image {
-        display: block;
-        width: 100%;
-        max-width: 360px;
-        height: auto;
-        object-fit: contain;
-        background: #fff;
     }
 
     .dokumen-pbj-meta {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: 0.5rem;
-        margin: 0;
+        gap: 0.5rem 0.75rem;
+    }
+
+    .dokumen-pbj-badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        background: #e8f6ee;
+        color: #0f7a3a;
+        padding: 0.2rem 0.65rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .dokumen-pbj-type {
         color: var(--muted, #5c6570);
         font-size: 0.8125rem;
         font-weight: 600;
     }
 
     .dokumen-pbj-kicker {
-        margin: 0.85rem 0 0;
+        margin-top: 0.85rem;
         color: var(--navy, #17184f);
-        font-family: var(--font-heading);
-        font-size: 1rem;
+        font-size: 0.95rem;
         font-weight: 700;
         letter-spacing: 0.02em;
+        line-height: 1.4;
         text-transform: uppercase;
+        overflow-wrap: anywhere;
     }
 
-    .dokumen-pbj-cta {
-        display: inline-flex;
+    .dokumen-pbj-figure {
+        margin: 1rem 0 0;
+        max-width: 100%;
+    }
+
+    .dokumen-pbj-image-link {
+        display: block;
+        max-width: 100%;
+        border-radius: 0.5rem;
+    }
+
+    .dokumen-pbj-image-link:focus-visible,
+    .dokumen-pbj-cta:focus-visible,
+    .dokumen-pbj-download:focus-visible {
+        outline: 2px solid var(--navy, #17184f);
+        outline-offset: 3px;
+    }
+
+    .dokumen-pbj-image {
+        display: block;
         width: 100%;
-        min-height: 2.75rem;
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+        border: 1px solid var(--line, #e6e8ee);
+        border-radius: 0.5rem;
+        background: #fff;
+    }
+
+    .dokumen-pbj-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 1rem;
+        max-width: 100%;
+    }
+
+    .dokumen-pbj-cta,
+    .dokumen-pbj-download {
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 0.4rem;
-        margin-top: 1rem;
+        width: 100%;
+        min-height: 2.75rem;
         border-radius: 0.5rem;
-        background: var(--green, #0f9f6e);
-        padding: 0.65rem 1.1rem;
-        color: #fff;
-        font-family: var(--font-heading);
-        font-size: 0.875rem;
-        font-weight: 600;
-        line-height: 1.35;
+        padding: 0.7rem 1rem;
+        font-size: 0.9375rem;
+        font-weight: 700;
+        line-height: 1.2;
         text-align: center;
         text-decoration: none;
     }
 
+    .dokumen-pbj-cta {
+        background: var(--green, #0f9f6e);
+        color: #fff;
+    }
+
     .dokumen-pbj-cta:hover {
-        background: var(--green-light, #14b87a);
+        background: #0c8a5e;
     }
 
-    .dokumen-pbj-url {
-        display: inline-block;
-        margin-top: 0.85rem;
-        color: var(--green, #0f9f6e);
-        font-size: 0.875rem;
-        font-weight: 600;
-        line-height: 1.45;
-        overflow-wrap: anywhere;
-        text-decoration: underline;
-        text-underline-offset: 3px;
+    .dokumen-pbj-download {
+        border: 1px solid var(--line, #e6e8ee);
+        background: #fff;
+        color: var(--navy, #17184f);
     }
 
-    @media (min-width: 1024px) {
-        .dokumen-pbj-layout {
-            grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+    .dokumen-pbj-download:hover {
+        border-color: var(--navy, #17184f);
+    }
+
+    @media (min-width: 640px) {
+        .dokumen-pbj-actions {
+            flex-direction: row;
+            flex-wrap: wrap;
         }
 
-        .dokumen-pbj-cta {
+        .dokumen-pbj-cta,
+        .dokumen-pbj-download {
             width: auto;
         }
     }

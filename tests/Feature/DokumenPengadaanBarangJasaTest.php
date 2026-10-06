@@ -25,27 +25,41 @@ class DokumenPengadaanBarangJasaTest extends TestCase
     }
 
     #[Test]
-    public function setiap_saat_shows_the_procurement_section_before_staffing_statistics(): void
+    public function setiap_saat_shows_the_local_procurement_image_before_staffing_statistics(): void
     {
+        PublicDocument::query()
+            ->where('section_title', DokumenPengadaanBarangJasa::SECTION)
+            ->update([
+                'external_url' => 'https://s.kemkes.go.id/DokumenPBJPolkesten',
+                'is_external' => true,
+            ]);
+
         $response = $this->get('/informasi-publik/setiap-saat');
 
         $response->assertOk();
         $response->assertSee(DokumenPengadaanBarangJasa::SECTION, false);
-        $response->assertSee(DokumenPengadaanBarangJasa::URL, false);
-        $response->assertSee(DokumenPengadaanBarangJasa::CTA, false);
-        $response->assertSee(DokumenPengadaanBarangJasa::DISPLAY_URL, false);
+        $response->assertSee(DokumenPengadaanBarangJasa::DESCRIPTION, false);
+        $response->assertSee(DokumenPengadaanBarangJasa::IMAGE_PATH, false);
+        $response->assertSee(DokumenPengadaanBarangJasa::IMAGE_ALT, false);
+        $response->assertSee('TERSEDIA', false);
+        $response->assertSee(DokumenPengadaanBarangJasa::DOCUMENT_LABEL, false);
+        $response->assertSee(DokumenPengadaanBarangJasa::FORMAT_LABEL, false);
+        $response->assertSee(DokumenPengadaanBarangJasa::OPEN_LABEL, false);
+        $response->assertSee(DokumenPengadaanBarangJasa::DOWNLOAD_LABEL, false);
+        $response->assertSee(DokumenPengadaanBarangJasa::OPEN_ARIA, false);
         $response->assertSee('id="surat-perjanjian-pengadaan-barang-jasa"', false);
+        $response->assertSee('loading="lazy"', false);
+        $response->assertSee('object-fit: contain', false);
         $response->assertSee('target="_blank"', false);
         $response->assertSee('rel="noopener noreferrer"', false);
+        $response->assertSee('download="'.DokumenPengadaanBarangJasa::DOWNLOAD_NAME.'"', false);
         $response->assertSee('Statistik Kepegawaian', false);
         $response->assertSee('Oktober 2026', false);
         $response->assertSee('id="statistik-kepegawaian"', false);
-        $response->assertSee('object-fit: contain', false);
-
-        if (is_file(public_path(DokumenPengadaanBarangJasa::QR_PATH))) {
-            $response->assertSee(DokumenPengadaanBarangJasa::QR_PATH, false);
-            $response->assertSee(DokumenPengadaanBarangJasa::QR_ALT, false);
-        }
+        $response->assertDontSee('s.kemkes.go.id/DokumenPBJPolkesten', false);
+        $response->assertDontSee('DokumenPBJPolkesten', false);
+        $response->assertDontSee('Akses Dokumen Pengadaan Barang dan Jasa', false);
+        $response->assertDontSee('Pindai QR Code', false);
 
         $html = $response->getContent();
         $procurement = strpos($html, DokumenPengadaanBarangJasa::SECTION);
@@ -58,7 +72,7 @@ class DokumenPengadaanBarangJasaTest extends TestCase
     }
 
     #[Test]
-    public function seeder_is_idempotent_and_keeps_an_admin_url_edit(): void
+    public function seeder_is_idempotent_and_does_not_render_an_admin_url_edit(): void
     {
         $this->seed(DokumenPengadaanBarangJasaSeeder::class);
 
@@ -79,7 +93,9 @@ class DokumenPengadaanBarangJasaTest extends TestCase
 
         $this->get('/informasi-publik/setiap-saat')
             ->assertOk()
-            ->assertSee('https://example.com/dokumen-pbj-suntingan', false)
+            ->assertSee(DokumenPengadaanBarangJasa::IMAGE_PATH, false)
+            ->assertDontSee('https://example.com/dokumen-pbj-suntingan', false)
+            ->assertDontSee('s.kemkes.go.id/DokumenPBJPolkesten', false)
             ->assertSee(StatistikKepegawaian::SECTION, false);
     }
 }

@@ -44,11 +44,13 @@ class DokumenPengadaanBarangJasaSeeder extends Seeder
                 'document_category_id' => $docCategory?->id,
                 'section_title' => DokumenPengadaanBarangJasa::SECTION,
                 'description' => DokumenPengadaanBarangJasa::DESCRIPTION,
-                'source_type' => PublicDocument::SOURCE_EXTERNAL,
-                'external_url' => DokumenPengadaanBarangJasa::URL,
+                'source_type' => PublicDocument::SOURCE_UPLOADED,
+                'external_url' => null,
                 'internal_url' => null,
-                'file_path' => null,
-                'is_external' => true,
+                'file_path' => DokumenPengadaanBarangJasa::IMAGE_PATH,
+                'file_name' => DokumenPengadaanBarangJasa::DOWNLOAD_NAME,
+                'file_type' => 'image/jpeg',
+                'is_external' => false,
                 'status' => 'published',
                 'sort_order' => 5,
                 'published_at' => now(),
@@ -61,17 +63,16 @@ class DokumenPengadaanBarangJasaSeeder extends Seeder
             return;
         }
 
-        if (filled($document->external_url) && filled($document->section_title)) {
+        if (filled($document->section_title)) {
             return;
         }
 
         $document->forceFill([
             'public_information_category_id' => $document->public_information_category_id ?: $category->id,
-            'section_title' => $document->section_title ?: DokumenPengadaanBarangJasa::SECTION,
+            'section_title' => DokumenPengadaanBarangJasa::SECTION,
             'description' => $document->description ?: DokumenPengadaanBarangJasa::DESCRIPTION,
-            'source_type' => PublicDocument::SOURCE_EXTERNAL,
-            'external_url' => $document->external_url ?: DokumenPengadaanBarangJasa::URL,
-            'is_external' => true,
+            'source_type' => $document->source_type ?: PublicDocument::SOURCE_UPLOADED,
+            'file_path' => $document->file_path ?: DokumenPengadaanBarangJasa::IMAGE_PATH,
             'status' => $document->status ?: 'published',
             'sort_order' => $document->sort_order ?: 5,
             'published_at' => $document->published_at ?? now(),
