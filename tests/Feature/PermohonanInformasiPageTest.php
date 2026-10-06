@@ -15,6 +15,8 @@ class PermohonanInformasiPageTest extends TestCase
 
     private const EMAIL = 'humas@poltekkesbanten.ac.id';
 
+    private const RECEIPT_URL = 'https://ppid.poltekkesbanten.ac.id/docs/TANDA%20TERIMA%20PERMOHONAN%20INFORMASI.docx';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -44,6 +46,23 @@ class PermohonanInformasiPageTest extends TestCase
         $response->assertSee('Senin – Kamis', false);
         $response->assertSee('Jumat', false);
         $response->assertSee('09.00 – 15.00 WIB', false);
+        $response->assertSee('Istirahat: 12.00 – 13.00 WIB', false);
+        $response->assertSee('Istirahat: 11.00 – 13.00 WIB', false);
+        $response->assertSee('id="tanda-terima-permohonan-informasi"', false);
+        $response->assertSee('<h2 id="tanda-terima-heading" class="ppid-request-section-title">Tanda Terima Permohonan Informasi</h2>', false);
+        $response->assertSee('PPID-TANDA-TERIMA-PERMOHONAN-DEPLOY-20261006-A', false);
+        $response->assertSee('Tanda Terima Permohonan Informasi', false);
+        $response->assertSee('Tanda Terima Permohonan Informasi Publik', false);
+        $response->assertSee('Formulir tanda terima digunakan sebagai bukti penerimaan permohonan informasi publik oleh PPID Poltekkes Kemenkes Banten.', false);
+        $response->assertSee('Dokumen dapat dibuka atau diunduh dalam format Microsoft Word (DOCX).', false);
+        $response->assertSee('TERSEDIA', false);
+        $response->assertSee('DOCX / Dokumen', false);
+        $response->assertSee('Buka Dokumen', false);
+        $response->assertSee('Unduh DOCX', false);
+        $response->assertSee(self::RECEIPT_URL, false);
+        $response->assertSee('download="TANDA TERIMA PERMOHONAN INFORMASI.docx"', false);
+        $response->assertSee('aria-label="Buka dokumen Tanda Terima Permohonan Informasi Publik"', false);
+        $response->assertSee('aria-label="Unduh dokumen Tanda Terima Permohonan Informasi Publik format DOCX"', false);
         $response->assertSee('Pelayanan Informasi', false);
         $response->assertSee('Undang-Undang Nomor 14 Tahun 2008', false);
         $response->assertSee(self::EMAIL, false);
@@ -65,8 +84,29 @@ class PermohonanInformasiPageTest extends TestCase
         $this->assertSame(1, preg_match_all('/<ol\b[^>]*class="ppid-requirement-list"/', $html));
         $this->assertGreaterThanOrEqual(2, substr_count($html, 'target="_blank"'));
         $this->assertGreaterThanOrEqual(2, substr_count($html, 'rel="noopener noreferrer"'));
+        $this->assertSame(2, substr_count($html, self::RECEIPT_URL));
+        $this->assertStringNotContainsString('http://ppid.poltekkesbanten.ac.id/docs/', $html);
+        $this->assertStringNotContainsString('<iframe', $html);
+        $this->assertStringNotContainsString('application/pdf', $html);
+
+        $formHeading = strpos($html, 'Ajukan Permohonan Informasi Publik');
+        $receiptHeading = strpos($html, 'Tanda Terima Permohonan Informasi');
+        $hoursHeading = strpos($html, 'Waktu Pelayanan Informasi');
+        $this->assertNotFalse($formHeading);
+        $this->assertNotFalse($receiptHeading);
+        $this->assertNotFalse($hoursHeading);
         $this->assertLessThan(
-            strpos($html, 'Waktu Pelayanan Informasi'),
+            $receiptHeading,
+            $formHeading,
+            'Ajukan Permohonan Informasi Publik must appear before Tanda Terima Permohonan Informasi'
+        );
+        $this->assertLessThan(
+            $hoursHeading,
+            $receiptHeading,
+            'Tanda Terima Permohonan Informasi must appear before Waktu Pelayanan Informasi'
+        );
+        $this->assertLessThan(
+            $hoursHeading,
             strpos($html, 'Isi Form Permohonan Informasi Publik'),
             'CTA must appear before Waktu Pelayanan Informasi'
         );
@@ -97,6 +137,8 @@ class PermohonanInformasiPageTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('Permohonan Informasi Publik', false);
+        $response->assertSee('Tanda Terima Permohonan Informasi', false);
+        $response->assertSee(self::RECEIPT_URL, false);
         $response->assertDontSee('javascript:alert(1)', false);
         $response->assertDontSee('Isi Form Permohonan Informasi Publik', false);
     }
@@ -114,6 +156,8 @@ class PermohonanInformasiPageTest extends TestCase
         $response->assertDontSee('PPID-PERMOHONAN-FORM-CTA-DEPLOY-20260907-A', false);
         $response->assertDontSee('ppid-request-page', false);
         $response->assertDontSee('Isi Form Permohonan Informasi Publik', false);
+        $response->assertDontSee('Tanda Terima Permohonan Informasi', false);
+        $response->assertDontSee('PPID-TANDA-TERIMA-PERMOHONAN-DEPLOY-20261006-A', false);
         $response->assertDontSee('Persyaratan Permohonan Informasi Publik', false);
         $response->assertDontSee('Formulir belum terhubung', false);
         $response->assertDontSee('config/ppid.php', false);
