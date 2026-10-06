@@ -169,6 +169,15 @@
             ])
             @break
 
+        @case('statistik-keuangan')
+            @include('pages.partials.statistik-keuangan', [
+                'title' => $title ?? $page->title,
+                'excerpt' => $excerpt ?? $page->excerpt,
+                'label' => $label ?? null,
+                'breadcrumbs' => $breadcrumbs ?? [],
+            ])
+            @break
+
         @default
             @if (($page->slug ?? '') === 'akreditasi')
                 <!-- PPID-AKREDITASI-DEPLOY-20260904-A -->

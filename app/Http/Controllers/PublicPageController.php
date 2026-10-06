@@ -8,6 +8,7 @@ use App\Models\LhkpnDocument;
 use App\Models\Page;
 use App\Support\HtmlSanitizer;
 use App\Support\InformationDesk;
+use App\Support\StatistikKeuangan;
 use App\Support\ServiceSummaryReport;
 use App\Support\SopLayananDocuments;
 use Illuminate\Http\RedirectResponse;
@@ -69,10 +70,18 @@ class PublicPageController extends Controller
             }
         }
 
+        if ($slug === StatistikKeuangan::SLUG) {
+            $seoTitle = StatistikKeuangan::TITLE;
+            $seoDescription = StatistikKeuangan::META_DESCRIPTION;
+            $page->title = StatistikKeuangan::TITLE;
+            $page->excerpt = StatistikKeuangan::EXCERPT;
+        }
+
         $isProfil = $this->isProfilSlug($slug);
         $isDiumumkanBerkala = $this->isDiumumkanBerkalaSlug($slug);
         $isSopLayanan = $this->isSopLayananSlug($slug);
         $isInformationDesk = $slug === InformationDesk::SLUG;
+        $isInformasi = $isInformationDesk || $slug === StatistikKeuangan::SLUG;
 
         // Academic Calendar data
         $academicCalendars = collect();
@@ -123,7 +132,7 @@ class PublicPageController extends Controller
             'selectedYear' => $selectedYear,
             'sopDocuments' => $slug === SopLayananDocuments::SLUG ? SopLayananDocuments::all() : [],
             'lhkpnDocuments' => $slug === LhkpnDocument::PAGE_SLUG ? $this->lhkpnDocuments() : collect(),
-            'label' => $isInformationDesk
+            'label' => $isInformasi
                 ? 'Informasi'
                 : ($isProfil
                     ? 'Profil PPID'
@@ -133,7 +142,7 @@ class PublicPageController extends Controller
                 $isProfil ? ['label' => 'Profil', 'url' => null] : null,
                 $isDiumumkanBerkala ? ['label' => 'Diumumkan Berkala', 'url' => null] : null,
                 $isSopLayanan ? ['label' => 'SOP & Layanan', 'url' => null] : null,
-                $isInformationDesk ? ['label' => 'Informasi', 'url' => null] : null,
+                $isInformasi ? ['label' => 'Informasi', 'url' => null] : null,
                 ['label' => $this->breadcrumbLabel($slug, $page->title), 'url' => null],
             ])),
         ]);
@@ -203,6 +212,7 @@ class PublicPageController extends Controller
             'ringkasan-laporan-layanan-informasi' => 'Ringkasan Laporan Layanan Informasi',
             'standar-operasional-prosedur-layanan-informasi-publik' => 'Standar Operasional Prosedur Layanan Informasi Publik',
             InformationDesk::SLUG => InformationDesk::TITLE,
+            StatistikKeuangan::SLUG => StatistikKeuangan::TITLE,
             'profil-singkat-ppid' => 'Profil Singkat PPID',
             'dasar-hukum-sk-ppid' => 'Dasar Hukum dan SK PPID',
             'visi-dan-misi' => 'Visi dan Misi',
