@@ -59,16 +59,24 @@ class SopLayananNavTest extends TestCase
         $home->assertSee('Pengajuan Keberatan');
         $home->assertSee('Maklumat Pelayanan');
         $home->assertSee('Standar Operasional Prosedur Layanan Informasi Publik');
+        $home->assertSee('Daftar Registrasi Pemohon');
         $home->assertSee(route('pages.show', ['slug' => 'standar-operasional-prosedur-layanan-informasi-publik'], false), false);
+        $home->assertSee(route('services.show', ['slug' => 'daftar-registrasi-pemohon'], false), false);
         $html = $home->getContent();
+        $this->assertSame(2, substr_count($html, 'Daftar Registrasi Pemohon'));
         $this->assertSame(1, preg_match(
-            '/SOP &amp; Layanan[\s\S]{0,4000}?Permohonan Informasi Publik[\s\S]+?Pengajuan Keberatan[\s\S]+?Maklumat Pelayanan[\s\S]+?Standar Operasional Prosedur Layanan Informasi Publik/u',
+            '/SOP &amp; Layanan[\s\S]{0,4000}?Permohonan Informasi Publik[\s\S]+?Pengajuan Keberatan[\s\S]+?Maklumat Pelayanan[\s\S]+?Standar Operasional Prosedur Layanan Informasi Publik[\s\S]+?Daftar Registrasi Pemohon/u',
             $html
         ));
         $this->assertSame(1, preg_match(
-            '/aria-label="Navigasi seluler"[\s\S]+?SOP &amp; Layanan[\s\S]+?Maklumat Pelayanan[\s\S]+?Standar Operasional Prosedur Layanan Informasi Publik/u',
+            '/aria-label="Navigasi seluler"[\s\S]+?SOP &amp; Layanan[\s\S]+?Maklumat Pelayanan[\s\S]+?Standar Operasional Prosedur Layanan Informasi Publik[\s\S]+?Daftar Registrasi Pemohon/u',
             $html
         ));
+        $sopLabel = strpos($html, 'Standar Operasional Prosedur Layanan Informasi Publik');
+        $registerLabel = strpos($html, 'Daftar Registrasi Pemohon');
+        $this->assertNotFalse($sopLabel);
+        $this->assertNotFalse($registerLabel);
+        $this->assertLessThan($registerLabel, $sopLabel);
         $home->assertDontSee('SOP Pelayanan Informasi', false);
         $home->assertDontSee('Tata Cara Permohonan Informasi', false);
         $home->assertDontSee('Tata Cara Pengajuan Keberatan', false);
@@ -111,6 +119,9 @@ class SopLayananNavTest extends TestCase
 
         $sop = $this->get('/halaman/standar-operasional-prosedur-layanan-informasi-publik')->assertOk()->getContent();
         $this->assertSopMenuCurrent($sop, true);
+
+        $register = $this->get('/layanan/daftar-registrasi-pemohon')->assertOk()->getContent();
+        $this->assertSopMenuCurrent($register, true);
 
         $otherService = $this->get('/layanan/surat-keterangan')->assertOk()->getContent();
         $this->assertSopMenuCurrent($otherService, false);

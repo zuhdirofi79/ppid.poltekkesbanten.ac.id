@@ -28,13 +28,19 @@
                 <ol class="flex flex-wrap items-center gap-2">
                     <li><a href="{{ route('home') }}" class="hover:text-green">Beranda</a></li>
                     <li aria-hidden="true">/</li>
-                    <li><a href="{{ route('home') }}#layanan-heading" class="hover:text-green">Layanan</a></li>
+                    @if ($serviceSlug === 'daftar-registrasi-pemohon')
+                        <li>SOP & Layanan</li>
+                    @else
+                        <li><a href="{{ route('home') }}#layanan-heading" class="hover:text-green">Layanan</a></li>
+                    @endif
                     <li aria-hidden="true">/</li>
                     <li class="text-navy" aria-current="page">{{ $title }}</li>
                 </ol>
             </nav>
             @if ($serviceSlug === 'alur-pengajuan-sengketa')
                 <p class="text-sm font-semibold uppercase tracking-wider text-green">Layanan PPID</p>
+            @elseif ($serviceSlug === 'daftar-registrasi-pemohon')
+                <p class="text-sm font-semibold uppercase tracking-wider text-green">SOP & Layanan</p>
             @endif
             <h1 class="font-heading text-2xl font-bold leading-tight text-navy sm:text-3xl">{{ $title }}</h1>
             @if (! empty($description))
@@ -60,6 +66,8 @@
         @include('pages.partials.alur-pengajuan-sengketa', [
             'complaintFormUrl' => $complaintFormUrl ?? null,
         ])
+    @elseif (($service['slug'] ?? '') === 'daftar-registrasi-pemohon')
+        @include('pages.partials.daftar-registrasi-pemohon')
     @else
         <div class="mx-auto max-w-3xl px-4 py-10">
             <div class="rounded-xl border border-line bg-white p-6 shadow-sm">

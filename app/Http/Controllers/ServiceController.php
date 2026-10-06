@@ -59,6 +59,21 @@ class ServiceController extends Controller
             ]);
         }
 
+        if ($slug === 'daftar-registrasi-pemohon') {
+            $title = 'Daftar Registrasi Pemohon';
+            $description = 'Daftar Register Permohonan Informasi Publik merupakan dokumen pencatatan permohonan informasi yang diterima oleh PPID Poltekkes Kemenkes Banten.';
+
+            return view('pages.service', [
+                'service' => array_merge($service, [
+                    'slug' => $slug,
+                    'title' => $title,
+                    'excerpt' => $description,
+                ]),
+                'title' => $title,
+                'description' => $description,
+            ]);
+        }
+
         if ($slug === 'pengaduan-penyalahgunaan-wewenang') {
             return redirect()->route('services.show', ['slug' => 'alur-pengajuan-sengketa'], 301);
         }

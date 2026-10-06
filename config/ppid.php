@@ -449,6 +449,7 @@ return [
                 ['label' => 'Pengajuan Keberatan', 'route' => 'services.show', 'params' => ['slug' => 'pengajuan-keberatan']],
                 ['label' => 'Maklumat Pelayanan', 'route' => 'profil.maklumat-pelayanan', 'params' => []],
                 ['label' => 'Standar Operasional Prosedur Layanan Informasi Publik', 'route' => 'pages.show', 'params' => ['slug' => 'standar-operasional-prosedur-layanan-informasi-publik']],
+                ['label' => 'Daftar Registrasi Pemohon', 'route' => 'services.show', 'params' => ['slug' => 'daftar-registrasi-pemohon']],
             ],
         ],
         [
