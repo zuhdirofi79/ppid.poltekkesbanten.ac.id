@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\SaqItem;
+use App\Support\InventarisBarangMilikNegara;
 use Illuminate\Database\Seeder;
 
 class SaqItemSeeder extends Seeder
@@ -15,6 +16,13 @@ class SaqItemSeeder extends Seeder
                 $item,
             );
         }
+
+        SaqItem::query()
+            ->where('code', 'PENYEDIAAN-13')
+            ->where('recommended_public_route', '/halaman/data-perbendaharaan-inventaris-bmn')
+            ->update([
+                'recommended_public_route' => InventarisBarangMilikNegara::EVIDENCE_PATH,
+            ]);
     }
 
     /** @return list<array<string, mixed>> */
@@ -52,7 +60,7 @@ class SaqItemSeeder extends Seeder
             ['PENYEDIAAN-11', 'Penyediaan Informasi Publik', 'Renstra', 'Rencana Strategis Satuan Kerja yang Masih Berlaku', 'Gunakan dokumen RSB atau Renstra yang sudah ada. Jangan mengunggah duplikat.', 'document', '/informasi-publik/berkala', 410],
             ['PENYEDIAAN-12A', 'Penyediaan Informasi Publik', 'Statistik', 'Data Statistik Kepegawaian', 'Tabel agregat dan lampiran. Jangan menampilkan data pegawai pribadi.', 'page', '/halaman/statistik-kepegawaian', 421],
             ['PENYEDIAAN-12B', 'Penyediaan Informasi Publik', 'Statistik', 'Data Statistik Keuangan', 'Tabel agregat dan lampiran.', 'page', '/halaman/statistik-keuangan', 422],
-            ['PENYEDIAAN-13', 'Penyediaan Informasi Publik', 'BMN', 'Data Perbendaharaan atau Inventaris BMN', 'Tabel atau dokumen yang sudah direview. Jangan menampilkan informasi keamanan, nomor inventaris sensitif, atau data pegawai pribadi.', 'page', '/halaman/data-perbendaharaan-inventaris-bmn', 430],
+            ['PENYEDIAAN-13', 'Penyediaan Informasi Publik', 'BMN', 'Data Perbendaharaan atau Inventaris BMN', 'Tabel atau dokumen yang sudah direview. Jangan menampilkan informasi keamanan, nomor inventaris sensitif, atau data pegawai pribadi.', 'page', InventarisBarangMilikNegara::EVIDENCE_PATH, 430],
         ];
 
         return array_map(fn (array $row) => [

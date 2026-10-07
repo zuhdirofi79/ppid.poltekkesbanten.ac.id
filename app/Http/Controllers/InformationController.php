@@ -6,6 +6,7 @@ use App\Models\PublicDocument;
 use App\Models\PublicInformationCategory;
 use App\Support\DokumenPengadaanBarangJasa;
 use App\Support\InformasiDikecualikan;
+use App\Support\InventarisBarangMilikNegara;
 use App\Support\StatistikKepegawaian;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -57,6 +58,10 @@ class InformationController extends Controller
             ? DokumenPengadaanBarangJasa::presentation()
             : null;
 
+        $bmnInventory = $slug === 'setiap-saat'
+            ? InventarisBarangMilikNegara::presentation()
+            : null;
+
         $staffingChartGroups = $slug === 'setiap-saat'
             ? StatistikKepegawaian::groupsFor($category)
             : collect();
@@ -85,6 +90,7 @@ class InformationController extends Controller
             'documents',
             'staffingChartGroups',
             'procurementAccess',
+            'bmnInventory',
             'excludedInformation',
             'pageTitle',
             'pageExcerpt',
