@@ -24,6 +24,7 @@ class HtmlSanitizerTest extends TestCase
         $clean = HtmlSanitizer::clean($dirty);
 
         $this->assertStringNotContainsString('<script', $clean);
+        $this->assertStringNotContainsString('alert(2)', $clean);
         $this->assertStringNotContainsString('onclick', $clean);
         $this->assertStringNotContainsString('onerror', $clean);
         $this->assertStringNotContainsString('javascript:', strtolower($clean));

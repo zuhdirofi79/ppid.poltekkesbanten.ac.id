@@ -1,5 +1,11 @@
-{{-- Template khusus: /halaman/visi-dan-misi — blok Visi + daftar Misi bernomor --}}
+{{-- Template khusus: /halaman/visi-dan-misi — chrome tetap, isi dari body CMS --}}
 <!-- PPID-VISI-MISI-DEPLOY-20260723-A -->
+@php
+    $storedBody = trim((string) ($body ?? ''));
+    $visionBody = \App\Support\VisiDanMisi::isLegacyBody($storedBody)
+        ? \App\Support\VisiDanMisi::bodyHtml()
+        : $storedBody;
+@endphp
 <main class="ppid-vision-mission-page">
     <section class="border-b border-line bg-surface">
         <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -38,40 +44,7 @@
 
     <div class="mx-auto max-w-[1100px] px-5 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
         <article class="ppid-vision-mission-content mx-auto max-w-[960px]">
-            <section class="ppid-vision-section" aria-labelledby="visi-heading">
-                <h2 id="visi-heading" class="ppid-vision-heading">Visi</h2>
-                <blockquote class="ppid-vision-box">
-                    <p class="ppid-vision-text">
-                        Terwujudnya pelayanan informasi yang transparan, akuntabel, dan prima demi terselenggaranya pendidikan tinggi yang menghasilkan tenaga kesehatan berbasis kearifan lokal dan diakui internasional sesuai dengan ketentuan peraturan perundang-undangan yang berlaku.
-                    </p>
-                </blockquote>
-            </section>
-
-            <section class="ppid-mission-section" aria-labelledby="misi-heading">
-                <h2 id="misi-heading" class="ppid-mission-heading">Misi</h2>
-                <ol class="ppid-mission-list">
-                    <li class="ppid-mission-item">
-                        <span class="ppid-mission-number" aria-hidden="true">1</span>
-                        <p class="ppid-mission-text">Menyediakan informasi publik yang akurat dan dapat dipertanggungjawabkan;</p>
-                    </li>
-                    <li class="ppid-mission-item">
-                        <span class="ppid-mission-number" aria-hidden="true">2</span>
-                        <p class="ppid-mission-text">Membangun dan mengembangkan sistem penyediaan dan layanan informasi berbasis digital;</p>
-                    </li>
-                    <li class="ppid-mission-item">
-                        <span class="ppid-mission-number" aria-hidden="true">3</span>
-                        <p class="ppid-mission-text">Meningkatkan pengelolaan informasi dan dokumentasi secara baik, efisien, mudah diakses, dan bersifat desentralisasi;</p>
-                    </li>
-                    <li class="ppid-mission-item">
-                        <span class="ppid-mission-number" aria-hidden="true">4</span>
-                        <p class="ppid-mission-text">Memanfaatkan teknologi informasi dalam memberikan layanan informasi publik kepada masyarakat dan mendukung pengelolaan keterbukaan informasi publik;</p>
-                    </li>
-                    <li class="ppid-mission-item">
-                        <span class="ppid-mission-number" aria-hidden="true">5</span>
-                        <p class="ppid-mission-text">Meningkatkan pengelolaan informasi dan dokumentasi secara baik, efisien, mudah diakses, dan bersifat desentralisasi.</p>
-                    </li>
-                </ol>
-            </section>
+            {!! $visionBody !!}
         </article>
     </div>
 </main>

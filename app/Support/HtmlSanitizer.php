@@ -19,6 +19,9 @@ class HtmlSanitizer
             return '';
         }
 
+        $html = preg_replace('#<(script|style)\b[^>]*>.*?</\1>#is', '', $html) ?? $html;
+        $html = preg_replace('#<(script|style)\b[^>]*>.*$#is', '', $html) ?? $html;
+
         $allowed = '<'.implode('><', self::ALLOWED_TAGS).'>';
         $clean = strip_tags($html, $allowed);
 

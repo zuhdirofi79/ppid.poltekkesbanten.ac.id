@@ -2,7 +2,9 @@
 
 @section('title', ($page->slug ?? '') === \App\Support\InformationDesk::SLUG
     ? \App\Support\InformationDesk::TITLE.' | '.config('ppid.name')
-    : (($seoTitle ?? $title).' — '.config('ppid.name')))
+    : (($page->slug ?? '') === \App\Support\VisiDanMisi::SLUG
+        ? \App\Support\VisiDanMisi::documentTitle($seoTitle ?? $title)
+        : (($seoTitle ?? $title).' — '.config('ppid.name'))))
 @section('meta_description', $description ?? config('ppid.name_long'))
 @section('og_title', $seoTitle ?? $title)
 @section('og_description', $description ?? config('ppid.name_long'))

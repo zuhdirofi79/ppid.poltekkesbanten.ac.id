@@ -13,6 +13,7 @@ use App\Support\InformationDesk;
 use App\Support\StatistikKeuangan;
 use App\Support\ServiceSummaryReport;
 use App\Support\SopLayananDocuments;
+use App\Support\VisiDanMisi;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -91,6 +92,21 @@ class PublicPageController extends Controller
             $seoDescription = RapatKoordinasiPpid::META_DESCRIPTION;
             $page->title = RapatKoordinasiPpid::TITLE;
             $page->excerpt = RapatKoordinasiPpid::EXCERPT;
+        }
+
+        if ($slug === VisiDanMisi::SLUG) {
+            if (blank($page->title) || $page->title === VisiDanMisi::LEGACY_TITLE) {
+                $page->title = VisiDanMisi::TITLE;
+            }
+            if (blank($page->excerpt) || $page->excerpt === VisiDanMisi::LEGACY_EXCERPT) {
+                $page->excerpt = VisiDanMisi::EXCERPT;
+            }
+            if (blank($page->meta_title) || $page->meta_title === VisiDanMisi::LEGACY_META_TITLE) {
+                $seoTitle = VisiDanMisi::META_TITLE;
+            }
+            if (blank($page->meta_description) || str_contains((string) $page->meta_description, VisiDanMisi::LEGACY_META_MARKER)) {
+                $seoDescription = VisiDanMisi::META_DESCRIPTION;
+            }
         }
 
         $isProfil = $this->isProfilSlug($slug);
