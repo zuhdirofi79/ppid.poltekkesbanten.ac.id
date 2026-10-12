@@ -2,7 +2,7 @@
 
 @section('title', 'Maklumat Pelayanan | PPID Poltekkes Kemenkes Banten')
 @section('meta_description', 'Maklumat Pelayanan PPID Poltekkes Kemenkes Banten sebagai bentuk komitmen penyelenggaraan pelayanan publik sesuai standar dan peraturan yang berlaku.')
-@section('og_image', asset($imageWebp))
+@section('og_image', $imageUrl)
 @section('canonical', route('profil.maklumat-pelayanan'))
 
 @section('content')
@@ -47,53 +47,48 @@
     </div>
 
     <div class="mx-auto max-w-7xl px-4 pb-12">
-        @if ($imageExists)
-            <figure class="mx-auto max-w-[1200px] overflow-hidden rounded-2xl border border-line bg-white p-3 shadow-sm sm:p-4">
-                <img
-                    src="{{ asset($imageWebp) }}"
-                    alt="Maklumat Pelayanan Poltekkes Kemenkes Banten"
-                    width="{{ $imageWidth }}"
-                    height="{{ $imageHeight }}"
-                    class="mx-auto h-auto w-full max-w-full rounded-xl object-contain"
-                    loading="lazy"
-                    decoding="async"
-                >
-                <figcaption class="mt-3 text-center text-sm text-muted">
-                    Maklumat Pelayanan Poltekkes Kemenkes Banten
-                </figcaption>
-            </figure>
+        <figure class="mx-auto max-w-[1200px] overflow-hidden rounded-2xl border border-line bg-white p-3 shadow-sm sm:p-4">
+            <img
+                src="{{ $imageUrl }}"
+                alt="Maklumat Pelayanan Poltekkes Kemenkes Banten"
+                @if ($imageWidth && $imageHeight) width="{{ $imageWidth }}" height="{{ $imageHeight }}" @endif
+                class="mx-auto h-auto w-full max-w-full rounded-xl object-contain"
+                loading="eager"
+                decoding="async"
+            >
+            <figcaption class="mt-3 text-center text-sm text-muted">
+                Maklumat Pelayanan Poltekkes Kemenkes Banten
+            </figcaption>
+        </figure>
 
-            <div class="mx-auto mt-6 flex max-w-[1200px] flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <button
-                    type="button"
-                    class="font-heading inline-flex min-h-11 items-center justify-center rounded-md bg-navy px-5 py-2.5 text-sm font-semibold text-white hover:bg-navy-dark"
-                    @click="open()"
-                    x-ref="trigger"
-                >
-                    Lihat Ukuran Penuh
-                </button>
-                <a
-                    href="{{ route('profil.maklumat-pelayanan.download') }}"
-                    class="font-heading inline-flex min-h-11 items-center justify-center rounded-md bg-green px-5 py-2.5 text-sm font-semibold text-white hover:bg-green-light"
-                >
-                    Unduh Maklumat Pelayanan
-                </a>
-            </div>
+        <div class="mx-auto mt-6 flex max-w-[1200px] flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <button
+                type="button"
+                class="font-heading inline-flex min-h-11 items-center justify-center rounded-md bg-navy px-5 py-2.5 text-sm font-semibold text-white hover:bg-navy-dark"
+                @click="open()"
+                x-ref="trigger"
+            >
+                Lihat Ukuran Penuh
+            </button>
+            <a
+                href="{{ route('profil.maklumat-pelayanan.download') }}"
+                class="font-heading inline-flex min-h-11 items-center justify-center rounded-md bg-green px-5 py-2.5 text-sm font-semibold text-white hover:bg-green-light"
+            >
+                Unduh Maklumat Pelayanan
+            </a>
+        </div>
 
-            <dl class="mx-auto mt-6 grid max-w-[1200px] gap-2 text-sm text-muted sm:grid-cols-3">
-                <div><dt class="font-semibold text-navy">Format</dt><dd>WebP (PNG tersedia di server)</dd></div>
-                <div><dt class="font-semibold text-navy">Resolusi</dt><dd>{{ $imageWidth }} × {{ $imageHeight }} px</dd></div>
-                <div>
-                    <dt class="font-semibold text-navy">Ukuran berkas</dt>
-                    <dd>{{ $fileSize ? number_format($fileSize / 1024, 1, ',', '.').' KB' : '—' }}</dd>
-                </div>
-            </dl>
-        @else
-            <div class="rounded-xl border border-dashed border-line bg-white p-8 text-sm text-muted">
-                Gambar Maklumat Pelayanan belum tersedia. Pastikan file ada di
-                <code class="rounded bg-surface px-1">public/images/ppid/maklumat-pelayanan-poltekkes-banten.webp</code>.
+        <dl class="mx-auto mt-6 grid max-w-[1200px] gap-2 text-sm text-muted sm:grid-cols-3">
+            <div><dt class="font-semibold text-navy">Format</dt><dd>PNG</dd></div>
+            <div>
+                <dt class="font-semibold text-navy">Resolusi</dt>
+                <dd>{{ ($imageWidth && $imageHeight) ? $imageWidth.' × '.$imageHeight.' px' : '—' }}</dd>
             </div>
-        @endif
+            <div>
+                <dt class="font-semibold text-navy">Ukuran berkas</dt>
+                <dd>{{ $fileSize ? number_format($fileSize / 1024, 1, ',', '.').' KB' : '—' }}</dd>
+            </div>
+        </dl>
     </div>
 
     {{-- Lightbox modal --}}
@@ -117,11 +112,10 @@
                 ✕
             </button>
             <img
-                src="{{ asset($imageWebp) }}"
+                src="{{ $imageUrl }}"
                 alt="Maklumat Pelayanan Poltekkes Kemenkes Banten — ukuran penuh"
-                width="{{ $imageWidth }}"
-                height="{{ $imageHeight }}"
-                class="mx-auto h-auto max-h-[80vh] w-full object-contain"
+                @if ($imageWidth && $imageHeight) width="{{ $imageWidth }}" height="{{ $imageHeight }}" @endif
+                class="mx-auto h-auto max-h-[80vh] w-full max-w-full object-contain"
             >
         </div>
     </div>
