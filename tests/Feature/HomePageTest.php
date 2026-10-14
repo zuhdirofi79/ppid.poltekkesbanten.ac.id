@@ -23,6 +23,15 @@ class HomePageTest extends TestCase
         $response->assertSee('PPID POLTEKKES KEMENKES BANTEN', false);
         $response->assertSee('Informasi Serta-Merta', false);
         $response->assertSee('Layanan Informasi Publik', false);
+        $response->assertSee('Pilih layanan sesuai kebutuhan Anda.', false);
+        $response->assertSee('ppid-home-service-card', false);
+        $response->assertDontSee('Buka layanan', false);
+        foreach (config('ppid.services', []) as $service) {
+            $response->assertSee($service['title'], false);
+            if (blank($service['external_url'] ?? null)) {
+                $response->assertSee(route('services.show', ['slug' => $service['slug']], false), false);
+            }
+        }
         $response->assertSee('Shortcut Formulir', false);
         $response->assertSee('Berita Terbaru', false);
         $response->assertSee('Pengumuman Terbaru', false);

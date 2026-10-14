@@ -20,13 +20,13 @@
                     href="{{ route('information.category', ['slug' => $card['slug']]) }}"
                     class="group block rounded-xl border border-line bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-green hover:shadow-md lg:shadow-md"
                 >
-                    <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-navy/5 text-green group-hover:bg-green group-hover:text-white">
-                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <div class="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-navy/5 text-navy group-hover:bg-green group-hover:text-white">
+                        <svg class="h-6 w-6" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
                             {!! $icons[$card['icon'] ?? 'calendar'] ?? $icons['calendar'] !!}
                         </svg>
                     </div>
-                    <h3 class="font-heading text-base font-bold text-navy group-hover:text-green">{{ $card['title'] }}</h3>
-                    <p class="mt-2 text-sm leading-relaxed text-muted">{{ $card['excerpt'] }}</p>
+                    <h3 class="font-heading text-lg font-bold text-navy group-hover:text-green">{{ $card['title'] }}</h3>
+                    <p class="mt-2 text-sm leading-relaxed text-muted" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ $card['excerpt'] }}</p>
                 </a>
             @endforeach
         </div>
