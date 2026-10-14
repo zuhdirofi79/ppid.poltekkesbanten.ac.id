@@ -20,9 +20,9 @@ class DaftarInformasiPublik
 
     public const DOCUMENT_DESCRIPTION = 'Daftar Informasi Publik Poltekkes Kemenkes Banten yang telah dimuktahirkan untuk Tahun 2026.';
 
-    public const FORMAT_LABEL = 'DOCX / Dokumen';
+    public const FORMAT_LABEL = 'PDF / Dokumen';
 
-    public const FILENAME = 'DAFTAR INFORMASI PUBLIK.docx';
+    public const FILENAME = 'DAFTAR INFORMASI PUBLIK 2026.pdf';
 
     public const OPEN_LABEL = 'Buka Dokumen';
 

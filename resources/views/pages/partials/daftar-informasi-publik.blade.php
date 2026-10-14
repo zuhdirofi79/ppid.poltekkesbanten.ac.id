@@ -1,4 +1,4 @@
-{{-- Template khusus: /halaman/daftar-informasi-publik — kartu dokumen DOCX, tanpa iframe --}}
+{{-- Template khusus: /halaman/daftar-informasi-publik — kartu dokumen PDF, tanpa iframe --}}
 <!-- PPID-DAFTAR-INFORMASI-PUBLIK-DEPLOY-20261006-A -->
 @php
     use App\Support\DaftarInformasiPublik;

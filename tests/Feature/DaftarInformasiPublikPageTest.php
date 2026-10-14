@@ -30,7 +30,7 @@ class DaftarInformasiPublikPageTest extends TestCase
     }
 
     #[Test]
-    public function daftar_informasi_publik_page_shows_the_docx_card_without_an_iframe(): void
+    public function daftar_informasi_publik_page_shows_the_pdf_card_without_an_iframe(): void
     {
         $response = $this->get('/halaman/'.DaftarInformasiPublik::SLUG);
 
@@ -46,8 +46,11 @@ class DaftarInformasiPublikPageTest extends TestCase
         $response->assertSee(DaftarInformasiPublik::FORMAT_LABEL, false);
         $response->assertSee(DaftarInformasiPublik::OPEN_LABEL, false);
         $response->assertSee(DaftarInformasiPublik::DOWNLOAD_LABEL, false);
-        $response->assertSee('DAFTAR%20INFORMASI%20PUBLIK.docx', false);
-        $response->assertSee('docs/DAFTAR%20INFORMASI%20PUBLIK.docx', false);
+        $response->assertSee('DAFTAR%20INFORMASI%20PUBLIK%202026.pdf', false);
+        $response->assertSee('docs/DAFTAR%20INFORMASI%20PUBLIK%202026.pdf', false);
+        $response->assertDontSee('DAFTAR INFORMASI PUBLIK.docx', false);
+        $response->assertDontSee('DAFTAR%20INFORMASI%20PUBLIK.docx', false);
+        $response->assertDontSee('DOCX / Dokumen', false);
         $response->assertSee('download="'.DaftarInformasiPublik::FILENAME.'"', false);
         $response->assertSee('target="_blank"', false);
         $response->assertSee('rel="noopener noreferrer"', false);
@@ -59,7 +62,7 @@ class DaftarInformasiPublikPageTest extends TestCase
 
         $html = $response->getContent();
         $this->assertSame(1, preg_match_all('/<h1\b/i', $html));
-        $this->assertSame(2, substr_count($html, 'docs/DAFTAR%20INFORMASI%20PUBLIK.docx'));
+        $this->assertSame(2, substr_count($html, 'docs/DAFTAR%20INFORMASI%20PUBLIK%202026.pdf'));
         $this->assertSame(1, preg_match(
             '/aria-label="Breadcrumb"[\s\S]+?Beranda[\s\S]+?Informasi[\s\S]+?Daftar Informasi Publik/u',
             $html
