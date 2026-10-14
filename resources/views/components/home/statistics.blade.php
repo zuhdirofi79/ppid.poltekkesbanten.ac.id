@@ -1,6 +1,6 @@
 @props(['statistics' => collect()])
 
-<section class="bg-white py-14" aria-labelledby="statistik-heading">
+<section class="bg-white pb-14 pt-6" aria-labelledby="statistik-heading">
     <div class="mx-auto max-w-7xl px-4">
         <div class="mx-auto mb-10 max-w-2xl text-center">
             <p class="text-sm font-semibold uppercase tracking-wider text-green">Transparansi</p>

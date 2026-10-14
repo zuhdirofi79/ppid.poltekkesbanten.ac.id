@@ -72,12 +72,21 @@ class MaklumatPelayananTest extends TestCase
         }
     }
 
-    public function test_homepage_includes_maklumat_section(): void
+    public function test_homepage_uses_maklumat_popup_instead_of_a_home_section(): void
     {
-        $this->get('/')
-            ->assertOk()
-            ->assertSee('Lihat Maklumat Pelayanan', false)
-            ->assertSee(route('profil.maklumat-pelayanan', [], false), false);
+        $response = $this->get('/');
+
+        $response->assertOk();
+        $response->assertSee('ppid-maklumat-popup', false);
+        $response->assertSee('Saya Mengerti', false);
+        $response->assertSee('Lihat Maklumat Ukuran Penuh', false);
+        $response->assertSee(self::IMAGE_URL_PATH, false);
+        $response->assertSee('ppid_maklumat_seen_v1', false);
+        $response->assertDontSee('Lihat Maklumat Pelayanan', false);
+        $response->assertDontSee('%2520', false);
+
+        $this->get('/admin/login')->assertOk()->assertDontSee('ppid-maklumat-popup', false);
+        $this->get('/layanan/permohonan-informasi')->assertOk()->assertSee('ppid-maklumat-popup', false);
     }
 
     public function test_related_public_pages_stay_available(): void

@@ -25,21 +25,39 @@ class HomePageTest extends TestCase
         $response->assertSee('Layanan Informasi Publik', false);
         $response->assertSee('Pilih layanan sesuai kebutuhan Anda.', false);
         $response->assertSee('ppid-home-service-card', false);
-        $response->assertDontSee('Buka layanan', false);
-        foreach (config('ppid.services', []) as $service) {
-            $response->assertSee($service['title'], false);
-            if (blank($service['external_url'] ?? null)) {
-                $response->assertSee(route('services.show', ['slug' => $service['slug']], false), false);
-            }
-        }
-        $response->assertSee('Shortcut Formulir', false);
-        $response->assertSee('Berita Terbaru', false);
-        $response->assertSee('Pengumuman Terbaru', false);
         $response->assertSee('Statistik PPID', false);
-        $response->assertSee('PPID Pelaksana', false);
-        $response->assertSee('Jurusan Teknologi Laboratorium Medis', false);
-        $response->assertSee('Peta dan Kontak', false);
         $response->assertSee('CONTOH', false);
+        $response->assertSee('ppid-maklumat-popup', false);
+        $response->assertSee('Saya Mengerti', false);
+        $response->assertDontSee('Buka layanan', false);
+        $response->assertDontSee('Shortcut Formulir', false);
+        $response->assertDontSee('Berita Terbaru', false);
+        $response->assertDontSee('Pengumuman Terbaru', false);
+        $response->assertDontSee('id="unit-heading"', false);
+        $response->assertDontSee('Peta dan Kontak', false);
+        $response->assertDontSee('Lihat Maklumat Pelayanan', false);
+
+        $html = $response->getContent();
+        $this->assertSame(6, substr_count($html, 'class="ppid-home-service-card"'));
+        $hero = strpos($html, 'PPID POLTEKKES KEMENKES BANTEN');
+        $categories = strpos($html, 'id="kategori-heading"');
+        $services = strpos($html, 'id="layanan-heading"');
+        $statistics = strpos($html, 'id="statistik-heading"');
+        $footer = strpos($html, '<footer');
+        $this->assertNotFalse($hero);
+        $this->assertTrue($hero < $categories && $categories < $services && $services < $statistics && $statistics < $footer);
+
+        foreach ([
+            'permohonan-informasi',
+            'pengajuan-keberatan',
+            'pengaduan-penyalahgunaan-wewenang',
+            'keluhan-pelayanan',
+            'surat-keterangan',
+            'alur-permohonan-informasi',
+        ] as $slug) {
+            $response->assertSee(route('services.show', ['slug' => $slug], false), false);
+        }
+
         $response->assertDontSee('Poltekkes Semarang', false);
         $response->assertDontSee('Gizi', false);
         $response->assertDontSee('RMIK', false);

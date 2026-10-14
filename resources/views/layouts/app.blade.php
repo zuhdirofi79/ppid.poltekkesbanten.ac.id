@@ -77,6 +77,7 @@
     </main>
 
     <x-layout.footer />
+    <x-layout.maklumat-popup />
     <x-layout.accessibility />
     <x-layout.back-to-top />
 
