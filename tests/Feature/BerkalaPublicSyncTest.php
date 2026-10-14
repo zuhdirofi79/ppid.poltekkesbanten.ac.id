@@ -37,7 +37,17 @@ class BerkalaPublicSyncTest extends TestCase
         $this->seedCatalog();
 
         $akademik = PublicDocument::query()->where('slug', 'tarif-layanan-akademik')->firstOrFail();
-        $penunjang = PublicDocument::query()->where('slug', 'tarif-layanan-penunjang-akademik')->firstOrFail();
+        $penunjang = PublicDocument::query()->create([
+            'title' => 'Tarif Layanan Penunjang Akademik',
+            'slug' => 'tarif-layanan-penunjang-akademik',
+            'public_information_category_id' => $akademik->public_information_category_id,
+            'document_category_id' => $akademik->document_category_id,
+            'section_title' => 'Pola Tarif Poltekkes Kemenkes Banten',
+            'source_type' => PublicDocument::SOURCE_UPLOADED,
+            'status' => 'published',
+            'published_at' => now(),
+            'sort_order' => 910,
+        ]);
 
         $path = 'ppid/documents/2026/09/sk-tarif-blu-akademik.pdf';
         Storage::disk('public')->put($path, '%PDF-1.4');

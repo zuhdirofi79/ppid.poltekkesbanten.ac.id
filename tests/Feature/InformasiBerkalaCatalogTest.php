@@ -50,7 +50,7 @@ class InformasiBerkalaCatalogTest extends TestCase
         $response->assertSee('Laporan Keuangan', false);
         $response->assertSee('Laporan Keuangan Tahun 2025 (Audited)', false);
         $response->assertSee('Tarif Layanan Akademik', false);
-        $response->assertSee('Tarif Layanan Penunjang Akademik', false);
+        $response->assertDontSee('Tarif Layanan Penunjang Akademik', false);
         $response->assertSee('Laporan PPID Tahun 2024', false);
         $response->assertSee('Dokumen belum tersedia', false);
         $response->assertDontSee('WAJIB UNGGAH', false);
@@ -201,6 +201,64 @@ class InformasiBerkalaCatalogTest extends TestCase
         $this->assertSame(1, substr_count($html, 'LAKIN Poltekkes Kemenkes Banten 2023'));
         $this->assertStringNotContainsString('LAKIP Poltekkes Kemenkes Banten 2023', $html);
         $this->assertStringContainsString('LAKIN Poltekkes Kemenkes Banten 2025', $html);
+    }
+
+    #[Test]
+    public function unavailable_tarif_penunjang_placeholder_is_removed_without_touching_available_tariff_documents(): void
+    {
+        $this->seedCatalog();
+
+        $this->assertNull(PublicDocument::query()->where('title', 'Tarif Layanan Penunjang Akademik')->first());
+
+        $akademik = PublicDocument::query()->where('slug', 'tarif-layanan-akademik')->firstOrFail();
+        $akademik->update([
+            'title' => 'SK Tarif BLU Akademik',
+            'file_path' => 'ppid/documents/sk-tarif-blu-akademik.pdf',
+            'source_type' => PublicDocument::SOURCE_UPLOADED,
+        ]);
+        $penunjang = PublicDocument::query()->create([
+            'title' => 'SK Tarif BLU Penunjang Akademik',
+            'slug' => 'sk-tarif-blu-penunjang-akademik',
+            'public_information_category_id' => $akademik->public_information_category_id,
+            'document_category_id' => $akademik->document_category_id,
+            'section_title' => 'Pola Tarif Poltekkes Kemenkes Banten',
+            'source_type' => PublicDocument::SOURCE_UPLOADED,
+            'file_path' => 'ppid/documents/sk-tarif-blu-penunjang.pdf',
+            'status' => 'published',
+            'published_at' => now(),
+            'sort_order' => 20,
+        ]);
+        PublicDocument::query()->create([
+            'title' => 'Tarif Layanan Penunjang Akademik',
+            'slug' => 'tarif-layanan-penunjang-akademik',
+            'public_information_category_id' => $akademik->public_information_category_id,
+            'document_category_id' => $akademik->document_category_id,
+            'section_title' => 'Pola Tarif Poltekkes Kemenkes Banten',
+            'source_type' => PublicDocument::SOURCE_UPLOADED,
+            'status' => 'published',
+            'published_at' => now(),
+            'sort_order' => 30,
+        ]);
+
+        $this->seed(InformasiBerkalaSeeder::class);
+        $this->seed(InformasiBerkalaSeeder::class);
+
+        $this->assertNull(PublicDocument::query()->where('slug', 'tarif-layanan-penunjang-akademik')->first());
+        $this->assertNotNull(PublicDocument::onlyTrashed()->where('slug', 'tarif-layanan-penunjang-akademik')->first());
+        $this->assertTrue($akademik->fresh()->isAvailable());
+        $this->assertSame('SK Tarif BLU Akademik', $akademik->fresh()->title);
+        $this->assertTrue($penunjang->fresh()->isAvailable());
+        $this->assertNull($penunjang->fresh()->deleted_at);
+
+        $html = $this->get('/informasi-publik/berkala')->assertOk()->getContent();
+        $this->assertStringNotContainsString('Tarif Layanan Penunjang Akademik', $html);
+        $this->assertSame(1, substr_count($html, 'SK Tarif BLU Penunjang Akademik'));
+        $this->assertSame(1, substr_count($html, 'SK Tarif BLU Akademik'));
+        $this->assertStringContainsString('Pola Tarif Poltekkes Kemenkes Banten', $html);
+        $this->assertStringContainsString('Panduan Akademik', $html);
+        $this->assertStringContainsString('Laporan Keuangan Tahun 2025 (Audited)', $html);
+        $this->assertStringContainsString('LAKIN Poltekkes Kemenkes Banten 2025', $html);
+        $this->assertStringContainsString('Dokumen belum tersedia', $html);
     }
 
     #[Test]

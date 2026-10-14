@@ -111,6 +111,31 @@ class InformasiBerkalaSeeder extends Seeder
 
         $this->removeUnavailableLakinDuplicates();
         $this->normalizeLakipTitlesToLakin();
+        $this->removeUnavailableTarifPenunjangPlaceholder();
+    }
+
+    /**
+     * Nonaktifkan hanya placeholder kosong "Tarif Layanan Penunjang Akademik".
+     * Dokumen SK Tarif BLU yang sudah punya berkas tidak disentuh.
+     */
+    private function removeUnavailableTarifPenunjangPlaceholder(): void
+    {
+        $title = 'Tarif Layanan Penunjang Akademik';
+        $section = 'Pola Tarif Poltekkes Kemenkes Banten';
+
+        $documents = PublicDocument::query()
+            ->where('title', $title)
+            ->where('slug', PublicDocument::makeCatalogSlug($title))
+            ->where('section_title', $section)
+            ->get();
+
+        foreach ($documents as $document) {
+            if ($document->isAvailable()) {
+                continue;
+            }
+
+            $document->delete();
+        }
     }
 
     /**
@@ -335,13 +360,6 @@ class InformasiBerkalaSeeder extends Seeder
                 'title' => 'Tarif Layanan Akademik',
                 'source_type' => PublicDocument::SOURCE_UPLOADED,
                 'admin_notice' => 'Dokumen Tarif Layanan Akademik wajib diunggah oleh Admin PPID.',
-                'year' => null,
-            ],
-            [
-                'section_title' => 'Pola Tarif Poltekkes Kemenkes Banten',
-                'title' => 'Tarif Layanan Penunjang Akademik',
-                'source_type' => PublicDocument::SOURCE_UPLOADED,
-                'admin_notice' => 'Dokumen Tarif Layanan Penunjang Akademik wajib diunggah oleh Admin PPID.',
                 'year' => null,
             ],
             [
