@@ -1,16 +1,16 @@
 @php
-    $heroPath = public_path(config('ppid.hero'));
-    $heroExists = is_file($heroPath);
+    $heroRelative = 'images/hero/gedung-poltekkesbanten-baru.jpeg';
+    $heroExists = is_file(public_path($heroRelative));
 @endphp
 
 <section class="hero-banner flex items-center" aria-labelledby="hero-heading">
     @if ($heroExists)
         <img
             class="hero-banner__media"
-            src="{{ asset(config('ppid.hero')) }}"
+            src="{{ asset($heroRelative) }}"
             alt="{{ config('ppid.hero_alt') }}"
-            width="1920"
-            height="887"
+            width="1600"
+            height="900"
             fetchpriority="high"
         >
     @else

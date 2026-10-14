@@ -21,6 +21,8 @@ class HomePageTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('PPID POLTEKKES KEMENKES BANTEN', false);
+        $response->assertSee('src="'.asset('images/hero/gedung-poltekkesbanten-baru.jpeg').'"', false);
+        $response->assertSee('hero-banner__overlay', false);
         $response->assertSee('Informasi Serta-Merta', false);
         $response->assertSee('Layanan Informasi Publik', false);
         $response->assertSee('Pilih layanan sesuai kebutuhan Anda.', false);
