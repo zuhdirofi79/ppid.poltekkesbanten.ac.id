@@ -150,7 +150,8 @@ class RapatKoordinasiPpidPageTest extends TestCase
         $this->assertSame(1, MenuItem::query()
             ->where('parent_id', $informasiPublik->id)
             ->where('label', 'Daftar Informasi Publik')
-            ->where('route_name', 'information.index')
+            ->where('route_name', 'pages.show')
+            ->where('route_params->slug', DaftarInformasiPublik::SLUG)
             ->count());
 
         SiteSetting::query()->updateOrCreate(

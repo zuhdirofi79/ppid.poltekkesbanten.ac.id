@@ -384,7 +384,7 @@ return [
                 ['label' => 'Informasi Serta-Merta', 'route' => 'information.category', 'params' => ['slug' => 'serta-merta']],
                 ['label' => 'Informasi Setiap Saat', 'route' => 'information.category', 'params' => ['slug' => 'setiap-saat']],
                 ['label' => 'Informasi Dikecualikan', 'route' => 'information.category', 'params' => ['slug' => 'dikecualikan']],
-                ['label' => 'Daftar Informasi Publik', 'route' => 'information.index', 'params' => []],
+                ['label' => 'Daftar Informasi Publik', 'route' => 'pages.show', 'params' => ['slug' => 'daftar-informasi-publik']],
                 ['label' => 'Dokumen Publik', 'route' => 'documents.index', 'params' => []],
             ],
         ],

@@ -32,6 +32,7 @@ class EnsureDaftarInformasiPublikMenuItemSeeder extends Seeder
 
         $existing = MenuItem::query()
             ->where('menu_id', $menu->id)
+            ->where('parent_id', $parent->id)
             ->where('route_name', 'pages.show')
             ->where('route_params->slug', $slug)
             ->first();

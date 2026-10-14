@@ -80,7 +80,7 @@ class DaftarInformasiPublikPageTest extends TestCase
             '/aria-label="Breadcrumb"[\s\S]+?Beranda[\s\S]+?Informasi[\s\S]+?Daftar Informasi Publik/u',
             $html
         ));
-        $this->assertSame(2, preg_match_all(
+        $this->assertSame(4, preg_match_all(
             '/href="[^"]*\/halaman\/'.DaftarInformasiPublik::SLUG.'"[^>]*aria-current="page"/u',
             $html
         ));
@@ -104,6 +104,14 @@ class DaftarInformasiPublikPageTest extends TestCase
             $home
         ));
         $this->assertSame(1, preg_match(
+            '/aria-label="Navigasi utama"[\s\S]+?Informasi Publik[\s\S]+?href="[^"]*\/halaman\/'.DaftarInformasiPublik::SLUG.'"[^>]*>\s*Daftar Informasi Publik\s*</u',
+            $home
+        ));
+        $this->assertSame(1, preg_match(
+            '/aria-label="Navigasi seluler"[\s\S]+?Informasi Publik[\s\S]+?href="[^"]*\/halaman\/'.DaftarInformasiPublik::SLUG.'"[^>]*>\s*Daftar Informasi Publik\s*</u',
+            $home
+        ));
+        $this->assertSame(1, preg_match(
             '/aria-label="Navigasi utama"[\s\S]+?Statistik Keuangan[\s\S]+?Inventaris Barang Milik Negara[\s\S]+?Daftar Informasi Publik[\s\S]+?Rapat Koordinasi PPID[\s\S]+?aria-label="Navigasi seluler"/u',
             $home
         ));
@@ -123,7 +131,9 @@ class DaftarInformasiPublikPageTest extends TestCase
     public function database_navigation_inserts_the_item_after_inventaris_barang_milik_negara(): void
     {
         $this->seed(MenuSeeder::class);
+        $informasiParent = MenuItem::query()->whereNull('parent_id')->where('label', 'Informasi')->firstOrFail();
         MenuItem::query()
+            ->where('parent_id', $informasiParent->id)
             ->where('route_name', 'pages.show')
             ->where('route_params->slug', DaftarInformasiPublik::SLUG)
             ->delete();
@@ -137,11 +147,13 @@ class DaftarInformasiPublikPageTest extends TestCase
             ->where('label', 'Inventaris Barang Milik Negara')
             ->firstOrFail();
         $item = MenuItem::query()
+            ->where('parent_id', $parent->id)
             ->where('route_name', 'pages.show')
             ->where('route_params->slug', DaftarInformasiPublik::SLUG)
             ->firstOrFail();
 
         $this->assertSame(1, MenuItem::query()
+            ->where('parent_id', $parent->id)
             ->where('route_name', 'pages.show')
             ->where('route_params->slug', DaftarInformasiPublik::SLUG)
             ->count());
@@ -149,7 +161,8 @@ class DaftarInformasiPublikPageTest extends TestCase
         $this->assertSame(1, MenuItem::query()
             ->where('parent_id', $informasiPublik->id)
             ->where('label', 'Daftar Informasi Publik')
-            ->where('route_name', 'information.index')
+            ->where('route_name', 'pages.show')
+            ->where('route_params->slug', DaftarInformasiPublik::SLUG)
             ->count());
         $this->assertSame($parent->id, $item->parent_id);
         $this->assertSame('route', $item->type);
