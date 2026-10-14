@@ -71,6 +71,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 ->name('academic-calendars.remove-file');
 
             Route::get('lhkpn', [LhkpnDocumentController::class, 'index'])->name('lhkpn.index');
+            Route::get('lhkpn/create', [LhkpnDocumentController::class, 'create'])->name('lhkpn.create');
+            Route::post('lhkpn', [LhkpnDocumentController::class, 'store'])->name('lhkpn.store');
             Route::get('lhkpn/{lhkpnDocument}/edit', [LhkpnDocumentController::class, 'edit'])->name('lhkpn.edit');
             Route::put('lhkpn/{lhkpnDocument}', [LhkpnDocumentController::class, 'update'])->name('lhkpn.update');
             Route::post('lhkpn/{lhkpnDocument}/file', [LhkpnDocumentController::class, 'upload'])->name('lhkpn.upload');

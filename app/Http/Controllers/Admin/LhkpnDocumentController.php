@@ -24,6 +24,40 @@ class LhkpnDocumentController extends Controller
         return view('admin.lhkpn.index', compact('documents'));
     }
 
+    public function create(): View
+    {
+        $document = new LhkpnDocument([
+            'group_key' => LhkpnDocument::GROUP_PIMPINAN,
+            'is_published' => false,
+            'sort_order' => ((int) LhkpnDocument::query()->max('sort_order')) + 10,
+        ]);
+
+        return view('admin.lhkpn.create', compact('document'));
+    }
+
+    public function store(Request $request, MediaLibrary $library): RedirectResponse
+    {
+        $data = $this->validated($request, new LhkpnDocument, true);
+        $data['created_by'] = $request->user()->id;
+        $data['updated_by'] = $request->user()->id;
+
+        if ($data['is_published']) {
+            $data['published_at'] = now();
+        }
+
+        $document = LhkpnDocument::query()->create($data);
+
+        if ($request->hasFile('file')) {
+            $this->storePdf($request->file('file'), $document, $library, $request->user()->id);
+        }
+
+        ActivityLog::record('created', $document, 'Menambahkan dokumen LHKPN: '.$document->person_name);
+
+        return redirect()
+            ->route('admin.lhkpn.index')
+            ->with('status', 'Data LHKPN ditambahkan.');
+    }
+
     public function edit(LhkpnDocument $lhkpnDocument): View
     {
         $lhkpnDocument->load('mediaAsset');
@@ -112,18 +146,26 @@ class LhkpnDocumentController extends Controller
     /**
      * @return array<string, mixed>
      */
-    private function validated(Request $request, LhkpnDocument $document): array
+    private function validated(Request $request, LhkpnDocument $document, bool $creating = false): array
     {
-        $data = $request->validate([
+        $rules = [
             'person_name' => ['required', 'string', 'max:255'],
             'position' => ['required', 'string', 'max:255'],
             'group_key' => ['required', Rule::in([LhkpnDocument::GROUP_PIMPINAN, LhkpnDocument::GROUP_TERKAIT])],
             'report_year' => ['nullable', 'integer', 'min:2000', 'max:2100'],
             'document_label' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string', 'max:2000'],
+            'public_asset_path' => ['nullable', 'string', 'max:255'],
+            'external_url' => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
             'file' => ['nullable', 'file', 'max:'.$this->maxKilobytes()],
-        ]);
+        ];
+
+        if ($creating) {
+            $rules['position_key'] = ['required', 'string', 'max:64', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('lhkpn_documents', 'position_key')];
+        }
+
+        $data = $request->validate($rules);
 
         foreach (['person_name', 'position', 'document_label', 'notes'] as $field) {
             $value = trim(strip_tags((string) ($data[$field] ?? '')));
@@ -141,11 +183,81 @@ class LhkpnDocumentController extends Controller
         $data['is_published'] = $request->boolean('is_published');
         unset($data['file']);
 
+        if ($creating) {
+            $data['position_key'] = strtolower(trim((string) $data['position_key']));
+        } else {
+            unset($data['position_key']);
+        }
+
+        $publicPath = $request->exists('public_asset_path')
+            ? $this->normalizedPublicPath($request->input('public_asset_path'))
+            : $document->public_asset_path;
+        if ($request->exists('public_asset_path')) {
+            $data['public_asset_path'] = $publicPath;
+        }
+
+        $externalUrl = $request->exists('external_url')
+            ? $this->normalizedExternalUrl($request->input('external_url'))
+            : $document->external_url;
+        if ($request->exists('external_url')) {
+            $data['external_url'] = $externalUrl;
+        }
+
+        $keepsUpload = $request->hasFile('file')
+            || ($document->exists && (filled($document->media_asset_id) || filled($document->file_path)));
+
+        if ($keepsUpload) {
+            $data['source_type'] = LhkpnDocument::SOURCE_UPLOADED;
+        } elseif (filled($publicPath)) {
+            $data['source_type'] = LhkpnDocument::SOURCE_PUBLIC_ASSET;
+        } elseif (filled($externalUrl)) {
+            $data['source_type'] = LhkpnDocument::SOURCE_EXTERNAL;
+        } else {
+            $data['source_type'] = null;
+        }
+
         if ($request->hasFile('file')) {
             $this->assertPdf($request->file('file'));
         }
 
         return $data;
+    }
+
+    private function normalizedPublicPath(mixed $path): ?string
+    {
+        $path = trim(str_replace('\\', '/', (string) $path));
+        if ($path === '') {
+            return null;
+        }
+
+        if (
+            str_contains($path, '..')
+            || str_starts_with($path, '/')
+            || str_contains($path, "\0")
+            || ! str_ends_with(strtolower($path), '.pdf')
+        ) {
+            throw ValidationException::withMessages([
+                'public_asset_path' => 'Path dokumen publik harus berupa berkas PDF di dalam folder situs, tanpa tanda .. atau garis miring di awal.',
+            ]);
+        }
+
+        return $path;
+    }
+
+    private function normalizedExternalUrl(mixed $url): ?string
+    {
+        $url = trim((string) $url);
+        if ($url === '') {
+            return null;
+        }
+
+        if (! LhkpnDocument::isSafeHttpUrl($url)) {
+            throw ValidationException::withMessages([
+                'external_url' => 'URL harus berupa tautan HTTP atau HTTPS yang valid.',
+            ]);
+        }
+
+        return $url;
     }
 
     private function storePdf(UploadedFile $file, LhkpnDocument $document, MediaLibrary $library, ?int $userId): void

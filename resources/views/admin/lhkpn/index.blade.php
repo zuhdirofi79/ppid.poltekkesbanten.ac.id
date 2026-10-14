@@ -6,7 +6,10 @@
         <h1 class="font-heading text-2xl font-bold text-navy">LHKPN Pimpinan</h1>
         <p class="mt-1 text-sm text-muted">Kelola dokumen LHKPN pimpinan dan pejabat terkait. Urutan mengikuti kolom urutan.</p>
     </div>
-    <a href="{{ route('pages.show', 'lhkpn-pimpinan-tertinggi') }}" target="_blank" rel="noopener noreferrer" class="rounded-md border border-line px-4 py-2 text-sm font-semibold text-navy">Lihat Halaman Publik</a>
+    <div class="flex flex-wrap items-center gap-2">
+        <a href="{{ route('pages.show', 'lhkpn-pimpinan-tertinggi') }}" target="_blank" rel="noopener noreferrer" class="rounded-md border border-line px-4 py-2 text-sm font-semibold text-navy">Lihat Halaman Publik</a>
+        <a href="{{ route('admin.lhkpn.create') }}" class="rounded-md bg-navy px-4 py-2 text-sm font-semibold text-white">Tambah LHKPN</a>
+    </div>
 </div>
 
 <div class="overflow-x-auto rounded-xl border border-line bg-white">
@@ -16,8 +19,11 @@
                 <th class="px-4 py-3">Urutan</th>
                 <th class="px-4 py-3">Nama</th>
                 <th class="px-4 py-3">Jabatan</th>
+                <th class="px-4 py-3">Kelompok</th>
                 <th class="px-4 py-3">Tahun/Periode</th>
+                <th class="px-4 py-3">Keterangan</th>
                 <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3">Sumber</th>
                 <th class="px-4 py-3">Dokumen</th>
                 <th class="px-4 py-3">Publish</th>
                 <th class="px-4 py-3">Action</th>
@@ -29,7 +35,9 @@
                     <td class="px-4 py-3 font-heading text-lg font-bold text-navy">{{ $loop->iteration }}</td>
                     <td class="px-4 py-3 font-medium text-navy">{{ $document->person_name }}</td>
                     <td class="px-4 py-3 text-muted">{{ $document->position }}</td>
+                    <td class="px-4 py-3 text-muted">{{ $document->group_key === 'terkait' ? 'Pejabat terkait' : 'Pimpinan' }}</td>
                     <td class="px-4 py-3">{{ $document->report_year ?: '—' }}</td>
+                    <td class="px-4 py-3">{{ $document->document_label ?: '—' }}</td>
                     <td class="px-4 py-3">
                         @if ($document->requiresUpload())
                             <span class="inline-flex rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-900">WAJIB DILENGKAPI</span>
@@ -39,6 +47,14 @@
                         @else
                             <span class="text-muted">Tidak ditayangkan</span>
                         @endif
+                    </td>
+                    <td class="px-4 py-3 text-muted">
+                        @switch($document->source_type)
+                            @case('uploaded_file') Unggahan @break
+                            @case('public_asset') Berkas publik @break
+                            @case('external_url') Tautan eksternal @break
+                            @default —
+                        @endswitch
                     </td>
                     <td class="px-4 py-3">
                         @if ($document->documentUrl())
@@ -74,7 +90,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8" class="px-4 py-8 text-center text-muted">Belum ada data LHKPN. Jalankan seeder LhkpnDocumentSeeder.</td>
+                    <td colspan="11" class="px-4 py-8 text-center text-muted">Belum ada dokumen LHKPN yang dikelola. Tambahkan data LHKPN untuk mulai mempublikasikan dokumen.</td>
                 </tr>
             @endforelse
         </tbody>

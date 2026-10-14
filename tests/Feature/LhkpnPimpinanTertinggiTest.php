@@ -232,6 +232,137 @@ class LhkpnPimpinanTertinggiTest extends TestCase
             ->assertSee('LHKPN Pimpinan Tertinggi', false);
     }
 
+    #[Test]
+    public function lhkpn_admin_controller_resolves_and_routes_are_registered(): void
+    {
+        $this->assertTrue(class_exists(\App\Http\Controllers\Admin\LhkpnDocumentController::class));
+
+        foreach (['index', 'create', 'store', 'edit', 'update', 'upload', 'remove-file', 'publish'] as $name) {
+            $this->assertTrue(\Illuminate\Support\Facades\Route::has('admin.lhkpn.'.$name));
+        }
+    }
+
+    #[Test]
+    public function editor_without_document_permission_cannot_open_lhkpn_admin(): void
+    {
+        $editor = User::factory()->editor()->create();
+
+        $this->actingAs($editor)->get(route('admin.lhkpn.index'))->assertForbidden();
+
+        auth()->logout();
+
+        $this->get(route('admin.lhkpn.index'))->assertRedirect(route('admin.login'));
+    }
+
+    #[Test]
+    public function admin_can_create_edit_and_unpublish_without_removing_existing_files(): void
+    {
+        Storage::fake('public');
+        $admin = User::factory()->adminPpid()->create();
+        $before = LhkpnDocument::query()->count();
+        $dahrizal = LhkpnDocument::query()->where('position_key', 'direktur')->firstOrFail();
+        $originalPath = $dahrizal->public_asset_path;
+
+        $this->actingAs($admin)->get(route('admin.lhkpn.index'))->assertOk()->assertSee('Tambah LHKPN', false);
+        $this->actingAs($admin)->get(route('admin.lhkpn.index'))->assertOk();
+        $this->assertSame($before, LhkpnDocument::query()->count());
+
+        $this->actingAs($admin)
+            ->post(route('admin.lhkpn.store'), [
+                'position_key' => 'Direktur',
+                'person_name' => 'Pejabat Uji',
+                'position' => 'Jabatan Uji',
+                'group_key' => 'terkait',
+                'public_asset_path' => '../rahasia.pdf',
+                'sort_order' => 90,
+            ])
+            ->assertSessionHasErrors('position_key');
+
+        $this->actingAs($admin)
+            ->post(route('admin.lhkpn.store'), [
+                'position_key' => 'pejabat-uji',
+                'person_name' => 'Pejabat Uji',
+                'position' => 'Jabatan Uji',
+                'group_key' => 'terkait',
+                'report_year' => 2026,
+                'document_label' => 'Tanda Terima',
+                'public_asset_path' => '../rahasia.pdf',
+                'sort_order' => 90,
+            ])
+            ->assertSessionHasErrors('public_asset_path');
+
+        $this->assertSame($before, LhkpnDocument::query()->count());
+
+        $this->actingAs($admin)
+            ->post(route('admin.lhkpn.store'), [
+                'position_key' => 'direktur',
+                'person_name' => 'Pejabat Uji',
+                'position' => 'Jabatan Uji',
+                'group_key' => 'pimpinan',
+                'sort_order' => 90,
+            ])
+            ->assertSessionHasErrors('position_key');
+
+        $this->actingAs($admin)
+            ->post(route('admin.lhkpn.store'), [
+                'position_key' => 'pejabat-uji',
+                'person_name' => 'Pejabat Uji',
+                'position' => 'Jabatan Uji',
+                'group_key' => 'terkait',
+                'report_year' => 2026,
+                'document_label' => 'Tanda Terima',
+                'public_asset_path' => 'docs/LHKPN_verif_KPK/contoh.pdf',
+                'sort_order' => 90,
+                'is_published' => '1',
+                'file' => $this->pdfUpload('pejabat-uji.pdf'),
+            ])
+            ->assertRedirect(route('admin.lhkpn.index'));
+
+        $created = LhkpnDocument::query()->where('position_key', 'pejabat-uji')->firstOrFail();
+        $this->assertSame($before + 1, LhkpnDocument::query()->count());
+        $this->assertSame($admin->id, $created->created_by);
+        $this->assertSame($admin->id, $created->updated_by);
+        $this->assertTrue($created->isAvailable());
+        $this->assertSame(LhkpnDocument::SOURCE_UPLOADED, $created->source_type);
+        $this->assertSame('docs/LHKPN_verif_KPK/contoh.pdf', $created->public_asset_path);
+
+        $this->actingAs($admin)
+            ->put(route('admin.lhkpn.update', $dahrizal), [
+                'person_name' => 'Dr. Dahrizal, S.Kp., MPH',
+                'position' => 'Direktur — catatan uji',
+                'group_key' => 'pimpinan',
+                'document_label' => $dahrizal->document_label,
+                'public_asset_path' => $originalPath,
+                'sort_order' => $dahrizal->sort_order,
+                'is_published' => '1',
+            ])
+            ->assertRedirect(route('admin.lhkpn.index'));
+
+        $dahrizal->refresh();
+        $this->assertSame('direktur', $dahrizal->position_key);
+        $this->assertSame($originalPath, $dahrizal->public_asset_path);
+        $this->assertSame('Direktur — catatan uji', $dahrizal->position);
+        $this->assertSame(LhkpnDocument::SOURCE_PUBLIC_ASSET, $dahrizal->source_type);
+
+        $this->actingAs($admin)->post(route('admin.lhkpn.publish', $dahrizal))->assertRedirect();
+        $this->get('/halaman/lhkpn-pimpinan-tertinggi')
+            ->assertOk()
+            ->assertDontSee('Dr. Dahrizal, S.Kp., MPH', false);
+
+        $this->actingAs($admin)->post(route('admin.lhkpn.publish', $dahrizal))->assertRedirect();
+        $this->get('/halaman/lhkpn-pimpinan-tertinggi')
+            ->assertOk()
+            ->assertSee('Dr. Dahrizal, S.Kp., MPH', false);
+
+        $asmawati = LhkpnDocument::query()->where('position_key', 'wakil-direktur-3')->firstOrFail();
+        $asmawati->update([
+            'public_asset_path' => 'docs/LHKPN_verif_KPK/berkas-belum-ada.pdf',
+            'source_type' => LhkpnDocument::SOURCE_PUBLIC_ASSET,
+            'is_published' => true,
+        ]);
+        $this->get('/halaman/lhkpn-pimpinan-tertinggi')->assertOk();
+    }
+
     private function pdfUpload(string $name = 'lhkpn.pdf'): UploadedFile
     {
         return UploadedFile::fake()->createWithContent($name, "%PDF-1.4\n1 0 obj\n<<>>\nendobj\n%%EOF");

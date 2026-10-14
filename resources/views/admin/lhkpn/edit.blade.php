@@ -60,6 +60,17 @@
     </div>
 
     <div>
+        <label for="public_asset_path" class="mb-1 block text-sm font-medium text-navy">Path PDF yang sudah ada di situs</label>
+        <input id="public_asset_path" name="public_asset_path" value="{{ old('public_asset_path', $document->public_asset_path) }}" class="w-full rounded-md border border-line px-3 py-2 text-sm" placeholder="docs/LHKPN_verif_KPK/NAMA_FILE.pdf">
+        <p class="mt-1 text-xs text-muted">Isi hanya jika PDF sudah berada di folder publik. Jangan diawali garis miring.</p>
+    </div>
+
+    <div>
+        <label for="external_url" class="mb-1 block text-sm font-medium text-navy">URL eksternal</label>
+        <input id="external_url" name="external_url" type="url" value="{{ old('external_url', $document->external_url) }}" class="w-full rounded-md border border-line px-3 py-2 text-sm" placeholder="https://">
+    </div>
+
+    <div>
         <label for="notes" class="mb-1 block text-sm font-medium text-navy">Catatan internal</label>
         <textarea id="notes" name="notes" rows="3" class="w-full rounded-md border border-line px-3 py-2 text-sm">{{ old('notes', $document->notes) }}</textarea>
         <p class="mt-1 text-xs text-muted">Catatan ini tidak ditampilkan di kartu publik.</p>
