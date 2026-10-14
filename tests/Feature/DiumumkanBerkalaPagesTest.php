@@ -94,7 +94,9 @@ class DiumumkanBerkalaPagesTest extends TestCase
         $response->assertSee('Direktorat / Kampus Serang', false);
         $response->assertSee('Jl. Syekh Moh. Nawawi Albantani No.12,', false);
         $response->assertSee('Kampus Tangerang', false);
-        $response->assertSee('Persis samping RSUP Dr. Sitanala', false);
+        $response->assertSee('Jl. Dr. Sitanala (Komplek SPK), RT.002/RW.003,', false);
+        $response->assertDontSee('RJRP+697', false);
+        $response->assertDontSee('Persis samping RSUP Dr. Sitanala', false);
         $response->assertSee('Kampus Rangkasbitung', false);
         $response->assertSee('Jl. Raya Rangkasbitung Pandeglang No.421,', false);
         $this->assertSame(1, preg_match_all('/<h1\b/i', $response->getContent()));

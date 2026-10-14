@@ -314,7 +314,7 @@ return [
         ],
         [
             'name' => 'Kampus Tangerang',
-            'address' => 'RJRP+697, RT.002/RW.003, Karang Sari, Kec. Neglasari, Kota Tangerang, Banten 15121 (persis samping RSUP Dr. Sitanala)',
+            'address' => 'Jl. Dr. Sitanala (Komplek SPK), RT.002/RW.003, Karang Sari, Kec. Neglasari, Kota Tangerang, Banten 15121',
         ],
         [
             'name' => 'Kampus Rangkasbitung',
