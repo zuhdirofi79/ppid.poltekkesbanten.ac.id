@@ -24,13 +24,21 @@ class DaftarInformasiPublik
 
     public const FILENAME = 'DAFTAR INFORMASI PUBLIK 2026.pdf';
 
-    public const OPEN_LABEL = 'Buka Dokumen';
+    public const OPEN_LABEL = 'Preview PDF';
 
     public const DOWNLOAD_LABEL = 'Unduh Dokumen';
 
-    public const OPEN_ARIA = 'Buka Daftar Informasi Publik Tahun 2026';
+    public const PREVIEW_HEADING = 'Preview Daftar Informasi Publik Tahun 2026';
+
+    public const CLOSE_LABEL = 'Tutup Preview';
+
+    public const OPEN_ARIA = 'Preview Daftar Informasi Publik Tahun 2026';
+
+    public const CLOSE_ARIA = 'Tutup preview Daftar Informasi Publik Tahun 2026';
 
     public const DOWNLOAD_ARIA = 'Unduh Daftar Informasi Publik Tahun 2026';
+
+    public const IFRAME_TITLE = 'Preview Daftar Informasi Publik Poltekkes Kemenkes Banten Tahun 2026';
 
     public static function documentUrl(): string
     {

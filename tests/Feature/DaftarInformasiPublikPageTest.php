@@ -30,7 +30,7 @@ class DaftarInformasiPublikPageTest extends TestCase
     }
 
     #[Test]
-    public function daftar_informasi_publik_page_shows_the_pdf_card_without_an_iframe(): void
+    public function daftar_informasi_publik_page_shows_the_pdf_card_with_an_inline_preview(): void
     {
         $response = $this->get('/halaman/'.DaftarInformasiPublik::SLUG);
 
@@ -46,23 +46,36 @@ class DaftarInformasiPublikPageTest extends TestCase
         $response->assertSee(DaftarInformasiPublik::FORMAT_LABEL, false);
         $response->assertSee(DaftarInformasiPublik::OPEN_LABEL, false);
         $response->assertSee(DaftarInformasiPublik::DOWNLOAD_LABEL, false);
+        $response->assertSee(DaftarInformasiPublik::PREVIEW_HEADING, false);
+        $response->assertSee(DaftarInformasiPublik::CLOSE_LABEL, false);
         $response->assertSee('DAFTAR%20INFORMASI%20PUBLIK%202026.pdf', false);
         $response->assertSee('docs/DAFTAR%20INFORMASI%20PUBLIK%202026.pdf', false);
         $response->assertDontSee('DAFTAR INFORMASI PUBLIK.docx', false);
         $response->assertDontSee('DAFTAR%20INFORMASI%20PUBLIK.docx', false);
         $response->assertDontSee('DOCX / Dokumen', false);
+        $response->assertDontSee('>Buka Dokumen<', false);
         $response->assertSee('download="'.DaftarInformasiPublik::FILENAME.'"', false);
-        $response->assertSee('target="_blank"', false);
-        $response->assertSee('rel="noopener noreferrer"', false);
+        $response->assertSee('type="button"', false);
+        $response->assertSee('aria-controls="daftar-informasi-publik-preview"', false);
         $response->assertSee('aria-label="'.DaftarInformasiPublik::OPEN_ARIA.'"', false);
+        $response->assertSee('aria-label="'.DaftarInformasiPublik::CLOSE_ARIA.'"', false);
         $response->assertSee('aria-label="'.DaftarInformasiPublik::DOWNLOAD_ARIA.'"', false);
-        $response->assertDontSee('<iframe', false);
+        $response->assertSee('title="'.DaftarInformasiPublik::IFRAME_TITLE.'"', false);
+        $response->assertSee('class="ppid-sk-preview-frame"', false);
+        $response->assertSee('x-show="previewOpen"', false);
+        $response->assertSee('x-cloak', false);
         $response->assertDontSee('docs.google.com', false);
         $response->assertDontSee('view.officeapps.live.com', false);
+        $response->assertDontSee('%2520', false);
 
         $html = $response->getContent();
         $this->assertSame(1, preg_match_all('/<h1\b/i', $html));
-        $this->assertSame(2, substr_count($html, 'docs/DAFTAR%20INFORMASI%20PUBLIK%202026.pdf'));
+        $this->assertSame(1, preg_match_all('/<iframe\b/i', $html));
+        $this->assertSame(3, substr_count($html, 'docs/DAFTAR%20INFORMASI%20PUBLIK%202026.pdf'));
+        $this->assertSame(1, preg_match(
+            '/<button[^>]*type="button"[^>]*aria-controls="daftar-informasi-publik-preview"[^>]*>\s*'.preg_quote(DaftarInformasiPublik::OPEN_LABEL, '/').'\s*<\/button>/u',
+            $html
+        ));
         $this->assertSame(1, preg_match(
             '/aria-label="Breadcrumb"[\s\S]+?Beranda[\s\S]+?Informasi[\s\S]+?Daftar Informasi Publik/u',
             $html
