@@ -27,6 +27,10 @@
 
 <div class="ppid-berkala-page mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
     @forelse ($sections as $section)
+        @if ($section['title'] === \App\Support\AkreditasiSertifikat::SECTION)
+            @include('pages.information.partials.akreditasi-sertifikat', ['headingId' => 'section-'.$loop->index])
+            @continue
+        @endif
         <section class="ppid-berkala-section" aria-labelledby="section-{{ $loop->index }}">
             <h2 id="section-{{ $loop->index }}" class="ppid-berkala-section-title">
                 {{ $section['title'] }}

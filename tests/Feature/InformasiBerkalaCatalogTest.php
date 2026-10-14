@@ -33,7 +33,12 @@ class InformasiBerkalaCatalogTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('PPID-INFORMASI-BERKALA-DEPLOY-20260904-A', false);
-        $response->assertSee('Akreditasi Poltekkes Banten', false);
+        $response->assertSee('Akreditasi Institusi Poltekkes Kemenkes Banten', false);
+        $response->assertSee('Akreditasi Prodi D3 Keperawatan', false);
+        $response->assertSee('Akreditasi Prodi Sarjana Terapan Keperawatan', false);
+        $response->assertSee('Akreditasi Prodi D3 Kebidanan', false);
+        $response->assertSee('Akreditasi Prodi D3 Teknologi Laboratorium Medis (TLM)', false);
+        $response->assertSee('Akreditasi Prodi Profesi Ners', false);
         $response->assertSee('RAK Poltekkes Banten 2020–2024', false);
         $response->assertSee('RSB Poltekkes Banten 2022–2026', false);
         $response->assertSee('RSB Poltekkes Banten 2025–2029', false);
@@ -259,6 +264,42 @@ class InformasiBerkalaCatalogTest extends TestCase
         $this->assertStringContainsString('Laporan Keuangan Tahun 2025 (Audited)', $html);
         $this->assertStringContainsString('LAKIN Poltekkes Kemenkes Banten 2025', $html);
         $this->assertStringContainsString('Dokumen belum tersedia', $html);
+    }
+
+    #[Test]
+    public function akreditasi_section_lists_six_certificate_previews(): void
+    {
+        $this->seedCatalog();
+
+        $html = $this->get('/informasi-publik/berkala')->assertOk()->getContent();
+        $documents = \App\Support\AkreditasiSertifikat::documents();
+
+        $this->assertCount(6, $documents);
+        $this->assertSame(1, substr_count($html, '>Akreditasi Institusi</h3>'));
+        $this->assertSame(1, substr_count($html, '>Akreditasi Program Studi<'));
+        $this->assertStringNotContainsString('Akreditasi Poltekkes Banten', $html);
+        $this->assertStringNotContainsString('%2520', $html);
+        $this->assertStringNotContainsString('%2528', $html);
+        $this->assertSame(1, substr_count($html, 'class="ppid-akreditasi-preview-dialog"'));
+        $this->assertStringContainsString('Buka PDF di Tab Baru', $html);
+        $this->assertStringContainsString('Unduh PDF', $html);
+        $this->assertStringContainsString('RAK Poltekkes Banten 2020–2024', $html);
+        $this->assertStringContainsString('RSB Poltekkes Banten 2025–2029', $html);
+
+        $urls = [];
+        foreach ($documents as $document) {
+            $this->assertStringContainsString($document['label'], $html);
+            $this->assertSame(1, substr_count($html, 'href="'.$document['url'].'"'));
+            $urls[] = $document['url'];
+        }
+
+        $this->assertCount(6, array_unique($urls));
+
+        $section = strpos($html, \App\Support\AkreditasiSertifikat::SECTION);
+        $rak = strpos($html, 'Kegiatan (RAK) Poltekkes Kemenkes Banten');
+        $this->assertNotFalse($section);
+        $this->assertNotFalse($rak);
+        $this->assertLessThan($rak, $section);
     }
 
     #[Test]
